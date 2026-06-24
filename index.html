@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOOPI — Good Picks Only</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --brown-dark:#3D2314;
+  --brown-mid:#6B3A2A;
+  --brown-light:#C4956A;
+  --cream-dark:#F5EDD6;
+  --cream-light:#FBF5EA;
+  --green:#6B8F71;
+  --green-light:#E8F0E9;
+  --pink:#D4748C;
+  --pink-light:#FAE8ED;
+  --white:#FFFFFF;
+  --text:#2A1A0E;
+  --text-mid:#7A5C4A;
+  --border:#E8DECE;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cream-light);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6}
+
+/* NAV */
+nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;height:64px;gap:16px;flex-wrap:wrap}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--brown-dark);cursor:pointer;letter-spacing:-.5px;text-decoration:none;display:flex;align-items:center;gap:6px}
+.nav-logo .dot{width:6px;height:6px;border-radius:50%;background:var(--pink);display:inline-block}
+.nav-links{display:flex;gap:6px;align-items:center}
+.nav-link{padding:6px 14px;border-radius:100px;font-size:.8rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mid);transition:all .2s;letter-spacing:.2px}
+.nav-link:hover,.nav-link.active{background:var(--brown-dark);color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-search{display:flex;align-items:center;gap:8px;background:var(--cream-dark);border-radius:100px;padding:8px 16px}
+.nav-search input{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;width:140px;color:var(--text)}
+.nav-search input::placeholder{color:var(--text-mid)}
+.btn-admin{background:var(--brown-dark);color:var(--white);border:none;border-radius:100px;padding:8px 18px;font-size:.78rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s}
+.btn-admin:hover{background:var(--brown-mid)}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+.hamburger span{display:block;width:20px;height:1.5px;background:var(--brown-dark);transition:all .3s}
+.hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.mobile-menu{display:none;flex-direction:column;width:100%;border-top:1px solid var(--border);padding:12px 0;gap:2px;order:10}
+.mobile-menu.open{display:flex}
+.mobile-menu button{padding:10px 0;font-size:.88rem;font-weight:500;background:none;border:none;cursor:pointer;text-align:left;color:var(--text-mid);font-family:'DM Sans',sans-serif}
+
+/* PAGES */
+.page{display:none}.page.active{display:block}
+
+/* HERO */
+.hero{background:var(--brown-dark);padding:96px 40px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C4956A' fill-opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");opacity:.5}
+.hero-inner{position:relative;z-index:2;max-width:600px;margin:0 auto}
+.hero-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--brown-light);margin-bottom:24px}
+.hero h1{font-family:'DM Sans',sans-serif;font-size:clamp(3rem,8vw,5.5rem);font-weight:700;color:var(--cream-light);line-height:1;margin-bottom:8px;letter-spacing:6px}
+.hero h1 em{color:var(--pink);font-style:italic}
+.hero-sub{font-size:.95rem;color:rgba(245,237,214,.6);margin:20px auto 40px;max-width:340px;line-height:1.7;font-weight:300}
+.hero-search{display:flex;max-width:440px;margin:48px auto 0;background:var(--cream-light);border-radius:100px;overflow:hidden}
+.hero-search input{flex:1;border:none;padding:14px 22px;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;color:var(--text);background:transparent}
+.hero-search input::placeholder{color:var(--text-mid)}
+.hero-search button{background:var(--pink);color:var(--white);border:none;padding:14px 24px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.8rem;cursor:pointer;border-radius:0 100px 100px 0;transition:background .2s;white-space:nowrap}
+.hero-search button:hover{background:var(--brown-mid)}
+
+/* FILTER */
+.filter-bar{padding:24px 40px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--border);background:var(--cream-light);overflow-x:auto;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-chip{display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-mid);transition:all .2s;white-space:nowrap;flex-shrink:0;font-family:'DM Sans',sans-serif}
+.filter-chip:hover{border-color:var(--brown-dark);color:var(--brown-dark)}
+.filter-chip.active{background:var(--brown-dark);border-color:var(--brown-dark);color:var(--white)}
+.filter-chip .pip{width:6px;height:6px;border-radius:50%}
+
+/* SECTION */
+.main-section{padding:48px 40px}
+.section-label{font-size:.68rem;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-mid);margin-bottom:28px;display:flex;align-items:center;gap:12px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px;background:var(--border)}
+.card{background:var(--cream-light);cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
+.card:hover{background:var(--cream-dark)}
+.card-img{width:100%;height:220px;object-fit:cover;display:block}
+.card-img-placeholder{width:100%;height:220px;display:flex;align-items:center;justify-content:center;font-size:3.5rem}
+.card-body{padding:20px}
+.card-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-cat{font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid)}
+.verdict-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:.65rem;font-weight:600;letter-spacing:.5px}
+.verdict-yes{background:var(--green-light);color:var(--green)}
+.verdict-no{background:var(--pink-light);color:var(--pink)}
+.verdict-maybe{background:#FEF3C7;color:#92400E}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;margin-bottom:4px;line-height:1.3;color:var(--text)}
+.card-author{font-size:.75rem;color:var(--text-mid);margin-bottom:10px}
+.card-excerpt{font-size:.8rem;color:var(--text-mid);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.6}
+.card-footer{margin-top:12px;display:flex;align-items:center;justify-content:space-between}
+.rating-stars{color:var(--pink);font-size:.75rem;letter-spacing:1px}
+.card-date{font-size:.68rem;color:#B8A89A}
+.empty{padding:80px 40px;text-align:center;color:var(--text-mid)}
+.empty-icon{font-size:3rem;margin-bottom:16px;display:block;opacity:.4}
+.empty p{font-size:.9rem}
+
+/* DETAIL */
+.detail-wrap{max-width:780px;margin:0 auto;padding:48px 40px}
+.detail-back{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:500;color:var(--text-mid);cursor:pointer;margin-bottom:36px;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color .2s;letter-spacing:.5px}
+.detail-back:hover{color:var(--brown-dark)}
+.detail-hero{margin-bottom:40px;display:grid;grid-template-columns:160px 1fr;gap:32px;align-items:start}
+.detail-cover img{width:100%;border-radius:4px;box-shadow:0 8px 40px rgba(61,35,20,.15)}
+.placeholder-cover{width:160px;height:220px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:4rem;background:var(--cream-dark)}
+.detail-info{}
+.detail-cat{font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:12px}
+.detail-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;line-height:1.1;margin-bottom:8px;color:var(--text)}
+.detail-author{font-size:.9rem;color:var(--text-mid);margin-bottom:20px;font-style:italic}
+.detail-rating{font-size:1rem;color:var(--pink);margin-bottom:16px;letter-spacing:2px}
+.detail-verdict-box{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:4px;font-weight:600;font-size:.88rem}
+.detail-verdict-box.yes{background:var(--green-light);color:var(--green)}
+.detail-verdict-box.no{background:var(--pink-light);color:var(--pink)}
+.detail-verdict-box.maybe{background:#FEF3C7;color:#92400E}
+.detail-divider{border:none;border-top:1px solid var(--border);margin:36px 0}
+.detail-body{font-size:1rem;line-height:1.9;color:var(--text)}
+.detail-body p{margin-bottom:1.4em}
+.detail-pullquote{
+  margin:36px 0;padding:28px 32px;
+  background:var(--cream-dark);
+  border-radius:4px;
+  position:relative;
+  font-family:'Playfair Display',serif;
+  font-size:1.15rem;font-style:italic;
+  color:var(--brown-dark);line-height:1.7;
+  text-align:center;
+}
+.detail-pullquote::before{
+  content:'"';
+  font-family:'Playfair Display',serif;
+  font-size:5rem;line-height:.8;
+  color:var(--pink);opacity:.4;
+  position:absolute;top:12px;left:20px;
+  font-style:normal;
+}
+.detail-pullquote::after{
+  content:'"';
+  font-family:'Playfair Display',serif;
+  font-size:5rem;line-height:.2;
+  color:var(--pink);opacity:.4;
+  position:absolute;bottom:0;right:20px;
+  font-style:normal;
+}
+.usb-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.usb-bar-label{font-size:.78rem;width:150px;flex-shrink:0;color:var(--text-mid)}
+.usb-bar-track{flex:1;height:6px;background:var(--cream-dark);border-radius:100px;overflow:hidden}
+.usb-bar-fill{height:100%;border-radius:100px}
+.usb-bar-num{font-size:.75rem;font-weight:600;width:30px;text-align:right;color:var(--text)}
+.lang-tabs{display:flex;gap:0;border-bottom:1px solid var(--border)}
+.lang-tab{padding:8px 16px;font-size:.78rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mid);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;font-family:'DM Sans',sans-serif}
+.lang-tab.active{color:var(--brown-dark);border-bottom-color:var(--brown-dark)}
+.lang-tab-panel{display:none;padding:20px 0}
+.lang-tab-panel.active{display:block}
+.lang-pill{display:inline-flex;align-items:center;gap:4px;background:var(--cream-dark);border-radius:100px;padding:3px 10px;font-size:.72rem;font-weight:500;color:var(--text)}
+.lang-pill.available{background:var(--green-light);color:var(--green)}
+.lang-pill.unavailable{background:var(--pink-light);color:var(--pink)}
+.no-links-msg{font-size:.82rem;color:var(--text-mid);padding:8px 0}
+.buy-list{display:flex;flex-direction:column;gap:8px}
+.buy-item{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:1px solid var(--border);border-radius:4px;gap:12px;flex-wrap:wrap;transition:border-color .2s;background:var(--white)}
+.buy-item:hover{border-color:var(--brown-dark)}
+.buy-store{display:flex;align-items:center;gap:10px}
+.store-logo{width:30px;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--cream-dark);flex-shrink:0}
+.store-name{font-weight:500;font-size:.85rem}
+.store-note{font-size:.72rem;color:var(--text-mid)}
+.buy-price{font-family:'Playfair Display',serif;font-weight:600;font-size:1rem;color:var(--brown-dark)}
+.buy-btn{background:var(--brown-dark);color:var(--white);border:none;border-radius:100px;padding:7px 16px;font-size:.73rem;font-weight:500;cursor:pointer;text-decoration:none;display:inline-block;transition:background .2s;font-family:'DM Sans',sans-serif}
+.buy-btn:hover{background:var(--brown-mid)}
+.cheapest-tag{background:var(--green-light);color:var(--green);font-size:.62rem;font-weight:600;padding:2px 7px;border-radius:100px}
+.stream-list{display:flex;flex-direction:column;gap:8px}
+.stream-item{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border:1px solid var(--border);border-radius:4px;gap:12px;flex-wrap:wrap;background:var(--white)}
+.stream-item:hover{border-color:var(--brown-dark)}
+.stream-platform{display:flex;align-items:center;gap:10px}
+.platform-logo{width:30px;height:30px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--cream-dark);flex-shrink:0}
+.platform-name{font-weight:500;font-size:.85rem}
+.platform-type{font-size:.72rem;color:var(--text-mid)}
+.stream-price{font-family:'Playfair Display',serif;font-weight:600;font-size:.95rem;color:var(--brown-dark)}
+.stream-price.free{color:var(--green)}
+.stream-btn{background:var(--brown-dark);color:var(--white);border:none;border-radius:100px;padding:7px 16px;font-size:.73rem;font-weight:500;cursor:pointer;text-decoration:none;display:inline-block;font-family:'DM Sans',sans-serif}
+
+/* ABOUT */
+.about-wrap{max-width:640px;margin:0 auto;padding:80px 40px}
+.about-title{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;margin-bottom:6px;color:var(--text)}
+.about-title span{color:var(--pink);font-style:italic}
+.about-tagline{font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:40px;padding-bottom:32px;border-bottom:1px solid var(--border)}
+.about-body{font-size:1rem;line-height:1.9;color:var(--text-mid)}
+.about-body p{margin-bottom:1.4em}
+
+/* SEARCH */
+.search-wrap{padding:48px 40px}
+.search-headline{font-family:'Playfair Display',serif;font-size:2rem;font-weight:600;margin-bottom:4px;color:var(--text)}
+.search-sub{font-size:.82rem;color:var(--text-mid);margin-bottom:36px}
+
+/* ADMIN */
+.admin-overlay{position:fixed;inset:0;background:rgba(42,26,14,.7);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.admin-login{background:var(--cream-light);border-radius:4px;padding:40px;width:100%;max-width:380px;border-top:3px solid var(--pink)}
+.admin-login h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:4px;color:var(--text)}
+.admin-login p{font-size:.82rem;color:var(--text-mid);margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);margin-bottom:6px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;color:var(--text);background:var(--white);transition:border-color .2s}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--brown-dark)}
+.form-group textarea{resize:vertical;min-height:100px}
+.btn{padding:10px 22px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:var(--brown-dark);color:var(--white)}.btn-primary:hover{background:var(--brown-mid)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--brown-dark)}
+.btn-red{background:transparent;color:var(--pink);border:1px solid var(--pink)}.btn-red:hover{background:var(--pink);color:var(--white)}
+.btn-sm{padding:6px 14px;font-size:.7rem}
+.err-msg{color:var(--pink);font-size:.78rem;margin-top:8px}
+.admin-panel{min-height:100vh;background:var(--cream-dark)}
+.admin-topbar{background:var(--brown-dark);padding:0 32px;height:56px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.admin-topbar .logo{font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--cream-light)}
+.admin-topbar .logo span{color:var(--pink);font-style:italic}
+.admin-body{max-width:960px;margin:0 auto;padding:32px}
+.admin-tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:1px solid var(--border);background:transparent;flex-wrap:wrap}
+.admin-tab{padding:10px 20px;font-size:.75rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mid);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;font-family:'DM Sans',sans-serif}
+.admin-tab.active{color:var(--brown-dark);border-bottom-color:var(--brown-dark)}
+.admin-section{display:none}.admin-section.active{display:block}
+.admin-card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:28px;margin-bottom:20px}
+.admin-card h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:20px;color:var(--text)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.table-head{display:grid;grid-template-columns:2fr 1fr 1fr 90px 110px;gap:12px;padding:10px 16px;background:var(--cream-dark);border-radius:4px;font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);margin-bottom:6px}
+.table-row{display:grid;grid-template-columns:2fr 1fr 1fr 90px 110px;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:4px;align-items:center;font-size:.82rem;margin-bottom:4px;background:var(--white)}
+.table-row:hover{border-color:var(--brown-dark)}
+.tbl-actions{display:flex;gap:6px}
+.section-divider{border:none;border-top:1px dashed var(--border);margin:20px 0}
+.ai-step{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:24px;margin-bottom:12px}
+.ai-step.active{border-color:var(--brown-dark)}
+.ai-step.done{border-color:var(--green);background:var(--green-light)}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--border);color:var(--text-mid);font-size:.72rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center;margin-right:8px;flex-shrink:0}
+.ai-step.active .step-num{background:var(--brown-dark);color:var(--white)}
+.ai-step.done .step-num{background:var(--green);color:var(--white)}
+.step-header{display:flex;align-items:center;margin-bottom:4px}
+.step-title{font-weight:600;font-size:.9rem;color:var(--text)}
+.step-sub{font-size:.75rem;color:var(--text-mid);margin-bottom:16px;padding-left:32px}
+.genre-badge{display:inline-flex;align-items:center;gap:6px;background:var(--cream-dark);color:var(--brown-dark);padding:5px 12px;border-radius:100px;font-size:.75rem;font-weight:500;margin-top:8px}
+.buy-links-list,.stream-admin-list{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.buy-link-item,.stream-admin-item{display:flex;align-items:center;gap:8px;background:var(--cream-light);border:1px solid var(--border);border-radius:4px;padding:7px 12px;font-size:.78rem}
+.buy-link-item span,.stream-admin-item span{flex:1;color:var(--text-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.buy-link-del{background:none;border:none;color:var(--border);cursor:pointer;font-size:.9rem}
+.buy-link-del:hover{color:var(--pink)}
+.buy-link-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap}
+.buy-link-row .form-group{flex:1;min-width:100px;margin-bottom:0}
+.btn-add-link{background:var(--cream-dark);color:var(--brown-dark);border:none;border-radius:4px;padding:10px 14px;font-size:.75rem;font-weight:500;cursor:pointer;flex-shrink:0;align-self:flex-end;font-family:'DM Sans',sans-serif}
+.ai-suggest-btn{background:var(--cream-dark);color:var(--brown-dark);border:none;border-radius:4px;padding:8px 14px;font-size:.72rem;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif}
+.ai-suggest-btn:hover{background:var(--brown-dark);color:var(--white)}
+.ai-suggest-btn:disabled{opacity:.4;cursor:not-allowed}
+.score-grid{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.score-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.score-label{flex:1;min-width:120px;font-size:.82rem;font-weight:500;color:var(--text)}
+.score-label small{display:block;font-size:.68rem;font-weight:400;color:var(--text-mid)}
+.score-slider-wrap{flex:2;min-width:140px;display:flex;align-items:center;gap:10px}
+.score-slider{flex:1;-webkit-appearance:none;height:3px;border-radius:3px;background:var(--cream-dark);outline:none}
+.score-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--brown-dark);cursor:pointer}
+.score-val{width:32px;height:32px;border-radius:4px;background:var(--cream-dark);color:var(--brown-dark);font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.total-score-box{display:flex;align-items:center;gap:16px;background:var(--cream-dark);border-radius:4px;padding:20px;margin-top:16px;flex-wrap:wrap}
+.total-num{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;color:var(--brown-dark);line-height:1}
+.total-info{flex:1}
+.total-label{font-size:.65rem;color:var(--text-mid);text-transform:uppercase;letter-spacing:1.5px}
+.total-verdict{font-weight:600;font-size:1rem;margin-top:2px}
+.total-verdict.yes{color:var(--green)}.total-verdict.no{color:var(--pink)}.total-verdict.maybe{color:#92400E}
+.settings-card{background:var(--white);padding:28px;margin-bottom:16px;border-left:3px solid var(--brown-dark);border-radius:0 4px 4px 0}
+.settings-card h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:16px;color:var(--text)}
+
+/* TOP 10 */
+.top10-card{background:var(--white);border:1px solid var(--border);border-radius:4px;padding:28px;margin-bottom:20px}
+.top10-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.top10-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--text)}
+.top10-date{font-size:.72rem;color:var(--text-mid);margin-top:2px}
+.top10-tabs{display:flex;gap:4px;background:var(--cream-dark);border-radius:100px;padding:3px}
+.top10-tab{padding:6px 14px;border-radius:100px;font-size:.72rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mid);transition:all .2s;font-family:'DM Sans',sans-serif}
+.top10-tab.active{background:var(--white);color:var(--brown-dark)}
+.top10-panel{display:none}.top10-panel.active{display:block}
+.top10-list{display:flex;flex-direction:column;gap:6px}
+.top10-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:all .2s;background:var(--cream-light)}
+.top10-item:hover{border-color:var(--brown-dark);background:var(--cream-dark)}
+.top10-rank{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--border);width:28px;text-align:center;flex-shrink:0}
+.top10-rank.gold{color:#D4A017}.top10-rank.silver{color:#A8A9AD}.top10-rank.bronze{color:#C4956A}
+.top10-cover{width:36px;height:48px;border-radius:2px;flex-shrink:0;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.top10-info{flex:1;min-width:0}
+.top10-name{font-weight:500;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.top10-meta{font-size:.72rem;color:var(--text-mid);margin-top:1px}
+.top10-source{font-size:.62rem;background:var(--cream-dark);color:var(--text-mid);padding:2px 8px;border-radius:100px;font-weight:500;flex-shrink:0}
+.top10-use-btn{background:var(--brown-dark);color:var(--white);border:none;border-radius:100px;padding:5px 12px;font-size:.68rem;font-weight:500;cursor:pointer;flex-shrink:0;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.top10-loading{text-align:center;padding:40px;color:var(--text-mid);font-size:.85rem}
+.top10-loading .spin{font-size:1.5rem;animation:spin 1s linear infinite;display:block;margin-bottom:8px}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.top10-empty{text-align:center;padding:28px;color:var(--text-mid);font-size:.82rem}
+.top10-refresh{background:none;border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:.72rem;font-weight:500;cursor:pointer;color:var(--text-mid);transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px}
+.top10-refresh:hover{border-color:var(--brown-dark);color:var(--brown-dark)}
+.already-reviewed{opacity:.5}
+.already-badge{font-size:.62rem;background:var(--green-light);color:var(--green);padding:2px 7px;border-radius:100px;font-weight:500}
+
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .nav-links,.nav-right{display:none}
+  .hamburger{display:flex}
+  .hero{padding:64px 24px 56px}
+  .filter-bar,.main-section,.detail-wrap,.about-wrap,.search-wrap{padding-left:20px;padding-right:20px}
+  .card-grid{grid-template-columns:1fr 1fr}
+  .detail-hero{grid-template-columns:1fr;gap:20px}
+  .placeholder-cover{width:100%;height:200px}
+  .form-row,.form-row-3{grid-template-columns:1fr}
+  .table-head,.table-row{grid-template-columns:2fr 1fr 80px}
+  .admin-body{padding:16px}
+}
+@media(max-width:480px){.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')"><span style="font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:3px;font-size:1.1rem">GOOPI</span> <span class="dot"></span></div>
+  <div class="nav-links" id="navLinks">
+    <button class="nav-link active" onclick="navTo('home',this)">Home</button>
+    <button class="nav-link" onclick="navCat('book')">Buku</button>
+    <button class="nav-link" onclick="navCat('movie')">Film</button>
+    <button class="nav-link" onclick="showPage('about')">About</button>
+  </div>
+  <div class="nav-right">
+    <div class="nav-search"><span style="color:var(--text-mid);font-size:12px">⌕</span><input type="text" id="navSearch" placeholder="Cari review..." onkeydown="if(event.key==='Enter')doSearch()"></div>
+    <button class="btn-admin" onclick="showAdminGate()">Admin</button>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
+  <div class="mobile-menu" id="mobileMenu">
+    <button onclick="navTo('home');toggleMobile()">Home</button>
+    <button onclick="navCat('book');toggleMobile()">Buku</button>
+    <button onclick="navCat('movie');toggleMobile()">Film</button>
+    <button onclick="showPage('about');toggleMobile()">About</button>
+    <button onclick="showAdminGate();toggleMobile()">Admin</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Good Picks Only</div>
+      <h1 style="display:inline-flex;align-items:center;gap:6px">GOOPI<span style="color:var(--pink);font-size:.5em;display:block;line-height:1;margin-top:4px">●</span></h1>
+      
+      <div class="hero-search">
+        <input type="text" id="heroSearch" placeholder="Cek Dulu Disini… Book / Film" onkeydown="if(event.key==='Enter')doHeroSearch()">
+        <button onclick="doHeroSearch()" style="font-size:1rem;padding:14px 22px">🔍</button>
+      </div>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-chip active" onclick="setFilter('all',this)"><span class="pip" style="background:var(--brown-dark)"></span>Semua</button>
+    <button class="filter-chip" onclick="setFilter('book',this)"><span class="pip" style="background:var(--green)"></span>Buku</button>
+    <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Film</button>
+  </div>
+  <div class="main-section">
+    <div class="section-label">Review Terbaru</div>
+    <div class="card-grid" id="mainGrid"></div>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div id="page-detail" class="page"><div class="detail-wrap" id="detailContent"></div></div>
+
+<!-- ABOUT -->
+<div id="page-about" class="page">
+  <div class="about-wrap">
+    <div class="about-title">GOO<span>PI</span></div>
+    <div class="about-tagline">Good Picks Only</div>
+    <div class="about-body" id="aboutBody"></div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div id="page-search" class="page">
+  <div class="search-wrap">
+    <div class="search-headline">Hasil untuk "<span id="searchQ" style="color:var(--pink);font-style:italic"></span>"</div>
+    <div class="search-sub" id="searchCount"></div>
+    <div class="card-grid" id="searchGrid"></div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="adminOverlay" style="display:none" class="admin-overlay">
+  <div class="admin-login">
+    <h2>Admin</h2><p>Masukkan password untuk lanjut.</p>
+    <div class="form-group"><label>Password</label><input type="password" id="loginPw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div style="display:flex;gap:10px;margin-top:4px"><button class="btn btn-primary" onclick="doLogin()">Masuk</button><button class="btn btn-outline" onclick="closeGate()">Batal</button></div>
+    <div class="err-msg" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+  <div class="admin-panel">
+    <div class="admin-topbar">
+      <div class="logo">GOO<span>PI</span></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" style="color:var(--cream-light);border-color:rgba(255,255,255,.3)" onclick="showPage('home')">← Site</button><button class="btn btn-red btn-sm" onclick="doLogout()">Logout</button></div>
+    </div>
+    <div class="admin-body">
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('add',this)">+ Tambah</button>
+        <button class="admin-tab" onclick="switchTab('manage',this)">Kelola</button>
+        <button class="admin-tab" onclick="switchTab('inspire',this)">💡 Inspirasi</button>
+        <button class="admin-tab" onclick="switchTab('settings',this)">Settings</button>
+      </div>
+
+      <!-- ADD -->
+      <div class="admin-section active" id="at-add">
+        <div style="border:1px solid var(--brown-dark);border-radius:4px;padding:24px;margin-bottom:20px;background:linear-gradient(135deg,var(--cream-dark),var(--cream-light))">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span>✨</span><h3 style="margin:0;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)">AI Review Generator</h3>
+          </div>
+          <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:20px">AI cari data → deteksi genre → buat skor → tulis review. Semua bisa diedit.</p>
+          <div class="ai-step active" id="step1">
+            <div class="step-header"><span class="step-num">1</span><span class="step-title">Info Dasar</span></div>
+            <div class="step-sub">Isi judul dan pilih kategori</div>
+            <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="ai-title" placeholder="e.g. Atomic Habits"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="ai-author" placeholder="e.g. James Clear"></div></div>
+            <div class="form-row"><div class="form-group"><label>Kategori</label><select id="ai-cat" onchange="toggleCatSections(this.value)"><option value="book">Buku</option><option value="movie">Film</option></select></div><div class="form-group"><label>Tone</label><select id="ai-tone"><option value="casual">Santai</option><option value="critical">Kritis</option><option value="hype">Hype</option></select></div></div>
+            <button class="btn btn-primary" id="btnStep1" onclick="aiStep1()">Cari Data & Buat Skor →</button>
+            <div id="step1Status" style="margin-top:10px;font-size:.78rem;display:none;color:var(--brown-dark)">Mencari data...</div>
+          </div>
+          <div class="ai-step" id="step2" style="display:none">
+            <div class="step-header"><span class="step-num">2</span><span class="step-title">Skor per Kriteria</span></div>
+            <div class="step-sub">Geser untuk edit skor</div>
+            <div id="genreDisplay"></div>
+            <div class="score-grid" id="scoreGrid"></div>
+            <div class="total-score-box"><div class="total-num" id="totalScoreNum">0</div><div class="total-info"><div class="total-label">Total / 100</div><div class="total-verdict" id="totalVerdictLabel">—</div></div><div id="totalVerdictBadge"></div></div>
+            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn btn-primary" id="btnStep2" onclick="aiStep2()">Generate Review →</button><button class="btn btn-outline" onclick="resetAI()">Mulai Ulang</button></div>
+            <div id="step2Status" style="margin-top:8px;font-size:.78rem;color:var(--brown-dark);display:none">Menulis review...</div>
+          </div>
+          <div class="ai-step" id="step3" style="display:none">
+            <div class="step-header"><span class="step-num">3</span><span class="step-title">Review Siap!</span></div>
+            <div class="step-sub">Form di bawah sudah terisi. Edit jika perlu lalu simpan.</div>
+            <div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="document.getElementById('formTitle').scrollIntoView({behavior:'smooth'})">Lihat Form ↓</button><button class="btn btn-outline" onclick="resetAI()">Buat Baru</button></div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <h3 id="formTitle">Tambah Review</h3>
+          <div class="form-row-3">
+            <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">Buku</option><option value="movie">Film</option></select></div>
+            <div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
+            <div class="form-group"><label>Rating</label><select id="f-rating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div>
+          </div>
+          <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="f-title"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="f-author"></div></div>
+          <div class="form-group"><label>URL Cover (opsional)</label>
+<div style="display:flex;gap:8px;align-items:center">
+  <input type="text" id="f-img" placeholder="https://..." style="flex:1">
+  <button type="button" class="ai-suggest-btn" id="btnFetchCover" onclick="fetchCover()" style="flex-shrink:0;white-space:nowrap">🔍 Cari Cover</button>
+</div>
+<div id="coverPreview" style="margin-top:10px;display:none">
+  <img id="coverPreviewImg" style="height:100px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+  <span id="coverPreviewMsg" style="font-size:.75rem;color:var(--text-mid);margin-left:10px"></span>
+</div></div>
+          <div class="form-group"><label>Hook (1 kalimat)</label><textarea id="f-excerpt" rows="2"></textarea></div>
+          <div class="form-group"><label>Review Lengkap (gunakan [QUOTE: teks] untuk pull-quote)</label><textarea id="f-body" rows="10"></textarea></div>
+          <hr class="section-divider">
+          <div id="streamingSection">
+            <div class="form-group"><label>📺 Tonton Online (Film)</label>
+              <div class="stream-admin-list" id="streamList"></div>
+              <div style="margin-bottom:10px"><button class="ai-suggest-btn" id="btnSuggestStream" onclick="aiSuggestStreaming()">✨ AI Suggest Platform</button></div>
+              <div class="buy-link-row">
+                <div class="form-group"><label>Platform</label><input type="text" id="sl-platform" placeholder="Netflix"></div>
+                <div class="form-group"><label>Tipe</label><select id="sl-type"><option value="subscription">Subscription</option><option value="rent">Sewa</option><option value="buy">Beli</option><option value="free">Gratis</option></select></div>
+                <div class="form-group"><label>Harga</label><input type="text" id="sl-price" placeholder="Rp 54.000/bln"></div>
+                <div class="form-group"><label>URL</label><input type="text" id="sl-url" placeholder="https://..."></div>
+                <button class="btn-add-link" onclick="addStreamLink()">+ Tambah</button>
+              </div>
+            </div>
+          </div>
+          <div id="translationSection" style="display:none">
+            <div class="form-group"><label>📖 Bahasa & Terjemahan (Buku)</label>
+              <div style="margin-bottom:12px"><button class="ai-suggest-btn" id="btnSuggestTranslation" onclick="aiSuggestTranslation()">✨ AI Deteksi Bahasa</button></div>
+              <div class="form-row"><div class="form-group"><label>Bahasa Original</label><input type="text" id="tl-original" placeholder="Bahasa Inggris"></div><div class="form-group"><label>Ada Terjemahan ID?</label><select id="tl-available"><option value="">Belum tahu</option><option value="yes">✓ Ada</option><option value="no">✗ Belum ada</option></select></div></div>
+              <label style="font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);display:block;margin-bottom:6px">Beli Versi Original</label>
+              <div class="buy-links-list" id="tlOrigBuyList"></div>
+              <div class="buy-link-row"><div class="form-group"><label>Toko</label><input type="text" id="tobl-store" placeholder="Amazon"></div><div class="form-group"><label>Harga</label><input type="text" id="tobl-price"></div><div class="form-group"><label>URL</label><input type="text" id="tobl-url"></div><button class="btn-add-link" onclick="addOrigBuyLink()">+ Tambah</button></div>
+              <label style="font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);display:block;margin:12px 0 6px">Beli Versi Terjemahan</label>
+              <div class="buy-links-list" id="tlBuyList"></div>
+              <div class="buy-link-row"><div class="form-group"><label>Toko</label><input type="text" id="tbl-store" placeholder="Gramedia"></div><div class="form-group"><label>Harga</label><input type="text" id="tbl-price"></div><div class="form-group"><label>URL</label><input type="text" id="tbl-url"></div><button class="btn-add-link" onclick="addTlBuyLink()">+ Tambah</button></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" onclick="saveReview()">Simpan Review</button><button class="btn btn-outline" onclick="resetForm()">Reset</button></div>
+          <div class="err-msg" id="formErr"></div>
+        </div>
+      </div>
+
+      <!-- MANAGE -->
+      <div class="admin-section" id="at-manage">
+        <div class="admin-card" style="padding:0;overflow:hidden">
+          <div style="padding:20px 24px;border-bottom:1px solid var(--border)"><h3 style="margin:0">Semua Review</h3></div>
+          <div style="padding:16px"><div class="table-head"><span>Judul</span><span>Tipe</span><span>Rating</span><span>Verdict</span><span>Aksi</span></div><div id="adminTable"></div></div>
+        </div>
+      </div>
+
+      <!-- INSPIRASI -->
+      <div class="admin-section" id="at-inspire">
+        <div class="top10-card">
+          <div class="top10-header">
+            <div><div class="top10-title">Inspirasi Hari Ini</div><div class="top10-date" id="top10Date"></div></div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="top10-tabs"><button class="top10-tab active" onclick="switchTop10('books',this)">Buku</button><button class="top10-tab" onclick="switchTop10('movies',this)">Film</button></div>
+              <button class="top10-refresh" onclick="loadTop10(true)">↺ Refresh</button>
+            </div>
+          </div>
+          <div class="top10-panel active" id="top10-books"><div class="top10-loading"><span class="spin">⟳</span>Memuat...</div></div>
+          <div class="top10-panel" id="top10-movies"><div class="top10-loading"><span class="spin">⟳</span>Memuat...</div></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="admin-section" id="at-settings">
+        <div class="settings-card"><h3>Halaman About</h3><div class="form-group"><textarea id="s-about" rows="5"></textarea></div><button class="btn btn-primary" onclick="saveAbout()">Simpan</button></div>
+        <div class="settings-card"><h3>Ganti Password</h3><div class="form-row"><div class="form-group"><label>Password Baru</label><input type="password" id="s-pw1"></div><div class="form-group"><label>Konfirmasi</label><input type="password" id="s-pw2"></div></div><button class="btn btn-primary" onclick="changePw()">Update</button><div class="err-msg" id="pwErr"></div></div>
+        <div class="settings-card"><h3>Backup</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline" onclick="exportData()">Export JSON</button><label class="btn btn-outline" style="cursor:pointer">Import JSON<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFilter='all',editId=null;
+let tempBuyLinks=[],tempStreamLinks=[],tempTlBuyLinks=[],tempOrigBuyLinks=[];
+let aiScoreCriteria=[],aiGenre='';
+let top10Cache={books:null,movies:null,loadedAt:null};
+
+// ── SUPABASE CONFIG ──────────────────────────────────────
+// Ganti dua nilai di bawah ini dengan milik kamu dari Supabase dashboard
+const SUPABASE_URL = 'https://mkhpjhihkzapfibxdokd.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1raHBqaGloa3phcGZpYnhkb2tkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNzAzMjUsImV4cCI6MjA5Nzg0NjMyNX0.y0YzaTZ1NqXjktugCJRHdrDw9VJ1zVJ4on_EZ4vTlFA';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ─────────────────────────────────────────────────────────
+
+// localStorage fallback untuk auth & settings
+const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
+const s=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const getPass=()=>g('wi_pass')||'worthit';
+const getAbout=()=>g('wi_about')||'<p>Selamat datang di <strong>GOOPI</strong> — tempat kamu cek apakah sebuah buku atau film benar-benar layak waktu dan uang kamu.</p><p>Tidak ada review berbayar. Hanya opini jujur.</p>';
+
+// Supabase review functions
+let _reviewCache = null;
+async function getReviewsAsync(){
+  if(_reviewCache)return _reviewCache;
+  const{data,error}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
+  if(error){console.error('Supabase fetch error:',error);return[];}
+  _reviewCache=data||[];
+  return _reviewCache;
+}
+function getReviews(){return _reviewCache||[];}
+async function saveReview_db(review){
+  _reviewCache=null;
+  if(review.id&&typeof review.id==='string'&&review.id.length>10){
+    // update existing
+    const{error}=await sb.from('reviews').update(review).eq('id',review.id);
+    if(error)throw error;
+  } else {
+    // insert new
+    const{error}=await sb.from('reviews').insert(review);
+    if(error)throw error;
+  }
+  _reviewCache=null;
+}
+async function deleteReview_db(id){
+  _reviewCache=null;
+  const{error}=await sb.from('reviews').delete().eq('id',id);
+  if(error)throw error;
+  _reviewCache=null;
+}
+
+function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');if(n==='home')renderHome();if(n==='admin'){renderTable();document.getElementById('s-about').value=stripTags(getAbout())}if(n==='about')document.getElementById('aboutBody').innerHTML=getAbout();window.scrollTo(0,0)}
+function navTo(n,btn){currentFilter='all';document.querySelectorAll('.filter-chip').forEach((c,i)=>c.classList.toggle('active',i===0));showPage(n);document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
+function navCat(cat){currentFilter=cat;showPage('home');document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.textContent.toLowerCase().includes(cat==='book'?'buku':'film')))}
+function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('open');document.getElementById('hamburger').classList.toggle('open')}
+function stripTags(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent}
+
+async function renderHome(){
+  await loadReviews();
+  const reviews=getReviews().filter(r=>currentFilter==='all'||r.cat===currentFilter);
+  renderCards(reviews,'mainGrid');
+}
+async function loadReviews(){
+  if(_reviewCache)return;
+  document.getElementById('mainGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-mid);font-size:.85rem">Memuat review...</div>';
+  await getReviewsAsync();
+}
+function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderHome();}
+
+function renderCards(reviews,tid){
+  const grid=document.getElementById(tid);
+  if(!reviews.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><span class="empty-icon">📚</span><p>Belum ada review. Tambahkan lewat Admin.</p></div>';return}
+  const vMap={yes:['verdict-yes','Worth It ✓'],no:['verdict-no','Skip ✗'],maybe:['verdict-maybe','OK, BUT']};
+  grid.innerHTML=reviews.map(r=>{
+    const emoji=r.cat==='book'?'📚':'🎬';
+    const bgColor=r.cat==='book'?'#E8F0E9':'#FAE8ED';
+    const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
+    const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
+    return`<div class="card" onclick="showDetail('${r.id}')">
+      ${cover}<div class="card-body">
+      <div class="card-meta"><span class="card-cat">${r.cat==='book'?'Buku':'Film'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div>
+      <div class="card-title">${r.title}</div><div class="card-author">${r.author}</div>
+      <div class="card-excerpt">${r.excerpt||''}</div>
+      <div class="card-footer"><span class="rating-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span><span class="card-date">${fmtDate(r.date)}</span></div>
+      </div></div>`;
+  }).join('')}
+
+function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
+
+function showDetail(id){
+  const r=getReviews().find(x=>x.id===id);if(!r)return;
+  const emoji=r.cat==='book'?'📚':'🎬';
+  const bg=r.cat==='book'?'linear-gradient(135deg,var(--green-light),#d4e8d6)':'linear-gradient(135deg,var(--pink-light),#f5d0da)';
+  const cover=r.img?`<img src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="placeholder-cover">${emoji}</div>`;
+  const bodyHtml=(r.body||'').split('\n').filter(l=>l.trim()).map(line=>{
+    if(line.startsWith('[QUOTE:')&&line.endsWith(']')){
+      return`<div class="detail-pullquote">${line.slice(7,-1).trim()}</div>`;
+    }
+    return`<p>${line}</p>`;
+  }).join('');
+  const vConf={yes:{icon:'✓',label:'Worth It!',cls:'yes',color:'var(--green)',bg:'var(--green-light)'},no:{icon:'✗',label:'Skip Aja',cls:'no',color:'var(--pink)',bg:'var(--pink-light)'},maybe:{icon:'~',label:'OK, BUT',cls:'maybe',color:'#92400E',bg:'#FEF3C7'}};
+  const vc=vConf[r.verdict]||vConf.maybe;
+  const hasScoring=r.scoring&&r.scoring.criteria&&r.scoring.criteria.length;
+  const barsHtml=hasScoring?r.scoring.criteria.map(c=>{
+    const col=c.score>=8?'var(--green)':c.score>=5?'var(--brown-light)':'var(--pink)';
+    const reason=c.reason?`<div style="font-size:.7rem;color:var(--text-mid);margin-top:2px;font-style:italic">${c.reason}</div>`:'';
+    return`<div class="usb-bar-row" style="align-items:flex-start">
+      <div class="usb-bar-label" style="width:150px;flex-shrink:0">${c.name}${reason}</div>
+      <div style="flex:1;padding-top:6px">
+        <div class="usb-bar-track"><div class="usb-bar-fill" style="width:${c.score*10}%;background:${col}"></div></div>
+      </div>
+      <div class="usb-bar-num" style="padding-top:2px">${c.score}/10</div>
+    </div>`;
+  }).join(''):'';
+
+  const mkLinks=(links,note,color)=>links&&links.length
+    ?'<div class="buy-list">'+sortBuyLinks(links).map((b,i)=>'<div class="buy-item"><div class="buy-store"><div class="store-logo">'+storeEmoji(b.store)+'</div><div><div class="store-name">'+b.store+(i===0?' <span class="cheapest-tag">Termurah</span>':'')+'</div><div class="store-note">'+note+'</div></div></div><div class="buy-price" style="color:'+color+'">'+b.price+'</div><a href="'+b.url+'" target="_blank" class="buy-btn" style="background:'+color+'">Beli →</a></div>').join('')+'</div>'
+    :'<div class="no-links-msg">Belum ada link tersedia.</div>';
+
+  let bottomBox='';
+  if(r.cat==='book'){
+    const tr=r.translation,hasId=tr&&tr.hasIndonesian==='yes';
+    const origLinks=(tr&&tr.originalBuyLinks)||[],idLinks=(tr&&tr.buyLinks)||[];
+    const uid='lt_'+r.id,origLang=(tr&&tr.originalLanguage)||'Bahasa Asli';
+    const isOrigIndo=origLang.toLowerCase().includes('indonesia');
+    if(tr){
+      if(isOrigIndo){
+        // Original is Indonesian — single "Beli Buku" section, no tabs needed
+        const allLinks=sortBuyLinks([...origLinks,...idLinks]);
+        bottomBox='<hr class="detail-divider">'+
+          '<div style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:14px;display:flex;align-items:center;gap:10px">'+
+          'Beli Buku <span class="lang-pill available" style="font-size:.62rem;text-transform:none;letter-spacing:0">📗 Bahasa Indonesia</span></div>'+
+          mkLinks(allLinks,'Buku berbahasa Indonesia','var(--brown-dark)');
+      } else {
+        // Foreign original — show tabs for Original and Indonesian translation
+        const tabOrig='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">'+origLang+'</button>';
+        const tabId=hasId?'<button class="lang-tab" data-uid="'+uid+'" data-tab="id" onclick="switchLangTabEl(this)">Bahasa Indonesia</button>':'';
+        const panelOrig='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(origLinks,'Edisi original','var(--brown-dark)')+'</div>';
+        const panelId=hasId?'<div id="'+uid+'_id" class="lang-tab-panel">'+mkLinks(idLinks,'Versi terjemahan Indonesia','var(--green)')+'</div>':'';
+        bottomBox='<hr class="detail-divider">'+
+          '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">'+
+          '<span style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid)">Bahasa & Beli</span>'+
+          '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
+          '<span class="lang-pill">'+origLang+'</span>'+
+          (hasId?'<span class="lang-pill available">✓ Ada Terjemahan ID</span>':'<span class="lang-pill unavailable">Belum Ada Terjemahan</span>')+
+          '</div></div>'+
+          '<div class="lang-tabs" data-uid="'+uid+'">'+tabOrig+tabId+'</div>'+
+          panelOrig+panelId;
+      }
+    }
+    } else {
+    // Movie
+    const hasStream=(r.streamLinks||r.stream_links)&&(r.streamLinks||r.stream_links).length;
+    const tl={subscription:'Subscription',rent:'Sewa',buy:'Beli',free:'Gratis'};
+    const streamData=r.streamLinks||r.stream_links||[];if(hasStream)bottomBox='<hr class="detail-divider"><div style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:14px">Tonton Online</div><div class="stream-list">'+streamData.map(s=>'<div class="stream-item"><div class="stream-platform"><div class="platform-logo">'+platformEmoji(s.platform)+'</div><div><div class="platform-name">'+s.platform+'</div><div class="platform-type">'+(tl[s.type]||s.type)+'</div></div></div><div class="stream-price'+(s.type==='free'?' free':'')+'">'+(s.type==='free'?'Gratis':(s.price||'Cek harga'))+'</div>'+(s.url?'<a href="'+s.url+'" target="_blank" class="stream-btn">Tonton →</a>':'')+'</div>').join('')+'</div>';
+  }
+
+  const verdictSection=`<div style="background:${vc.bg};border-radius:4px;padding:24px;margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:14px;${hasScoring?`padding-bottom:20px;border-bottom:1px solid rgba(0,0,0,.08);margin-bottom:20px`:''}">
+      <div style="flex:1">
+        <div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${vc.color};margin-bottom:6px">Verdict Kami</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:${vc.color}">${vc.icon} ${vc.label}</div>
+        ${r.genre||r.scoring?.genre?`<div style="font-size:.75rem;color:var(--text-mid);margin-top:4px">Genre: ${r.genre||r.scoring.genre}</div>`:''}
+      </div>
+      ${hasScoring?`<div style="text-align:center;background:rgba(255,255,255,.7);border-radius:4px;padding:10px 16px"><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:${vc.color};line-height:1">${r.scoring.total}</div><div style="font-size:.62rem;color:var(--text-mid);letter-spacing:1px">/100</div></div>`:''}
+    </div>
+    ${hasScoring?`<div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:16px">Breakdown Penilaian</div>${barsHtml}`:''}
+  </div>`;
+
+  document.getElementById('detailContent').innerHTML=`
+    <button class="detail-back" onclick="showPage('home')">← Kembali</button>
+    <div class="detail-hero" style="background:${bg};border-radius:4px;padding:28px;margin-bottom:36px">
+      <div class="detail-cover">${cover}</div>
+      <div class="detail-info">
+        <div class="detail-cat">${r.cat==='book'?'Buku':'Film'}</div>
+        <div class="detail-title">${r.title}</div>
+        <div class="detail-author">oleh ${r.author}</div>
+        <div class="detail-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+        <div class="detail-verdict-box ${vc.cls}">${vc.icon} ${vc.label}</div>
+      </div>
+    </div>
+    ${verdictSection}
+    <div class="detail-body">${bodyHtml}</div>
+    ${bottomBox}
+  `;
+  showPage('detail');
+}
+
+function switchLangTab(uid,tab,btn){['orig','id'].forEach(t=>{const el=document.getElementById(uid+'_'+t);if(el)el.classList.remove('active')});const target=document.getElementById(uid+'_'+tab);if(target)target.classList.add('active');if(btn){btn.closest('.lang-tabs').querySelectorAll('.lang-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active')}}
+function switchLangTabEl(btn){const uid=btn.dataset.uid||(btn.closest('.lang-tabs')&&btn.closest('.lang-tabs').dataset.uid);const tab=btn.dataset.tab;if(uid&&tab)switchLangTab(uid,tab,btn)}
+
+function doSearch(){const q=document.getElementById('navSearch').value.trim().toLowerCase();if(!q)return;runSearch(q)}
+function doHeroSearch(){const q=document.getElementById('heroSearch').value.trim().toLowerCase();if(!q)return;runSearch(q)}
+function runSearch(q){const results=getReviews().filter(r=>r.title.toLowerCase().includes(q)||r.author.toLowerCase().includes(q)||(r.excerpt||'').toLowerCase().includes(q));document.getElementById('searchQ').textContent=q;document.getElementById('searchCount').textContent=results.length+' review ditemukan';renderCards(results,'searchGrid');showPage('search')}
+
+function showAdminGate(){if(g('wi_auth')){showPage('admin');return}document.getElementById('adminOverlay').style.display='flex';document.getElementById('loginPw').value='';document.getElementById('loginErr').textContent='';setTimeout(()=>document.getElementById('loginPw').focus(),100)}
+function closeGate(){document.getElementById('adminOverlay').style.display='none'}
+function doLogin(){if(document.getElementById('loginPw').value===getPass()){s('wi_auth',true);closeGate();showPage('admin')}else{document.getElementById('loginErr').textContent='Password salah.'}}
+function doLogout(){s('wi_auth',false);showPage('home')}
+
+function switchTab(name,btn){document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.admin-section').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('at-'+name).classList.add('active');if(name==='inspire')loadTop10(false)}
+function toggleCatSections(cat){const se=document.getElementById('streamingSection'),tr=document.getElementById('translationSection');if(!se||!tr)return;se.style.display=cat==='movie'?'block':'none';tr.style.display=cat==='book'?'block':'none'}
+
+function addStreamLink(){const p=document.getElementById('sl-platform').value.trim(),t=document.getElementById('sl-type').value,pr=document.getElementById('sl-price').value.trim(),u=document.getElementById('sl-url').value.trim();if(!p)return;tempStreamLinks.push({platform:p,type:t,price:pr,url:u});renderStreamList();['sl-platform','sl-price','sl-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-type').value='subscription'}
+function removeStreamLink(i){tempStreamLinks.splice(i,1);renderStreamList()}
+function renderStreamList(){const el=document.getElementById('streamList');if(!el)return;el.innerHTML=tempStreamLinks.map((s,i)=>`<div class="stream-admin-item"><span>${platformEmoji(s.platform)} ${s.platform} — ${s.type} ${s.price?'· '+s.price:''}</span><button class="buy-link-del" onclick="removeStreamLink(${i})">✕</button></div>`).join('')}
+function addOrigBuyLink(){const st=document.getElementById('tobl-store').value.trim(),pr=document.getElementById('tobl-price').value.trim(),u=document.getElementById('tobl-url').value.trim();if(!st)return;tempOrigBuyLinks.push({store:st,price:pr,url:u});renderOrigBuyList();['tobl-store','tobl-price','tobl-url'].forEach(id=>document.getElementById(id).value='')}
+function removeOrigBuyLink(i){tempOrigBuyLinks.splice(i,1);renderOrigBuyList()}
+function renderOrigBuyList(){const el=document.getElementById('tlOrigBuyList');if(!el)return;el.innerHTML=tempOrigBuyLinks.map((b,i)=>`<div class="buy-link-item"><span>${storeEmoji(b.store)} ${b.store} — ${b.price}</span><button class="buy-link-del" onclick="removeOrigBuyLink(${i})">✕</button></div>`).join('')}
+function addTlBuyLink(){const st=document.getElementById('tbl-store').value.trim(),pr=document.getElementById('tbl-price').value.trim(),u=document.getElementById('tbl-url').value.trim();if(!st)return;tempTlBuyLinks.push({store:st,price:pr,url:u});renderTlBuyList();['tbl-store','tbl-price','tbl-url'].forEach(id=>document.getElementById(id).value='')}
+function removeTlBuyLink(i){tempTlBuyLinks.splice(i,1);renderTlBuyList()}
+function renderTlBuyList(){const el=document.getElementById('tlBuyList');if(!el)return;el.innerHTML=tempTlBuyLinks.map((b,i)=>`<div class="buy-link-item"><span>${storeEmoji(b.store)} ${b.store} — ${b.price}</span><button class="buy-link-del" onclick="removeTlBuyLink(${i})">✕</button></div>`).join('')}
+
+async function aiSuggestStreaming(){alert('Fitur AI membutuhkan deploy ke server.')}
+async function aiSuggestTranslation(){alert('Fitur AI membutuhkan deploy ke server.')}
+
+async function saveReview(){
+  const title=document.getElementById('f-title').value.trim(),author=document.getElementById('f-author').value.trim(),body=document.getElementById('f-body').value.trim();
+  if(!title||!author||!body){document.getElementById('formErr').textContent='Judul, penulis, dan review wajib diisi.';return}
+  document.getElementById('formErr').textContent='';
+  const cat=document.getElementById('f-cat').value;
+  const data={title,author,body,cat,genre:'',verdict:document.getElementById('f-verdict').value,rating:parseInt(document.getElementById('f-rating').value),img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),scoring:window._lastScoring||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
+  window._lastScoring=null;
+  if(editId){data.id=editId;editId=null;}
+  else{data.id=Date.now().toString();data.created_at=new Date().toISOString();}
+  try{
+    await saveReview_db(data);
+    resetForm();
+    await renderTable();
+    await renderHome();
+    alert('Review berhasil disimpan!');
+  }catch(e){
+    document.getElementById('formErr').textContent='Gagal simpan: '+e.message;
+    console.error(e);
+  }
+}
+function editReview(id){const r=getReviews().find(x=>x.id===id);if(!r)return;editId=id;document.getElementById('f-cat').value=r.cat;document.getElementById('f-verdict').value=r.verdict||'maybe';document.getElementById('f-rating').value=r.rating;document.getElementById('f-title').value=r.title;document.getElementById('f-author').value=r.author;document.getElementById('f-img').value=r.img||'';document.getElementById('f-excerpt').value=r.excerpt||'';document.getElementById('f-body').value=r.body||'';tempStreamLinks=[...(r.streamLinks||[])];renderStreamList();tempTlBuyLinks=[...((r.translation&&r.translation.buyLinks)||[])];renderTlBuyList();tempOrigBuyLinks=[...((r.translation&&r.translation.originalBuyLinks)||[])];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value=(r.translation&&r.translation.originalLanguage)||'';if(tlA)tlA.value=(r.translation&&r.translation.hasIndonesian)||'';toggleCatSections(r.cat);document.getElementById('formTitle').textContent='Edit Review';switchTab('add',document.querySelector('.admin-tab'));window.scrollTo(0,0)}
+async function deleteReview(id){if(!confirm('Hapus review ini?'))return;try{await deleteReview_db(id);await renderTable();await renderHome();}catch(e){alert('Gagal hapus: '+e.message)}}
+function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';document.getElementById('f-rating').value='5';tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI()}
+async function renderTable(){
+  await getReviewsAsync();
+  const reviews=getReviews(),t=document.getElementById('adminTable');
+  if(!reviews.length){t.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-mid)">Belum ada review.</div>';return}
+  const vMap={yes:'Worth It',no:'Skip',maybe:'OK, BUT'};
+  t.innerHTML=reviews.map(r=>`<div class="table-row"><span><strong>${r.title}</strong><br><small style="color:var(--text-mid)">${r.author}</small></span><span>${r.cat==='book'?'Buku':'Film'}</span><span>${'★'.repeat(r.rating)}</span><span>${vMap[r.verdict]||'—'}</span><div class="tbl-actions"><button class="btn btn-outline btn-sm" onclick="editReview('${r.id}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteReview('${r.id}')">Hapus</button></div></div>`).join('');
+}
+function saveAbout(){const txt=document.getElementById('s-about').value.trim();const html=txt.split('\n\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('');s('wi_about',html);document.getElementById('aboutBody').innerHTML=html;alert('Tersimpan!')}
+function changePw(){const p1=document.getElementById('s-pw1').value,p2=document.getElementById('s-pw2').value;if(!p1||p1.length<4){document.getElementById('pwErr').textContent='Min. 4 karakter.';return}if(p1!==p2){document.getElementById('pwErr').textContent='Tidak sama.';return}s('wi_pass',p1);document.getElementById('pwErr').textContent='';document.getElementById('s-pw1').value='';document.getElementById('s-pw2').value='';alert('Password diperbarui!')}
+function exportData(){const blob=new Blob([JSON.stringify({reviews:getReviews(),about:getAbout()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='goopi-backup.json';a.click()}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.reviews)saveReviews(d.reviews);if(d.about)s('wi_about',d.about);renderTable();alert('Import berhasil!')}catch{alert('File tidak valid.')}};r.readAsText(f)}
+
+function aiStep1(){alert('Fitur AI membutuhkan deploy ke server. Isi form manual.')}
+function aiStep2(){alert('Fitur AI membutuhkan deploy ke server.')}
+function resetAI(){['step1','step2','step3'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('active','done');if(id!=='step1')el.style.display='none'}});const s1=document.getElementById('step1');if(s1)s1.classList.add('active');const btn=document.getElementById('btnStep1');if(btn)btn.textContent='Cari Data & Buat Skor →'}
+function renderScoreGrid(){}
+function updateScore(){}
+function updateTotalScore(){return{total:0,verdict:'maybe'}}
+
+function switchTop10(tab,btn){document.querySelectorAll('.top10-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.top10-tab').forEach(t=>t.classList.remove('active'));document.getElementById('top10-'+tab).classList.add('active');btn.classList.add('active')}
+async function loadTop10(forceRefresh){
+  const now=new Date();document.getElementById('top10Date').textContent=now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const cacheAge=top10Cache.loadedAt?(Date.now()-top10Cache.loadedAt)/1000/60/60:999;
+  if(!forceRefresh&&cacheAge<6&&top10Cache.books&&top10Cache.movies){renderTop10('books',top10Cache.books);renderTop10('movies',top10Cache.movies);return}
+  fetchTop10('books');fetchTop10('movies');top10Cache.loadedAt=Date.now();
+}
+async function fetchTop10(type){
+  const isBook=type==='books';
+  const books=[{rank:1,title:"Atomic Habits",author:"James Clear",genre:"Self-Help",description:"Panduan membangun kebiasaan yang terjual 15 juta kopi",rating:"4.4/5",source:"Goodreads Bestseller"},{rank:2,title:"The Midnight Library",author:"Matt Haig",genre:"Fiksi Sastra",description:"Novel tentang kemungkinan hidup lain yang bisa kita jalani",rating:"3.9/5",source:"Goodreads Trending"},{rank:3,title:"Ikigai",author:"Héctor García",genre:"Self-Help",description:"Rahasia panjang umur dan kebahagiaan dari Jepang",rating:"3.8/5",source:"Populer Indonesia"},{rank:4,title:"Laut Bercerita",author:"Leila S. Chudori",genre:"Novel Sejarah",description:"Mahakarya tentang aktivis yang hilang di era Orde Baru",rating:"4.5/5",source:"Top Indonesia"},{rank:5,title:"The Power of Now",author:"Eckhart Tolle",genre:"Spiritualitas",description:"Panduan hidup di momen sekarang",rating:"4.1/5",source:"NYT Bestseller"},{rank:6,title:"Educated",author:"Tara Westover",genre:"Memoar",description:"Kisah nyata perempuan yang belajar tanpa sekolah formal",rating:"4.5/5",source:"NYT Bestseller"},{rank:7,title:"Sapiens",author:"Yuval Noah Harari",genre:"Sejarah",description:"Sejarah singkat umat manusia",rating:"4.4/5",source:"Global Bestseller"},{rank:8,title:"The Alchemist",author:"Paulo Coelho",genre:"Fiksi Filosofis",description:"Novel tentang mimpi yang terjual 65 juta kopi",rating:"3.9/5",source:"All-time Bestseller"},{rank:9,title:"Bumi Manusia",author:"Pramoedya Ananta Toer",genre:"Novel Sejarah",description:"Mahakarya sastra Indonesia yang wajib dibaca",rating:"4.6/5",source:"Top Indonesia"},{rank:10,title:"Deep Work",author:"Cal Newport",genre:"Produktivitas",description:"Cara bekerja fokus di era digital",rating:"4.2/5",source:"Goodreads Popular"}];
+  const movies=[{rank:1,title:"Dune: Part Two",director:"Denis Villeneuve",genre:"Sci-Fi",description:"Sekuel epik yang melampaui film pertamanya",rating:"8.5/10",source:"IMDb",year:"2024"},{rank:2,title:"Oppenheimer",director:"Christopher Nolan",genre:"Drama",description:"Kisah bapak bom atom, 7 Oscar",rating:"8.3/10",source:"Box Office",year:"2023"},{rank:3,title:"Past Lives",director:"Celine Song",genre:"Romance",description:"Film debut yang menyentuh tentang cinta yang tak terwujud",rating:"7.9/10",source:"A24",year:"2023"},{rank:4,title:"Poor Things",director:"Yorgos Lanthimos",genre:"Fantasy",description:"Pemenang Golden Lion Venice",rating:"7.9/10",source:"Oscar Winner",year:"2023"},{rank:5,title:"Killers of the Flower Moon",director:"Martin Scorsese",genre:"Drama",description:"Epik tentang pembunuhan sistematis suku Osage",rating:"7.7/10",source:"Apple TV+",year:"2023"},{rank:6,title:"Interstellar",director:"Christopher Nolan",genre:"Sci-Fi",description:"Klasik modern tentang cinta dan fisika",rating:"8.7/10",source:"IMDb Top 250",year:"2014"},{rank:7,title:"Parasite",director:"Bong Joon-ho",genre:"Thriller",description:"Film Korea pertama pemenang Oscar Best Picture",rating:"8.5/10",source:"IMDb Top 250",year:"2019"},{rank:8,title:"Everything Everywhere All at Once",director:"Daniels",genre:"Sci-Fi",description:"7 Oscar termasuk Best Picture",rating:"7.8/10",source:"Oscar Winner",year:"2022"},{rank:9,title:"Inception",director:"Christopher Nolan",genre:"Thriller",description:"Mimpi dalam mimpi yang selalu di watchlist",rating:"8.8/10",source:"IMDb Top 250",year:"2010"},{rank:10,title:"The Grand Budapest Hotel",director:"Wes Anderson",genre:"Comedy",description:"Visual paling ikonik dalam sinema modern",rating:"8.1/10",source:"IMDb",year:"2014"}];
+  const items=isBook?books:movies;
+  top10Cache[type]=items;
+  await new Promise(r=>setTimeout(r,300));
+  renderTop10(type,items);
+}
+function renderTop10(type,items){
+  const el=document.getElementById('top10-'+type);if(!items||!items.length){el.innerHTML='<div class="top10-empty">Tidak ada data.</div>';return}
+  const reviewed=getReviews().map(r=>r.title.toLowerCase()),rankCls=i=>['gold','silver','bronze'][i]||'',isBook=type==='books';
+  el.innerHTML='<div class="top10-list">'+items.map((item,i)=>{
+    const done=reviewed.includes((item.title||'').toLowerCase());
+    const sub=isBook?(item.author||''):((item.director||'')+(item.year?' · '+item.year:''));
+    const iJson=encodeURIComponent(JSON.stringify(item));
+    return'<div class="top10-item'+(done?' already-reviewed':'')+'">'+'<div class="top10-rank '+rankCls(i)+'">'+(item.rank||i+1)+'</div><div class="top10-cover">'+(isBook?'📚':'🎬')+'</div><div class="top10-info"><div class="top10-name">'+(item.title||'')+'</div><div class="top10-meta">'+sub+(item.rating?' · '+item.rating:'')+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0"><span class="top10-source">'+(item.source||'')+'</span>'+(done?'<span class="already-badge">✓ Direview</span>':'<button class="top10-use-btn" data-item="'+iJson+'" data-cat="'+(isBook?'book':'movie')+'" onclick="useTop10Item(this)">+ Review</button>')+'</div></div>';
+  }).join('')+'</div>';
+}
+function useTop10Item(btn){const item=JSON.parse(decodeURIComponent(btn.dataset.item)),cat=btn.dataset.cat;switchTab('add',document.querySelector('.admin-tab'));document.getElementById('f-cat').value=cat;document.getElementById('ai-cat').value=cat;toggleCatSections(cat);const title=item.title||'',author=cat==='book'?(item.author||''):(item.director||'');document.getElementById('ai-title').value=title;document.getElementById('ai-author').value=author;document.getElementById('f-title').value=title;document.getElementById('f-author').value=author;document.getElementById('step1').scrollIntoView({behavior:'smooth',block:'start'})}
+
+function sortBuyLinks(links){return[...links].sort((a,b)=>(parseInt((a.price||'0').replace(/[^0-9]/g,''))||0)-(parseInt((b.price||'0').replace(/[^0-9]/g,''))||0))}
+function storeEmoji(store){const s=(store||'').toLowerCase();if(s.includes('tokopedia'))return'🟢';if(s.includes('shopee'))return'🟠';if(s.includes('lazada'))return'🔵';if(s.includes('gramedia'))return'📗';if(s.includes('amazon'))return'📦';if(s.includes('periplus'))return'📘';return'🛒'}
+function platformEmoji(name){const n=(name||'').toLowerCase();if(n.includes('netflix'))return'🔴';if(n.includes('disney'))return'🔵';if(n.includes('vidio'))return'🟣';if(n.includes('apple'))return'⬛';if(n.includes('amazon')||n.includes('prime'))return'🟡';if(n.includes('max')||n.includes('hbo'))return'🟦';if(n.includes('viu'))return'🟩';return'📺'}
+
+// COVER
+function fetchCover(){
+  const title=document.getElementById('f-title').value.trim()||document.getElementById('ai-title').value.trim();
+  const author=document.getElementById('f-author').value.trim()||document.getElementById('ai-author').value.trim();
+  const cat=document.getElementById('f-cat').value;
+  if(!title){alert('Isi judul dulu!');return}
+  const q=encodeURIComponent(title+(author?' '+author:'')+(cat==='book'?' book cover':' movie poster'));
+  const preview=document.getElementById('coverPreview'),previewMsg=document.getElementById('coverPreviewMsg'),previewImg=document.getElementById('coverPreviewImg');
+  previewImg.style.display='none';
+  previewMsg.innerHTML='<strong>Cara dapat URL cover:</strong><br>1. <a href="https://www.google.com/search?tbm=isch&q='+q+'" target="_blank" style="color:var(--brown-dark);text-decoration:underline">Buka Google Images →</a> atau <a href="https://openlibrary.org/search?q='+encodeURIComponent(title)+'" target="_blank" style="color:var(--brown-dark);text-decoration:underline">Open Library →</a><br>2. Klik gambar → tekan lama → <strong>Copy Image Address</strong><br>3. Paste di field URL Cover · Gambar akan muncul saat deploy ke server';
+  previewMsg.style.color='var(--text-mid)';previewMsg.style.fontSize='0.78rem';previewMsg.style.lineHeight='1.8';
+  preview.style.display='block';preview.style.padding='10px 0';
+}
+function previewCoverFromInput(){
+  const url=document.getElementById('f-img').value.trim();
+  const preview=document.getElementById('coverPreview'),previewMsg=document.getElementById('coverPreviewMsg'),previewImg=document.getElementById('coverPreviewImg');
+  if(!url){preview.style.display='none';return}
+  previewImg.style.display='none';
+  previewMsg.innerHTML='✓ URL tersimpan. Cover akan muncul saat website di-deploy ke server.';
+  previewMsg.style.color='var(--green)';preview.style.display='block';preview.style.padding='8px 0';
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const imgInput=document.getElementById('f-img');
+  if(imgInput){imgInput.addEventListener('change',previewCoverFromInput);imgInput.addEventListener('paste',()=>setTimeout(previewCoverFromInput,100))}
+  const aiTitle=document.getElementById('ai-title'),fTitle=document.getElementById('f-title');
+  if(aiTitle&&fTitle){aiTitle.addEventListener('input',()=>{if(!fTitle.value)fTitle.value=aiTitle.value});fTitle.addEventListener('input',()=>{if(!aiTitle.value)aiTitle.value=fTitle.value})}
+});
+
+// INIT
+document.getElementById('aboutBody').innerHTML=getAbout();
+toggleCatSections('book');
+renderHome();
+</script>
+</body>
+</html>
