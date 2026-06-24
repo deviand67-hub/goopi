@@ -79,7 +79,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* CARDS */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px;background:var(--border)}
+.card-grid{display:flex;flex-direction:column;background:var(--border);gap:1px}
 .card{background:var(--cream-light);cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
 .card:hover{background:var(--cream-dark)}
 .card-img{width:100%;height:220px;object-fit:cover;display:block}
@@ -93,7 +93,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .verdict-maybe{background:#FEF3C7;color:#92400E}
 .card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;margin-bottom:4px;line-height:1.3;color:var(--text)}
 .card-author{font-size:.75rem;color:var(--text-mid);margin-bottom:10px}
-.card-excerpt{font-size:.8rem;color:var(--text-mid);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.6}
+.card-excerpt{font-size:.8rem;color:var(--text-mid);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;line-height:1.6;margin-bottom:8px}
 .card-footer{margin-top:12px;display:flex;align-items:center;justify-content:space-between}
 .rating-stars{color:var(--pink);font-size:.75rem;letter-spacing:1px}
 .card-date{font-size:.68rem;color:#B8A89A}
@@ -302,14 +302,14 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   .hamburger{display:flex}
   .hero{padding:64px 24px 56px}
   .filter-bar,.main-section,.detail-wrap,.about-wrap,.search-wrap{padding-left:20px;padding-right:20px}
-  .card-grid{grid-template-columns:1fr 1fr}
+  .card-img{width:100px;height:140px}
+  .card-img-placeholder{width:100px;height:140px}
   .detail-hero{grid-template-columns:1fr;gap:20px}
   .placeholder-cover{width:100%;height:200px}
   .form-row,.form-row-3{grid-template-columns:1fr}
   .table-head,.table-row{grid-template-columns:2fr 1fr 80px}
   .admin-body{padding:16px}
 }
-@media(max-width:480px){.card-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
