@@ -412,7 +412,41 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span>✨</span><h3 style="margin:0;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)">AI Review Generator</h3>
           </div>
-          <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:20px">AI cari data → deteksi genre → buat skor → tulis review. Semua bisa diedit.</p>
+          <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:12px">AI cari data → deteksi genre → buat skor → tulis review. Semua bisa diedit.</p>
+          <div style="background:var(--cream-dark);border-radius:8px;padding:14px;margin-bottom:16px">
+            <div style="font-size:.72rem;font-weight:600;color:var(--text-mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">💡 Atau generate manual via Claude.ai</div>
+            <div id="promptBox" style="display:none">
+              <div style="background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">Tulis review [buku/film] "[judul]" oleh [penulis/sutradara] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI. Jujur, ada opini personal, ada kritiknya juga.
+
+Berikan dalam format ini:
+
+EXCERPT: (1 kalimat hook, max 120 karakter)
+
+BODY: (min 400 kata, paragraf dipisah baris baru, sisipkan [QUOTE: teks] untuk 1 pull-quote terbaik)
+
+GENRE: (max 3 kata, bahasa Indonesia)
+
+RATING: (angka 1-5)
+
+VERDICT: (pilih: yes / maybe / no)
+
+SCORING:
+- Kedalaman Isi: [1-10] — [alasan]
+- Enak Dibaca: [1-10] — [alasan]
+- Ide Segar: [1-10] — [alasan]
+- Langsung Bisa Dipraktikkan: [1-10] — [alasan]
+- Worth the Price: [1-10] — [alasan]
+
+BAHASA ORIGINAL: (bahasa apa)
+
+TERJEMAHAN ID: (ada / belum ada)
+
+LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
+              <button onclick="copyPrompt()" class="btn btn-primary btn-sm">Copy Prompt</button>
+              <a href="https://claude.ai" target="_blank" class="btn btn-outline btn-sm" style="margin-left:6px">Buka Claude.ai →</a>
+            </div>
+            <button onclick="document.getElementById('promptBox').style.display=document.getElementById('promptBox').style.display==='none'?'block':'none'" style="background:none;border:none;font-size:.75rem;font-weight:600;color:var(--brown-dark);cursor:pointer;padding:0">Lihat prompt template ▾</button>
+          </div>
           <div class="ai-step active" id="step1">
             <div class="step-header"><span class="step-num">1</span><span class="step-title">Info Dasar</span></div>
             <div class="step-sub">Isi judul dan pilih kategori</div>
@@ -765,12 +799,78 @@ function changePw(){const p1=document.getElementById('s-pw1').value,p2=document.
 function exportData(){const blob=new Blob([JSON.stringify({reviews:getReviews(),about:getAbout()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='goopi-backup.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.reviews)saveReviews(d.reviews);if(d.about)s('wi_about',d.about);renderTable();alert('Import berhasil!')}catch{alert('File tidak valid.')}};r.readAsText(f)}
 
-function aiStep1(){alert('Fitur AI membutuhkan deploy ke server. Isi form manual.')}
-function aiStep2(){alert('Fitur AI membutuhkan deploy ke server.')}
+
+// AI API via Vercel proxy
+async function callAI(prompt){
+  return callAIMsg([{role:'user',content:prompt}]);
+}
+async function callAIMsg(messages){
+  const body={model:'claude-sonnet-4-6',max_tokens:1000,messages:messages};
+  const res=await fetch('/api/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  const data=await res.json();
+  if(data.error)throw new Error(data.error.message||'API Error');
+  return data.content?.[0]?.text||'';
+}
+
+function copyPrompt(){
+  const txt=document.getElementById('promptBox').querySelector('div').textContent;
+  navigator.clipboard.writeText(txt).then(()=>alert('Prompt berhasil di-copy! Buka Claude.ai dan paste.')).catch(()=>alert('Copy manual dari kotak prompt di atas.'));
+}
+async function aiStep1(){
+  const title=document.getElementById('ai-title').value.trim();if(!title){alert('Masukkan judul dulu!');return}
+  const author=document.getElementById('ai-author').value.trim(),cat=document.getElementById('ai-cat').value,catLabel=cat==='book'?'buku':'film';
+  const btn=document.getElementById('btnStep1'),status=document.getElementById('step1Status');
+  btn.disabled=true;btn.textContent='⏳ Mencari data...';status.style.display='block';status.style.color='var(--brown-dark)';status.textContent='Menganalisis data...';
+  try{
+    const scoreMsg=[{role:'user',content:'You are a '+catLabel+' curator. Rate "'+title+'"'+(author?' by '+author:'')+'. Reply with ONLY valid JSON no other text: {"genre":"Indonesian genre 3 words","sources":["source"],"criteria":[{"name":"name","description":"desc","score":7,"reason":"reason"},{"name":"name","description":"desc","score":7,"reason":"reason"},{"name":"name","description":"desc","score":7,"reason":"reason"},{"name":"name","description":"desc","score":7,"reason":"reason"},{"name":"name","description":"desc","score":7,"reason":"reason"}]}'}];
+    const raw=await callAIMsg(scoreMsg);
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    aiGenre=parsed.genre||'Umum';aiScoreCriteria=parsed.criteria||[];
+    document.getElementById('genreDisplay').innerHTML='<div class="genre-badge">🎯 '+aiGenre+'</div>';
+    renderScoreGrid();updateTotalScore();
+    document.getElementById('step1').classList.remove('active');document.getElementById('step1').classList.add('done');
+    document.getElementById('step2').style.display='block';setTimeout(()=>document.getElementById('step2').classList.add('active'),50);
+  }catch(e){status.textContent='❌ Gagal: '+e.message;status.style.color='var(--pink)';console.error(e)}
+  btn.disabled=false;btn.textContent='Cari Data & Buat Skor →';
+}
+async function aiStep2(){
+  const title=document.getElementById('ai-title').value.trim(),author=document.getElementById('ai-author').value.trim(),cat=document.getElementById('ai-cat').value,tone=document.getElementById('ai-tone').value,catLabel=cat==='book'?'buku':'film';
+  const btn=document.getElementById('btnStep2'),status=document.getElementById('step2Status');
+  btn.disabled=true;btn.textContent='⏳ Menulis review...';status.style.display='block';
+  const{total,verdict}=updateTotalScore();
+  const toneMap={casual:'santai dan relatable',critical:'kritis dan analitis',hype:'energik dan antusias'};
+  const scoresSummary=aiScoreCriteria.map(c=>c.name+': '+c.score+'/10').join(', ');
+  try{
+    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in Indonesian for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scores: '+scoresSummary+'. Total: '+total+'/100. Reply ONLY valid JSON: {"excerpt":"hook max 120 chars","body":"review min 400 words paragraphs with newline use [QUOTE: text] for pullquote","rating":'+Math.round(total/20)+'}'}];
+    const raw=await callAIMsg(step2Msg);
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    document.getElementById('f-cat').value=cat;document.getElementById('f-title').value=title;document.getElementById('f-author').value=author||'';
+    document.getElementById('f-excerpt').value=parsed.excerpt||'';document.getElementById('f-body').value=parsed.body||'';
+    document.getElementById('f-verdict').value=verdict;document.getElementById('f-rating').value=String(parsed.rating||3);
+    window._lastScoring={genre:aiGenre,criteria:[...aiScoreCriteria],total,verdict};
+    document.getElementById('step2').classList.remove('active');document.getElementById('step2').classList.add('done');
+    document.getElementById('step3').style.display='block';setTimeout(()=>document.getElementById('step3').classList.add('active'),50);
+    document.getElementById('formTitle').scrollIntoView({behavior:'smooth'});
+  }catch(e){status.textContent='❌ Gagal: '+e.message;status.style.color='var(--pink)';console.error(e)}
+  btn.disabled=false;btn.textContent='Generate Review →';status.style.display='none';
+}
 function resetAI(){['step1','step2','step3'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('active','done');if(id!=='step1')el.style.display='none'}});const s1=document.getElementById('step1');if(s1)s1.classList.add('active');const btn=document.getElementById('btnStep1');if(btn)btn.textContent='Cari Data & Buat Skor →'}
-function renderScoreGrid(){}
-function updateScore(){}
-function updateTotalScore(){return{total:0,verdict:'maybe'}}
+function renderScoreGrid(){document.getElementById('scoreGrid').innerHTML=aiScoreCriteria.map((c,i)=>`<div class="score-row"><div class="score-label">${c.name}<small>${c.description}</small>${c.reason?`<small style="color:var(--brown-mid);font-style:italic">${c.reason}</small>`:''}</div><div class="score-slider-wrap"><input type="range" min="1" max="10" value="${c.score}" class="score-slider" id="slider_${i}" oninput="updateScore(${i},this.value)"><div class="score-val" id="scoreval_${i}">${c.score}</div></div></div>`).join('')}
+function updateScore(i,val){aiScoreCriteria[i].score=parseInt(val);document.getElementById("scoreval_"+i).textContent=val;updateTotalScore()}
+function updateTotalScore(){
+  if(!aiScoreCriteria.length)return{total:0,verdict:'maybe'};
+  const avg=aiScoreCriteria.reduce((s,c)=>s+c.score,0)/aiScoreCriteria.length,total=Math.round(avg*10);
+  document.getElementById('totalScoreNum').textContent=total;
+  let verdict,label,cls;
+  if(total>=80){verdict='yes';label='Worth It!';cls='yes'}else if(total>=50){verdict='maybe';label='OK, BUT';cls='maybe'}else{verdict='no';label='Skip Aja';cls='no'}
+  const vEl=document.getElementById('totalVerdictLabel');vEl.textContent=label;vEl.className='total-verdict '+cls;
+  document.getElementById('totalVerdictBadge').innerHTML='<span class="verdict-pill verdict-'+cls+'">'+label+'</span>';
+  return{total,verdict};
+}
 
 function switchTop10(tab,btn){document.querySelectorAll('.top10-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.top10-tab').forEach(t=>t.classList.remove('active'));document.getElementById('top10-'+tab).classList.add('active');btn.classList.add('active')}
 async function loadTop10(forceRefresh){
