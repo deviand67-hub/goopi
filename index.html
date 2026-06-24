@@ -79,7 +79,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* CARDS */
-.card-grid{display:flex;flex-direction:column;background:var(--border);gap:1px}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
 .card{background:var(--cream-light);cursor:pointer;transition:background .2s;display:flex;flex-direction:row;align-items:stretch;border-bottom:1px solid var(--border)}
 .card:hover{background:var(--cream-dark)}
 .card-img{width:120px;height:160px;object-fit:cover;display:block;flex-shrink:0}
@@ -302,6 +302,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   .hamburger{display:flex}
   .hero{padding:64px 24px 56px}
   .filter-bar,.main-section,.detail-wrap,.about-wrap,.search-wrap{padding-left:20px;padding-right:20px}
+  .card-grid{grid-template-columns:1fr}
   .card-img{width:100px;height:140px}
   .card-img-placeholder{width:100px;height:140px}
   .detail-hero{grid-template-columns:1fr;gap:20px}
