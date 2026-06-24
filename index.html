@@ -80,11 +80,11 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 
 /* CARDS */
 .card-grid{display:flex;flex-direction:column;background:var(--border);gap:1px}
-.card{background:var(--cream-light);cursor:pointer;transition:background .2s;position:relative;overflow:hidden}
+.card{background:var(--cream-light);cursor:pointer;transition:background .2s;display:flex;flex-direction:row;align-items:stretch;border-bottom:1px solid var(--border)}
 .card:hover{background:var(--cream-dark)}
-.card-img{width:100%;height:220px;object-fit:cover;display:block}
-.card-img-placeholder{width:100%;height:220px;display:flex;align-items:center;justify-content:center;font-size:3.5rem}
-.card-body{padding:20px}
+.card-img{width:120px;height:160px;object-fit:cover;display:block;flex-shrink:0}
+.card-img-placeholder{width:120px;height:160px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;flex-shrink:0;background:var(--cream-dark)}
+.card-body{padding:14px;flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between}
 .card-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .card-cat{font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid)}
 .verdict-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:.65rem;font-weight:600;letter-spacing:.5px}
@@ -597,13 +597,7 @@ function renderCards(reviews,tid){
     const bgColor=r.cat==='book'?'#E8F0E9':'#FAE8ED';
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
-    return`<div class="card" onclick="showDetail('${r.id}')">
-      ${cover}<div class="card-body">
-      <div class="card-meta"><span class="card-cat">${r.cat==='book'?'Buku':'Film'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div>
-      <div class="card-title">${r.title}</div><div class="card-author">${r.author}</div>
-      <div class="card-excerpt">${r.excerpt||''}</div>
-      <div class="card-footer"><span class="rating-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span><span class="card-date">${fmtDate(r.date)}</span></div>
-      </div></div>`;
+    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'Buku':'Film'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="rating-stars">${'★'.repeat(r.rating)}${'\u2606'.repeat(5-r.rating)}</span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
   }).join('')}
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
@@ -844,4 +838,10 @@ toggleCatSections('book');
 renderHome();
 </script>
 </body>
-</html>
+</html.card{background:var(--white);cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);display:flex;flex-direction:row;align-items:stretch}
+.card:hover{background:var(--cream-dark)}
+.card-cover{width:120px;min-width:120px;flex-shrink:0;overflow:hidden}
+.card-img{width:120px;height:160px;object-fit:cover;display:block}
+.card-img-placeholder{width:120px;height:160px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:var(--cream-dark)}
+.card-body{padding:14px;flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between}
+>
