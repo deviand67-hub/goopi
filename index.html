@@ -489,6 +489,20 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
 </div></div>
           <div class="form-group"><label>Hook (1 kalimat)</label><textarea id="f-excerpt" rows="2"></textarea></div>
           <div class="form-group"><label>Review Lengkap (gunakan [QUOTE: teks] untuk pull-quote)</label><textarea id="f-body" rows="10"></textarea></div>
+          <div class="form-group">
+            <label>Genre</label>
+            <input type="text" id="f-genre-input" placeholder="e.g. Self-Help / Produktivitas">
+          </div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;justify-content:space-between">
+              <span>Scoring per Kriteria (opsional)</span>
+              <button type="button" onclick="toggleScoring()" style="background:none;border:none;font-size:.75rem;font-weight:600;color:var(--brown-dark);cursor:pointer">+ Tambah Scoring</button>
+            </label>
+            <div id="manualScoring" style="display:none;margin-top:12px">
+              <div id="scoringRows"></div>
+              <button type="button" onclick="addScoringRow()" class="btn-add-link" style="margin-top:8px">+ Tambah Kriteria</button>
+            </div>
+          </div>
           <hr class="section-divider">
           <div id="streamingSection">
             <div class="form-group"><label>📺 Tonton Online (Film)</label>
@@ -768,7 +782,7 @@ async function saveReview(){
   if(!title||!author||!body){document.getElementById('formErr').textContent='Judul, penulis, dan review wajib diisi.';return}
   document.getElementById('formErr').textContent='';
   const cat=document.getElementById('f-cat').value;
-  const data={title,author,body,cat,genre:'',verdict:document.getElementById('f-verdict').value,rating:parseInt(document.getElementById('f-rating').value),img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),scoring:window._lastScoring||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
+  const data={title,author,body,cat,genre:document.getElementById('f-genre-input')?document.getElementById('f-genre-input').value.trim():'',verdict:document.getElementById('f-verdict').value,rating:parseInt(document.getElementById('f-rating').value),img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),scoring:window._lastScoring||getManualScoring()||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
   window._lastScoring=null;
   const isUpdate=!!editId;
   if(editId){data.id=editId;editId=null;}
@@ -786,7 +800,7 @@ async function saveReview(){
 }
 function editReview(id){const r=getReviews().find(x=>x.id===id);if(!r)return;editId=id;document.getElementById('f-cat').value=r.cat;document.getElementById('f-verdict').value=r.verdict||'maybe';document.getElementById('f-rating').value=r.rating;document.getElementById('f-title').value=r.title;document.getElementById('f-author').value=r.author;document.getElementById('f-img').value=r.img||'';document.getElementById('f-excerpt').value=r.excerpt||'';document.getElementById('f-body').value=r.body||'';tempStreamLinks=[...(r.streamLinks||[])];renderStreamList();tempTlBuyLinks=[...((r.translation&&r.translation.buyLinks)||[])];renderTlBuyList();tempOrigBuyLinks=[...((r.translation&&r.translation.originalBuyLinks)||[])];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value=(r.translation&&r.translation.originalLanguage)||'';if(tlA)tlA.value=(r.translation&&r.translation.hasIndonesian)||'';toggleCatSections(r.cat);document.getElementById('formTitle').textContent='Edit Review';switchTab('add',document.querySelector('.admin-tab'));window.scrollTo(0,0)}
 async function deleteReview(id){if(!confirm('Hapus review ini?'))return;try{await deleteReview_db(id);await renderTable();await renderHome();}catch(e){alert('Gagal hapus: '+e.message)}}
-function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';document.getElementById('f-rating').value='5';tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI()}
+function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';document.getElementById('f-rating').value='5';tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI();manualCriteria=[];document.getElementById('manualScoring').style.display='none';const gi=document.getElementById('f-genre-input');if(gi)gi.value='';}
 async function renderTable(){
   await getReviewsAsync();
   const reviews=getReviews(),t=document.getElementById('adminTable');
@@ -799,6 +813,79 @@ function changePw(){const p1=document.getElementById('s-pw1').value,p2=document.
 function exportData(){const blob=new Blob([JSON.stringify({reviews:getReviews(),about:getAbout()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='goopi-backup.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.reviews)saveReviews(d.reviews);if(d.about)s('wi_about',d.about);renderTable();alert('Import berhasil!')}catch{alert('File tidak valid.')}};r.readAsText(f)}
 
+
+
+// MANUAL SCORING
+let manualCriteria = [];
+function toggleScoring(){
+  const el = document.getElementById('manualScoring');
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? 'block' : 'none';
+  if(isHidden && manualCriteria.length === 0) {
+    // Add 5 default criteria based on category
+    const cat = document.getElementById('f-cat').value;
+    if(cat === 'book') {
+      manualCriteria = [
+        {name:'Kedalaman Isi', score:7, reason:''},
+        {name:'Enak Dibaca', score:7, reason:''},
+        {name:'Ide Segar', score:7, reason:''},
+        {name:'Langsung Bisa Dipraktikkan', score:7, reason:''},
+        {name:'Worth the Price', score:7, reason:''}
+      ];
+    } else {
+      manualCriteria = [
+        {name:'Cerita', score:7, reason:''},
+        {name:'Akting', score:7, reason:''},
+        {name:'Visual', score:7, reason:''},
+        {name:'Pesan', score:7, reason:''},
+        {name:'Daya Tonton Ulang', score:7, reason:''}
+      ];
+    }
+    renderScoringRows();
+  }
+}
+function addScoringRow(){
+  manualCriteria.push({name:'', score:7, reason:''});
+  renderScoringRows();
+}
+function removeScoringRow(i){
+  manualCriteria.splice(i,1);
+  renderScoringRows();
+}
+function updateScoringRow(i, field, val){
+  manualCriteria[i][field] = field==='score' ? parseInt(val) : val;
+  if(field==='score') document.getElementById('sv_'+i).textContent = val;
+  updateManualTotal();
+}
+function updateManualTotal(){
+  if(!manualCriteria.length) return;
+  const total = Math.round(manualCriteria.reduce((s,c)=>s+c.score,0)/manualCriteria.length*10);
+  const el = document.getElementById('manualTotal');
+  if(el) el.textContent = 'Total: ' + total + '/100';
+}
+function renderScoringRows(){
+  const el = document.getElementById('scoringRows');
+  if(!el) return;
+  el.innerHTML = manualCriteria.map((c,i) => `
+    <div style="background:var(--cream-light);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <input type="text" value="${c.name}" placeholder="Nama kriteria" onchange="updateScoringRow(${i},'name',this.value)" style="flex:1;min-width:120px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:.8rem;font-family:DM Sans,sans-serif">
+        <input type="range" min="1" max="10" value="${c.score}" class="score-slider" style="flex:2;min-width:100px" oninput="updateScoringRow(${i},'score',this.value)">
+        <div class="score-val" id="sv_${i}">${c.score}</div>
+        <button type="button" onclick="removeScoringRow(${i})" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem">✕</button>
+      </div>
+      <input type="text" value="${c.reason}" placeholder="Alasan singkat..." onchange="updateScoringRow(${i},'reason',this.value)" style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:.75rem;font-family:DM Sans,sans-serif;color:var(--text-mid)">
+    </div>
+  `).join('') + '<div id="manualTotal" style="font-size:.8rem;font-weight:600;color:var(--brown-dark);margin-top:4px"></div>';
+  updateManualTotal();
+}
+function getManualScoring(){
+  if(!manualCriteria.length || document.getElementById('manualScoring').style.display==='none') return null;
+  const genre = document.getElementById('f-genre-input').value.trim();
+  const total = Math.round(manualCriteria.reduce((s,c)=>s+c.score,0)/manualCriteria.length*10);
+  const verdict = total>=80?'yes':total>=50?'maybe':'no';
+  return {genre, criteria:manualCriteria.map(c=>({...c})), total, verdict};
+}
 
 // AI API via Vercel proxy
 async function callAI(prompt){
