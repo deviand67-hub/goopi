@@ -542,22 +542,24 @@ const getAbout=()=>g('wi_about')||'<p>Selamat datang di <strong>GOOPI</strong> â
 let _reviewCache = null;
 async function getReviewsAsync(){
   if(_reviewCache)return _reviewCache;
-  const{data,error}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
-  if(error){console.error('Supabase fetch error:',error);return[];}
-  _reviewCache=data||[];
-  return _reviewCache;
+  try{
+    const{data,error}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
+    if(error){console.error('Supabase error:',JSON.stringify(error));_reviewCache=[];return[];}
+    _reviewCache=data||[];
+    return _reviewCache;
+  }catch(e){console.error('Supabase exception:',e.message);_reviewCache=[];return[];}
 }
 function getReviews(){return _reviewCache||[];}
-async function saveReview_db(review){
+async function saveReview_db(review, isUpdate=false){
   _reviewCache=null;
-  if(review.id&&typeof review.id==='string'&&review.id.length>10){
-    // update existing
-    const{error}=await sb.from('reviews').update(review).eq('id',review.id);
-    if(error)throw error;
+  // Remove fields that don't exist in DB schema
+  const{buyLinks,...cleanReview}=review;
+  if(isUpdate){
+    const{error}=await sb.from('reviews').update(cleanReview).eq('id',cleanReview.id);
+    if(error){console.error('Update error:',JSON.stringify(error));throw new Error(error.message||JSON.stringify(error));}
   } else {
-    // insert new
-    const{error}=await sb.from('reviews').insert(review);
-    if(error)throw error;
+    const{error}=await sb.from('reviews').insert(cleanReview);
+    if(error){console.error('Insert error:',JSON.stringify(error));throw new Error(error.message||JSON.stringify(error));}
   }
   _reviewCache=null;
 }
@@ -740,17 +742,18 @@ async function saveReview(){
   const cat=document.getElementById('f-cat').value;
   const data={title,author,body,cat,genre:'',verdict:document.getElementById('f-verdict').value,rating:parseInt(document.getElementById('f-rating').value),img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),scoring:window._lastScoring||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
   window._lastScoring=null;
+  const isUpdate=!!editId;
   if(editId){data.id=editId;editId=null;}
   else{data.id=Date.now().toString();data.created_at=new Date().toISOString();}
   try{
-    await saveReview_db(data);
+    await saveReview_db(data, isUpdate);
     resetForm();
     await renderTable();
     await renderHome();
     alert('Review berhasil disimpan!');
   }catch(e){
-    document.getElementById('formErr').textContent='Gagal simpan: '+e.message;
-    console.error(e);
+    document.getElementById('formErr').textContent='Gagal simpan: '+(e.message||JSON.stringify(e));
+    console.error('Save error:',e);
   }
 }
 function editReview(id){const r=getReviews().find(x=>x.id===id);if(!r)return;editId=id;document.getElementById('f-cat').value=r.cat;document.getElementById('f-verdict').value=r.verdict||'maybe';document.getElementById('f-rating').value=r.rating;document.getElementById('f-title').value=r.title;document.getElementById('f-author').value=r.author;document.getElementById('f-img').value=r.img||'';document.getElementById('f-excerpt').value=r.excerpt||'';document.getElementById('f-body').value=r.body||'';tempStreamLinks=[...(r.streamLinks||[])];renderStreamList();tempTlBuyLinks=[...((r.translation&&r.translation.buyLinks)||[])];renderTlBuyList();tempOrigBuyLinks=[...((r.translation&&r.translation.originalBuyLinks)||[])];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value=(r.translation&&r.translation.originalLanguage)||'';if(tlA)tlA.value=(r.translation&&r.translation.hasIndonesian)||'';toggleCatSections(r.cat);document.getElementById('formTitle').textContent='Edit Review';switchTab('add',document.querySelector('.admin-tab'));window.scrollTo(0,0)}
