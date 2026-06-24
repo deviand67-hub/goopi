@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GOOPI — Good Picks Only</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -55,7 +55,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .hero{background:var(--brown-dark);padding:96px 40px 80px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C4956A' fill-opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");opacity:.5}
 .hero-inner{position:relative;z-index:2;max-width:600px;margin:0 auto}
-.hero-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--brown-light);margin-bottom:24px}
+.hero-eyebrow{font-size:1.1rem;font-family:'Dancing Script',cursive;font-weight:600;letter-spacing:1px;color:var(--brown-light);margin-bottom:20px;text-transform:none}
 .hero h1{font-family:'DM Sans',sans-serif;font-size:clamp(3rem,8vw,5.5rem);font-weight:700;color:var(--cream-light);line-height:1;margin-bottom:8px;letter-spacing:6px}
 .hero h1 em{color:var(--pink);font-style:italic}
 .hero-sub{font-size:.95rem;color:rgba(245,237,214,.6);margin:20px auto 40px;max-width:340px;line-height:1.7;font-weight:300}
@@ -319,7 +319,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   <div class="nav-links" id="navLinks">
     <button class="nav-link active" onclick="navTo('home',this)">Home</button>
     <button class="nav-link" onclick="navCat('book')">Buku</button>
-    <button class="nav-link" onclick="navCat('movie')">Film</button>
+    <button class="nav-link" onclick="navCat('movie')">Movie</button>
     <button class="nav-link" onclick="showPage('about')">About</button>
   </div>
   <div class="nav-right">
@@ -330,7 +330,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   <div class="mobile-menu" id="mobileMenu">
     <button onclick="navTo('home');toggleMobile()">Home</button>
     <button onclick="navCat('book');toggleMobile()">Buku</button>
-    <button onclick="navCat('movie');toggleMobile()">Film</button>
+    <button onclick="navCat('movie');toggleMobile()">Movie</button>
     <button onclick="showPage('about');toggleMobile()">About</button>
     <button onclick="showAdminGate();toggleMobile()">Admin</button>
   </div>
@@ -339,12 +339,69 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 <!-- HOME -->
 <div id="page-home" class="page active">
   <div class="hero">
+    <!-- Decorative lineart background -->
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.07;pointer-events:none" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#FBF5EA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Book 1 - left -->
+      <rect x="40" y="120" width="70" height="90" rx="3"/>
+      <line x1="40" y1="120" x2="40" y2="210"/>
+      <line x1="55" y1="118" x2="55" y2="212"/>
+      <line x1="65" y1="135" x2="100" y2="135"/>
+      <line x1="65" y1="145" x2="100" y2="145"/>
+      <line x1="65" y1="155" x2="90" y2="155"/>
+      <!-- Book 2 - left tilted -->
+      <rect x="20" y="230" width="60" height="80" rx="3" transform="rotate(-15 20 230)"/>
+      <line x1="20" y1="230" x2="20" y2="310" transform="rotate(-15 20 230)"/>
+      <line x1="33" y1="228" x2="33" y2="312" transform="rotate(-15 20 230)"/>
+      <!-- Open book - bottom left -->
+      <path d="M80 370 Q110 355 140 370 Q110 380 80 370Z"/>
+      <path d="M140 370 Q170 355 200 370 Q170 380 140 370Z"/>
+      <line x1="140" y1="355" x2="140" y2="385"/>
+      <!-- Film reel - top right -->
+      <circle cx="1100" cy="100" r="55"/>
+      <circle cx="1100" cy="100" r="20"/>
+      <circle cx="1100" cy="100" r="8"/>
+      <circle cx="1100" cy="68" r="5"/>
+      <circle cx="1100" cy="132" r="5"/>
+      <circle cx="1068" cy="100" r="5"/>
+      <circle cx="1132" cy="100" r="5"/>
+      <circle cx="1078" cy="78" r="5"/>
+      <circle cx="1122" cy="122" r="5"/>
+      <circle cx="1078" cy="122" r="5"/>
+      <circle cx="1122" cy="78" r="5"/>
+      <!-- Film strip - right -->
+      <rect x="1130" y="180" width="50" height="120" rx="3"/>
+      <rect x="1134" y="185" width="42" height="28" rx="2"/>
+      <rect x="1134" y="220" width="42" height="28" rx="2"/>
+      <rect x="1134" y="255" width="42" height="28" rx="2"/>
+      <rect x="1127" y="190" width="4" height="8" rx="1"/>
+      <rect x="1127" y="208" width="4" height="8" rx="1"/>
+      <rect x="1127" y="226" width="4" height="8" rx="1"/>
+      <rect x="1127" y="244" width="4" height="8" rx="1"/>
+      <rect x="1127" y="262" width="4" height="8" rx="1"/>
+      <!-- Stars scattered -->
+      <path d="M300 60 L303 70 L313 70 L305 76 L308 86 L300 80 L292 86 L295 76 L287 70 L297 70Z"/>
+      <path d="M900 400 L902 407 L909 407 L904 411 L906 418 L900 414 L894 418 L896 411 L891 407 L898 407Z"/>
+      <path d="M200 450 L201 455 L206 455 L202 458 L204 463 L200 460 L196 463 L198 458 L194 455 L199 455Z"/>
+      <path d="M980 50 L981 55 L986 55 L982 58 L984 63 L980 60 L976 63 L978 58 L974 55 L979 55Z"/>
+      <!-- Bookmark ribbons -->
+      <path d="M500 0 L500 60 L490 50 L480 60 L480 0Z"/>
+      <path d="M700 0 L700 45 L692 37 L684 45 L684 0Z"/>
+      <!-- Magnifying glass -->
+      <circle cx="150" cy="430" r="25"/>
+      <line x1="168" y1="448" x2="185" y2="465"/>
+      <!-- Quote marks large -->
+      <text x="850" y="200" font-size="120" font-family="serif" fill="#FBF5EA" opacity="0.5">"</text>
+      <!-- Pencil -->
+      <rect x="560" y="420" width="10" height="55" rx="2" transform="rotate(35 560 420)"/>
+      <path d="M560 420 L554 406 L570 406Z" transform="rotate(35 560 420)"/>
+      <line x1="560" y1="430" x2="570" y2="430" transform="rotate(35 560 420)"/>
+    </svg>
     <div class="hero-inner">
-      <div class="hero-eyebrow">Good Picks Only</div>
       <h1 style="display:inline-flex;align-items:center;gap:6px">GOOPI<span style="color:var(--pink);font-size:.5em;display:block;line-height:1;margin-top:4px">●</span></h1>
+      <div class="hero-eyebrow">Good Picks Only</div>
       
       <div class="hero-search">
-        <input type="text" id="heroSearch" placeholder="Cek Dulu Disini… Book / Film" onkeydown="if(event.key==='Enter')doHeroSearch()">
+        <input type="text" id="heroSearch" placeholder="Cek Dulu Yuk... (Book / Movie)" onkeydown="if(event.key==='Enter')doHeroSearch()">
         <button onclick="doHeroSearch()" style="font-size:1rem;padding:14px 22px">🔍</button>
       </div>
     </div>
@@ -352,7 +409,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   <div class="filter-bar">
     <button class="filter-chip active" onclick="setFilter('all',this)"><span class="pip" style="background:var(--brown-dark)"></span>Semua</button>
     <button class="filter-chip" onclick="setFilter('book',this)"><span class="pip" style="background:var(--green)"></span>Buku</button>
-    <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Film</button>
+    <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Movie</button>
   </div>
   <div class="main-section">
     <div class="section-label">Review Terbaru</div>
@@ -451,7 +508,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
             <div class="step-header"><span class="step-num">1</span><span class="step-title">Info Dasar</span></div>
             <div class="step-sub">Isi judul dan pilih kategori</div>
             <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="ai-title" placeholder="e.g. Atomic Habits"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="ai-author" placeholder="e.g. James Clear"></div></div>
-            <div class="form-row"><div class="form-group"><label>Kategori</label><select id="ai-cat" onchange="toggleCatSections(this.value)"><option value="book">Buku</option><option value="movie">Film</option></select></div><div class="form-group"><label>Tone</label><select id="ai-tone"><option value="casual">Santai</option><option value="critical">Kritis</option><option value="hype">Hype</option></select></div></div>
+            <div class="form-row"><div class="form-group"><label>Kategori</label><select id="ai-cat" onchange="toggleCatSections(this.value)"><option value="book">Buku</option><option value="movie">Movie</option></select></div><div class="form-group"><label>Tone</label><select id="ai-tone"><option value="casual">Santai</option><option value="critical">Kritis</option><option value="hype">Hype</option></select></div></div>
             <button class="btn btn-primary" id="btnStep1" onclick="aiStep1()">Cari Data & Buat Skor →</button>
             <div id="step1Status" style="margin-top:10px;font-size:.78rem;display:none;color:var(--brown-dark)">Mencari data...</div>
           </div>
@@ -473,7 +530,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
         <div class="admin-card">
           <h3 id="formTitle">Tambah Review</h3>
           <div class="form-row-3">
-            <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">Buku</option><option value="movie">Film</option></select></div>
+            <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">Buku</option><option value="movie">Movie</option></select></div>
             <div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
             <div class="form-group"><label>Rating</label><select id="f-rating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div>
           </div>
@@ -548,7 +605,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
           <div class="top10-header">
             <div><div class="top10-title">Inspirasi Hari Ini</div><div class="top10-date" id="top10Date"></div></div>
             <div style="display:flex;gap:8px;align-items:center">
-              <div class="top10-tabs"><button class="top10-tab active" onclick="switchTop10('books',this)">Buku</button><button class="top10-tab" onclick="switchTop10('movies',this)">Film</button></div>
+              <div class="top10-tabs"><button class="top10-tab active" onclick="switchTop10('books',this)">Buku</button><button class="top10-tab" onclick="switchTop10('movies',this)">Movie</button></div>
               <button class="top10-refresh" onclick="loadTop10(true)">↺ Refresh</button>
             </div>
           </div>
@@ -620,7 +677,7 @@ async function deleteReview_db(id){
 
 function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');if(n==='home')renderHome();if(n==='admin'){renderTable();document.getElementById('s-about').value=stripTags(getAbout())}if(n==='about')document.getElementById('aboutBody').innerHTML=getAbout();window.scrollTo(0,0)}
 function navTo(n,btn){currentFilter='all';document.querySelectorAll('.filter-chip').forEach((c,i)=>c.classList.toggle('active',i===0));showPage(n);document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
-function navCat(cat){currentFilter=cat;showPage('home');document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.textContent.toLowerCase().includes(cat==='book'?'buku':'film')))}
+function navCat(cat){currentFilter=cat;showPage('home');document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.textContent.toLowerCase().includes(cat==='book'?'buku':'movie')))}
 function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('open');document.getElementById('hamburger').classList.toggle('open')}
 function stripTags(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent}
 
@@ -645,7 +702,7 @@ function renderCards(reviews,tid){
     const bgColor=r.cat==='book'?'#E8F0E9':'#FAE8ED';
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
-    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'Buku':'Film'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="rating-stars">${'★'.repeat(r.rating)}${'\u2606'.repeat(5-r.rating)}</span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
+    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'Buku':'Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="rating-stars">${'★'.repeat(r.rating)}${'\u2606'.repeat(5-r.rating)}</span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
   }).join('')}
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
@@ -735,7 +792,7 @@ function showDetail(id){
     <div class="detail-hero" style="background:${bg};border-radius:4px;padding:28px;margin-bottom:36px">
       <div class="detail-cover">${cover}</div>
       <div class="detail-info">
-        <div class="detail-cat">${r.cat==='book'?'Buku':'Film'}</div>
+        <div class="detail-cat">${r.cat==='book'?'Buku':'Movie'}</div>
         <div class="detail-title">${r.title}</div>
         <div class="detail-author">oleh ${r.author}</div>
         <div class="detail-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
@@ -806,7 +863,7 @@ async function renderTable(){
   const reviews=getReviews(),t=document.getElementById('adminTable');
   if(!reviews.length){t.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-mid)">Belum ada review.</div>';return}
   const vMap={yes:'Worth It',no:'Skip',maybe:'OK, BUT'};
-  t.innerHTML=reviews.map(r=>`<div class="table-row"><span><strong>${r.title}</strong><br><small style="color:var(--text-mid)">${r.author}</small></span><span>${r.cat==='book'?'Buku':'Film'}</span><span>${'★'.repeat(r.rating)}</span><span>${vMap[r.verdict]||'—'}</span><div class="tbl-actions"><button class="btn btn-outline btn-sm" onclick="editReview('${r.id}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteReview('${r.id}')">Hapus</button></div></div>`).join('');
+  t.innerHTML=reviews.map(r=>`<div class="table-row"><span><strong>${r.title}</strong><br><small style="color:var(--text-mid)">${r.author}</small></span><span>${r.cat==='book'?'Buku':'Movie'}</span><span>${'★'.repeat(r.rating)}</span><span>${vMap[r.verdict]||'—'}</span><div class="tbl-actions"><button class="btn btn-outline btn-sm" onclick="editReview('${r.id}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteReview('${r.id}')">Hapus</button></div></div>`).join('');
 }
 function saveAbout(){const txt=document.getElementById('s-about').value.trim();const html=txt.split('\n\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('');s('wi_about',html);document.getElementById('aboutBody').innerHTML=html;alert('Tersimpan!')}
 function changePw(){const p1=document.getElementById('s-pw1').value,p2=document.getElementById('s-pw2').value;if(!p1||p1.length<4){document.getElementById('pwErr').textContent='Min. 4 karakter.';return}if(p1!==p2){document.getElementById('pwErr').textContent='Tidak sama.';return}s('wi_pass',p1);document.getElementById('pwErr').textContent='';document.getElementById('s-pw1').value='';document.getElementById('s-pw2').value='';alert('Password diperbarui!')}
@@ -909,7 +966,7 @@ function copyPrompt(){
 }
 async function aiStep1(){
   const title=document.getElementById('ai-title').value.trim();if(!title){alert('Masukkan judul dulu!');return}
-  const author=document.getElementById('ai-author').value.trim(),cat=document.getElementById('ai-cat').value,catLabel=cat==='book'?'buku':'film';
+  const author=document.getElementById('ai-author').value.trim(),cat=document.getElementById('ai-cat').value,catLabel=cat==='book'?'buku':'movie';
   const btn=document.getElementById('btnStep1'),status=document.getElementById('step1Status');
   btn.disabled=true;btn.textContent='⏳ Mencari data...';status.style.display='block';status.style.color='var(--brown-dark)';status.textContent='Menganalisis data...';
   try{
@@ -925,7 +982,7 @@ async function aiStep1(){
   btn.disabled=false;btn.textContent='Cari Data & Buat Skor →';
 }
 async function aiStep2(){
-  const title=document.getElementById('ai-title').value.trim(),author=document.getElementById('ai-author').value.trim(),cat=document.getElementById('ai-cat').value,tone=document.getElementById('ai-tone').value,catLabel=cat==='book'?'buku':'film';
+  const title=document.getElementById('ai-title').value.trim(),author=document.getElementById('ai-author').value.trim(),cat=document.getElementById('ai-cat').value,tone=document.getElementById('ai-tone').value,catLabel=cat==='book'?'buku':'movie';
   const btn=document.getElementById('btnStep2'),status=document.getElementById('step2Status');
   btn.disabled=true;btn.textContent='⏳ Menulis review...';status.style.display='block';
   const{total,verdict}=updateTotalScore();
