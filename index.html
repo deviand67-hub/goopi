@@ -394,106 +394,123 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 <!-- HOME -->
 <div id="page-home" class="page active">
   <div class="hero">
-    <!-- Decorative lineart background -->
-    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.18;pointer-events:none" viewBox="0 0 1200 520" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#FBF5EA" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Decorative lineart background - animated -->
+    <style>
+      @keyframes float1{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+      @keyframes float2{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-8px) rotate(-3deg)}}
+      @keyframes float3{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-15px) rotate(1deg)}}
+      @keyframes float4{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+      @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+      @keyframes pulse{0%,100%{opacity:.18}50%{opacity:.28}}
+      @keyframes drift{0%{transform:translateX(0)}50%{transform:translateX(8px)}100%{transform:translateX(0)}}
+      .hero-lineart{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+      .hero-lineart .g-books-l{animation:float1 6s ease-in-out infinite}
+      .hero-lineart .g-books-r{animation:float2 7s ease-in-out infinite 1s}
+      .hero-lineart .g-reel{animation:spin 20s linear infinite;transform-origin:1050px 380px}
+      .hero-lineart .g-reel2{animation:spin 15s linear infinite reverse;transform-origin:200px 120px}
+      .hero-lineart .g-stars{animation:pulse 4s ease-in-out infinite}
+      .hero-lineart .g-books-top{animation:float3 8s ease-in-out infinite 2s}
+      .hero-lineart .g-strip-l{animation:float4 5s ease-in-out infinite 0.5s}
+      .hero-lineart .g-strip-r{animation:float4 5s ease-in-out infinite 1.5s}
+      .hero-lineart .g-open{animation:float2 9s ease-in-out infinite 3s}
+      .hero-lineart .g-extras{animation:drift 7s ease-in-out infinite}
+    </style>
+    <svg class="hero-lineart" viewBox="0 0 1200 520" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#FBF5EA" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.22">
       <!-- Books left cluster -->
-      <rect x="30" y="80" width="55" height="75" rx="3"/><line x1="30" y1="80" x2="30" y2="155"/><line x1="44" y1="78" x2="44" y2="157"/><line x1="52" y1="95" x2="78" y2="95"/><line x1="52" y1="105" x2="78" y2="105"/><line x1="52" y1="115" x2="70" y2="115"/>
-      <rect x="90" y="95" width="48" height="65" rx="3"/><line x1="90" y1="95" x2="90" y2="160"/><line x1="102" y1="93" x2="102" y2="162"/><line x1="110" y1="108" x2="132" y2="108"/><line x1="110" y1="118" x2="132" y2="118"/>
-      <rect x="145" y="105" width="42" height="60" rx="3" transform="rotate(8 145 105)"/><line x1="145" y1="105" x2="145" y2="165" transform="rotate(8 145 105)"/>
-      <rect x="20" y="200" width="60" height="80" rx="3" transform="rotate(-12 20 200)"/><line x1="20" y1="200" x2="20" y2="280" transform="rotate(-12 20 200)"/>
-      <rect x="95" y="185" width="50" height="70" rx="3" transform="rotate(5 95 185)"/>
-      <!-- Open book bottom left -->
-      <path d="M50 380 Q90 360 130 380 Q90 395 50 380Z"/><path d="M130 380 Q170 360 210 380 Q170 395 130 380Z"/><line x1="130" y1="358" x2="130" y2="398"/>
-      <line x1="65" y1="370" x2="115" y2="365"/><line x1="65" y1="378" x2="110" y2="375"/>
-      <line x1="148" y1="365" x2="195" y2="370"/><line x1="148" y1="375" x2="190" y2="378"/>
+      <g class="g-books-l">
+        <rect x="30" y="80" width="55" height="75" rx="3"/><line x1="30" y1="80" x2="30" y2="155"/><line x1="44" y1="78" x2="44" y2="157"/><line x1="52" y1="95" x2="78" y2="95"/><line x1="52" y1="105" x2="78" y2="105"/><line x1="52" y1="115" x2="70" y2="115"/>
+        <rect x="90" y="95" width="48" height="65" rx="3"/><line x1="90" y1="95" x2="90" y2="160"/><line x1="102" y1="93" x2="102" y2="162"/>
+        <rect x="145" y="105" width="42" height="60" rx="3" transform="rotate(8 145 105)"/>
+        <rect x="20" y="200" width="60" height="80" rx="3" transform="rotate(-12 20 200)"/>
+        <rect x="95" y="185" width="50" height="70" rx="3" transform="rotate(5 95 185)"/>
+        <rect x="20" y="300" width="40" height="65" rx="2"/>
+        <rect x="23" y="305" width="34" height="18" rx="1"/><rect x="23" y="328" width="34" height="18" rx="1"/><rect x="23" y="351" width="34" height="18" rx="1"/>
+      </g>
       <!-- Books right cluster -->
-      <rect x="1060" y="70" width="52" height="72" rx="3"/><line x1="1060" y1="70" x2="1060" y2="142"/><line x1="1073" y1="68" x2="1073" y2="144"/>
-      <rect x="1118" y="85" width="48" height="68" rx="3"/><line x1="1118" y1="85" x2="1118" y2="153"/>
-      <rect x="1040" y="170" width="55" height="75" rx="3" transform="rotate(-8 1040 170)"/>
-      <rect x="1105" y="175" width="45" height="65" rx="3" transform="rotate(10 1105 175)"/>
-      <!-- Film reel top right -->
-      <circle cx="1050" cy="380" r="60"/><circle cx="1050" cy="380" r="22"/><circle cx="1050" cy="380" r="9"/>
-      <circle cx="1050" cy="345" r="6"/><circle cx="1050" cy="415" r="6"/>
-      <circle cx="1015" cy="380" r="6"/><circle cx="1085" cy="380" r="6"/>
-      <circle cx="1025" cy="355" r="6"/><circle cx="1075" cy="405" r="6"/>
-      <circle cx="1025" cy="405" r="6"/><circle cx="1075" cy="355" r="6"/>
-      <!-- Film strip left -->
-      <rect x="20" y="300" width="40" height="65" rx="2"/>
-      <rect x="23" y="305" width="34" height="18" rx="1"/><rect x="23" y="328" width="34" height="18" rx="1"/><rect x="23" y="351" width="34" height="18" rx="1"/>
-      <rect x="17" y="308" width="3" height="6" rx="1"/><rect x="17" y="322" width="3" height="6" rx="1"/><rect x="17" y="336" width="3" height="6" rx="1"/><rect x="17" y="350" width="3" height="6" rx="1"/>
-      <!-- Film strip right -->
-      <rect x="1150" y="280" width="40" height="65" rx="2"/>
-      <rect x="1153" y="285" width="34" height="18" rx="1"/><rect x="1153" y="308" width="34" height="18" rx="1"/><rect x="1153" y="331" width="34" height="18" rx="1"/>
-      <!-- Stars scattered everywhere -->
-      <path d="M280 40 L283 52 L295 52 L285 59 L289 71 L280 64 L271 71 L275 59 L265 52 L277 52Z"/>
-      <path d="M920 30 L923 42 L935 42 L925 49 L929 61 L920 54 L911 61 L915 49 L905 42 L917 42Z"/>
-      <path d="M600 480 L602 488 L610 488 L604 492 L606 500 L600 496 L594 500 L596 492 L590 488 L598 488Z"/>
-      <path d="M400 20 L402 28 L410 28 L404 32 L406 40 L400 36 L394 40 L396 32 L390 28 L398 28Z"/>
-      <path d="M750 490 L752 496 L758 496 L753 499 L755 505 L750 502 L745 505 L747 499 L742 496 L748 496Z"/>
-      <path d="M180 490 L182 498 L190 498 L184 502 L186 510 L180 506 L174 510 L176 502 L170 498 L178 498Z"/>
-      <path d="M1020 490 L1022 498 L1030 498 L1024 502 L1026 510 L1020 506 L1014 510 L1016 502 L1010 498 L1018 498Z"/>
-      <!-- Sparkles near center -->
-      <path d="M480 200 L482 206 L488 200 L482 194Z"/>
-      <path d="M720 180 L722 186 L728 180 L722 174Z"/>
-      <path d="M500 320 L502 326 L508 320 L502 314Z"/>
-      <path d="M700 310 L702 316 L708 310 L702 304Z"/>
-      <!-- Magnifying glass center-ish -->
-      <circle cx="320" cy="420" r="22"/><line x1="336" y1="436" x2="350" y2="450"/>
-      <!-- Bookmark ribbons top -->
-      <path d="M440 0 L440 55 L430 45 L420 55 L420 0Z"/>
-      <path d="M760 0 L760 42 L752 34 L744 42 L744 0Z"/>
-      <path d="M600 0 L600 35 L593 28 L586 35 L586 0Z"/>
-      <!-- Quote marks near text -->
-      <path d="M390 230 Q390 215 405 215 Q395 225 400 235Z" stroke-width="2"/>
-      <path d="M415 230 Q415 215 430 215 Q420 225 425 235Z" stroke-width="2"/>
-      <path d="M770 260 Q770 245 785 245 Q775 255 780 265Z" stroke-width="2"/>
-      <path d="M795 260 Q795 245 810 245 Q800 255 805 265Z" stroke-width="2"/>
-      <!-- Play button circle near film -->
-      <circle cx="900" cy="420" r="30"/><path d="M890 407 L890 433 L915 420Z"/>
-      <!-- Pencil bottom right -->
-      <rect x="1100" y="420" width="8" height="50" rx="2" transform="rotate(-30 1100 420)"/>
-      <path d="M1100 420 L1095 407 L1109 407Z" transform="rotate(-30 1100 420)"/>
-      <line x1="1100" y1="430" x2="1108" y2="430" transform="rotate(-30 1100 420)"/>
-      <!-- Scattered dots -->
-      <circle cx="350" cy="80" r="2" fill="#FBF5EA"/><circle cx="370" cy="95" r="1.5" fill="#FBF5EA"/>
-      <circle cx="820" cy="70" r="2" fill="#FBF5EA"/><circle cx="845" cy="55" r="1.5" fill="#FBF5EA"/>
-      <circle cx="250" cy="460" r="2" fill="#FBF5EA"/><circle cx="950" cy="460" r="2" fill="#FBF5EA"/>
-      <rect x="480" y="30" width="38" height="52" rx="3"/><line x1="480" y1="30" x2="480" y2="82"/><line x1="491" y1="28" x2="491" y2="84"/>
-      <rect x="528" y="18" width="32" height="48" rx="3" transform="rotate(12 528 18)"/>
-      <rect x="640" y="25" width="36" height="50" rx="3"/><line x1="640" y1="25" x2="640" y2="75"/>
-      <rect x="685" y="15" width="30" height="45" rx="3" transform="rotate(-10 685 15)"/>
-      <rect x="350" y="440" width="42" height="58" rx="3" transform="rotate(-8 350 440)"/>
-      <rect x="400" y="450" width="38" height="52" rx="3" transform="rotate(5 400 450)"/>
-      <rect x="750" y="445" width="40" height="55" rx="3" transform="rotate(8 750 445)"/>
-      <rect x="800" y="438" width="35" height="50" rx="3" transform="rotate(-5 800 438)"/>
-      <circle cx="200" cy="120" r="40"/><circle cx="200" cy="120" r="15"/><circle cx="200" cy="120" r="6"/>
-      <circle cx="200" cy="88" r="4"/><circle cx="200" cy="152" r="4"/>
-      <circle cx="168" cy="120" r="4"/><circle cx="232" cy="120" r="4"/>
-      <circle cx="177" cy="97" r="4"/><circle cx="223" cy="143" r="4"/>
-      <circle cx="177" cy="143" r="4"/><circle cx="223" cy="97" r="4"/>
-      <rect x="230" y="300" width="35" height="55" rx="2"/>
-      <rect x="233" y="305" width="29" height="15" rx="1"/><rect x="233" y="324" width="29" height="15" rx="1"/><rect x="233" y="343" width="29" height="15" rx="1"/>
-      <rect x="930" y="80" width="35" height="55" rx="2"/>
-      <rect x="933" y="85" width="29" height="15" rx="1"/><rect x="933" y="104" width="29" height="15" rx="1"/><rect x="933" y="123" width="29" height="15" rx="1"/>
-      <path d="M550 440 L552 448 L560 448 L554 452 L556 460 L550 456 L544 460 L546 452 L540 448 L548 448Z"/>
-      <path d="M650 35 L652 43 L660 43 L654 47 L656 55 L650 51 L644 55 L646 47 L640 43 L648 43Z"/>
-      <path d="M100 280 L102 286 L108 286 L104 289 L106 295 L100 292 L94 295 L96 289 L90 286 L98 286Z"/>
-      <path d="M1100 280 L1102 286 L1108 286 L1104 289 L1106 295 L1100 292 L1094 295 L1096 289 L1090 286 L1098 286Z"/>
-      <path d="M320 160 L322 166 L328 160 L322 154Z"/><path d="M880 160 L882 166 L888 160 L882 154Z"/>
-      <path d="M450 380 L452 386 L458 380 L452 374Z"/><path d="M740 380 L742 386 L748 380 L742 374Z"/>
-      <path d="M600 80 L602 86 L608 80 L602 74Z"/>
-      <line x1="260" y1="200" x2="380" y2="200" stroke-dasharray="4 6"/>
-      <line x1="820" y1="200" x2="940" y2="200" stroke-dasharray="4 6"/>
-      <line x1="260" y1="320" x2="380" y2="320" stroke-dasharray="4 6"/>
-      <line x1="820" y1="320" x2="940" y2="320" stroke-dasharray="4 6"/>
-      <path d="M880 380 Q910 365 940 380 Q910 392 880 380Z"/><path d="M940 380 Q970 365 1000 380 Q970 392 940 380Z"/>
-      <line x1="940" y1="363" x2="940" y2="395"/>
-      <circle cx="450" cy="100" r="2.5" fill="#FBF5EA"/><circle cx="750" cy="100" r="2.5" fill="#FBF5EA"/>
-      <circle cx="300" cy="260" r="2" fill="#FBF5EA"/><circle cx="900" cy="260" r="2" fill="#FBF5EA"/>
-      <circle cx="500" cy="420" r="2" fill="#FBF5EA"/><circle cx="700" cy="420" r="2" fill="#FBF5EA"/>
-      <circle cx="150" cy="350" r="2" fill="#FBF5EA"/><circle cx="1050" cy="350" r="2" fill="#FBF5EA"/>
+      <g class="g-books-r">
+        <rect x="1060" y="70" width="52" height="72" rx="3"/><line x1="1060" y1="70" x2="1060" y2="142"/><line x1="1073" y1="68" x2="1073" y2="144"/>
+        <rect x="1118" y="85" width="48" height="68" rx="3"/><line x1="1118" y1="85" x2="1118" y2="153"/>
+        <rect x="1040" y="170" width="55" height="75" rx="3" transform="rotate(-8 1040 170)"/>
+        <rect x="1105" y="175" width="45" height="65" rx="3" transform="rotate(10 1105 175)"/>
+        <rect x="1150" y="280" width="40" height="65" rx="2"/>
+        <rect x="1153" y="285" width="34" height="18" rx="1"/><rect x="1153" y="308" width="34" height="18" rx="1"/><rect x="1153" y="331" width="34" height="18" rx="1"/>
+      </g>
+      <!-- Film reel right - spinning -->
+      <g class="g-reel">
+        <circle cx="1050" cy="380" r="60"/><circle cx="1050" cy="380" r="22"/><circle cx="1050" cy="380" r="9"/>
+        <circle cx="1050" cy="345" r="6"/><circle cx="1050" cy="415" r="6"/>
+        <circle cx="1015" cy="380" r="6"/><circle cx="1085" cy="380" r="6"/>
+        <circle cx="1025" cy="355" r="6"/><circle cx="1075" cy="405" r="6"/>
+        <circle cx="1025" cy="405" r="6"/><circle cx="1075" cy="355" r="6"/>
+      </g>
+      <!-- Film reel left - spinning reverse -->
+      <g class="g-reel2">
+        <circle cx="200" cy="120" r="40"/><circle cx="200" cy="120" r="15"/><circle cx="200" cy="120" r="6"/>
+        <circle cx="200" cy="88" r="4"/><circle cx="200" cy="152" r="4"/>
+        <circle cx="168" cy="120" r="4"/><circle cx="232" cy="120" r="4"/>
+        <circle cx="177" cy="97" r="4"/><circle cx="223" cy="143" r="4"/>
+        <circle cx="177" cy="143" r="4"/><circle cx="223" cy="97" r="4"/>
+      </g>
+      <!-- Books top center floating -->
+      <g class="g-books-top">
+        <rect x="480" y="30" width="38" height="52" rx="3"/><line x1="480" y1="30" x2="480" y2="82"/><line x1="491" y1="28" x2="491" y2="84"/>
+        <rect x="528" y="18" width="32" height="48" rx="3" transform="rotate(12 528 18)"/>
+        <rect x="640" y="25" width="36" height="50" rx="3"/><line x1="640" y1="25" x2="640" y2="75"/>
+        <rect x="685" y="15" width="30" height="45" rx="3" transform="rotate(-10 685 15)"/>
+        <path d="M440 0 L440 55 L430 45 L420 55 L420 0Z"/>
+        <path d="M760 0 L760 42 L752 34 L744 42 L744 0Z"/>
+        <path d="M600 0 L600 35 L593 28 L586 35 L586 0Z"/>
+      </g>
+      <!-- Stars pulsing -->
+      <g class="g-stars">
+        <path d="M280 40 L283 52 L295 52 L285 59 L289 71 L280 64 L271 71 L275 59 L265 52 L277 52Z"/>
+        <path d="M920 30 L923 42 L935 42 L925 49 L929 61 L920 54 L911 61 L915 49 L905 42 L917 42Z"/>
+        <path d="M550 440 L552 448 L560 448 L554 452 L556 460 L550 456 L544 460 L546 452 L540 448 L548 448Z"/>
+        <path d="M650 35 L652 43 L660 43 L654 47 L656 55 L650 51 L644 55 L646 47 L640 43 L648 43Z"/>
+        <path d="M100 280 L102 286 L108 286 L104 289 L106 295 L100 292 L94 295 L96 289 L90 286 L98 286Z"/>
+        <path d="M1100 280 L1102 286 L1108 286 L1104 289 L1106 295 L1100 292 L1094 295 L1096 289 L1090 286 L1098 286Z"/>
+        <path d="M400 20 L402 28 L410 28 L404 32 L406 40 L400 36 L394 40 L396 32 L390 28 L398 28Z"/>
+        <path d="M600 480 L602 488 L610 488 L604 492 L606 500 L600 496 L594 500 L596 492 L590 488 L598 488Z"/>
+        <path d="M750 490 L752 496 L758 496 L753 499 L755 505 L750 502 L745 505 L747 499 L742 496 L748 496Z"/>
+        <path d="M180 490 L182 498 L190 498 L184 502 L186 510 L180 506 L174 510 L176 502 L170 498 L178 498Z"/>
+        <path d="M1020 490 L1022 498 L1030 498 L1024 502 L1026 510 L1020 506 L1014 510 L1016 502 L1010 498 L1018 498Z"/>
+        <path d="M480 200 L482 206 L488 200 L482 194Z"/>
+        <path d="M720 180 L722 186 L728 180 L722 174Z"/>
+        <path d="M500 320 L502 326 L508 320 L502 314Z"/>
+        <path d="M700 310 L702 316 L708 310 L702 304Z"/>
+      </g>
+      <!-- Film strips floating -->
+      <g class="g-strip-l">
+        <rect x="230" y="300" width="35" height="55" rx="2"/>
+        <rect x="233" y="305" width="29" height="15" rx="1"/><rect x="233" y="324" width="29" height="15" rx="1"/><rect x="233" y="343" width="29" height="15" rx="1"/>
+      </g>
+      <g class="g-strip-r">
+        <rect x="930" y="80" width="35" height="55" rx="2"/>
+        <rect x="933" y="85" width="29" height="15" rx="1"/><rect x="933" y="104" width="29" height="15" rx="1"/><rect x="933" y="123" width="29" height="15" rx="1"/>
+      </g>
+      <!-- Open books floating -->
+      <g class="g-open">
+        <path d="M50 380 Q90 360 130 380 Q90 395 50 380Z"/><path d="M130 380 Q170 360 210 380 Q170 395 130 380Z"/><line x1="130" y1="358" x2="130" y2="398"/>
+        <path d="M880 380 Q910 365 940 380 Q910 392 880 380Z"/><path d="M940 380 Q970 365 1000 380 Q970 392 940 380Z"/><line x1="940" y1="363" x2="940" y2="395"/>
+        <path d="M350 440 L350 495 L340 485 L330 495 L330 440Z" transform="rotate(-8 350 440)"/>
+        <path d="M800 438 L800 490 L791 481 L782 490 L782 438Z" transform="rotate(5 800 438)"/>
+      </g>
+      <!-- Extra drifting elements -->
+      <g class="g-extras">
+        <circle cx="320" cy="420" r="22"/><line x1="336" y1="436" x2="350" y2="450"/>
+        <circle cx="900" cy="420" r="30"/><path d="M890 407 L890 433 L915 420Z"/>
+        <line x1="260" y1="200" x2="380" y2="200" stroke-dasharray="4 6"/>
+        <line x1="820" y1="200" x2="940" y2="200" stroke-dasharray="4 6"/>
+        <line x1="260" y1="320" x2="380" y2="320" stroke-dasharray="4 6"/>
+        <line x1="820" y1="320" x2="940" y2="320" stroke-dasharray="4 6"/>
+        <circle cx="450" cy="100" r="2.5" fill="#FBF5EA"/><circle cx="750" cy="100" r="2.5" fill="#FBF5EA"/>
+        <circle cx="300" cy="260" r="2" fill="#FBF5EA"/><circle cx="900" cy="260" r="2" fill="#FBF5EA"/>
+        <circle cx="500" cy="420" r="2" fill="#FBF5EA"/><circle cx="700" cy="420" r="2" fill="#FBF5EA"/>
+        <circle cx="150" cy="350" r="2" fill="#FBF5EA"/><circle cx="1050" cy="350" r="2" fill="#FBF5EA"/>
+        <circle cx="250" cy="460" r="2" fill="#FBF5EA"/><circle cx="950" cy="460" r="2" fill="#FBF5EA"/>
+      </g>
     </svg>
-    <div class="hero-inner">er">
+    <div class="hero-inner">er">er">
       <h1 style="display:inline-flex;align-items:center;gap:6px">GOOPI<span style="color:var(--pink);font-size:.5em;display:block;line-height:1;margin-top:4px">●</span></h1>
       <div class="hero-eyebrow">Good Picks Only</div>
       
