@@ -919,13 +919,13 @@ function showDetail(id){
   const verdictSection=`<div style="background:${vc.bg};border-radius:4px;padding:24px;margin-bottom:32px">
     <div style="display:flex;align-items:center;gap:14px;${hasScoring?`padding-bottom:20px;border-bottom:1px solid rgba(0,0,0,.08);margin-bottom:20px`:''}">
       <div style="flex:1">
-        <div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${vc.color};margin-bottom:6px">Verdict Kami</div>
+        <div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${vc.color};margin-bottom:6px">ASSESSMENT by GOOPI</div>
         <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:${vc.color}">${vc.icon} ${vc.label}</div>
         ${r.genre||r.scoring?.genre?`<div style="font-size:.75rem;color:var(--text-mid);margin-top:4px">Genre: ${r.genre||r.scoring.genre}</div>`:''}
       </div>
       ${hasScoring?`<div style="text-align:center;background:rgba(255,255,255,.7);border-radius:4px;padding:10px 16px"><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:${vc.color};line-height:1">${r.scoring.total}</div><div style="font-size:.62rem;color:var(--text-mid);letter-spacing:1px">/100</div></div>`:''}
     </div>
-    ${hasScoring?`<div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:16px">Breakdown Penilaian</div>${barsHtml}`:''}
+    ${hasScoring?`${barsHtml}`:''}
   </div>`;
 
   const donateBox = `
