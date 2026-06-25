@@ -194,8 +194,8 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .usb-bar-track{flex:1;height:6px;background:var(--cream-dark);border-radius:100px;overflow:hidden}
 .usb-bar-fill{height:100%;border-radius:100px}
 .usb-bar-num{font-size:.75rem;font-weight:600;width:30px;text-align:right;color:var(--text)}
-.lang-tabs{display:flex;gap:0;border-bottom:1px solid var(--border)}
-.lang-tab{padding:8px 16px;font-size:.78rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mid);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;font-family:'DM Sans',sans-serif}
+.lang-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--cream-dark);border-radius:8px 8px 0 0;padding:4px 4px 0}
+.lang-tab{padding:8px 16px;font-size:.78rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mid);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;font-family:'DM Sans',sans-serif;border-radius:6px 6px 0 0}
 .lang-tab.active{color:var(--brown-dark);border-bottom-color:var(--brown-dark)}
 .lang-tab-panel{display:none;padding:20px 0}
 .lang-tab-panel.active{display:block}
@@ -711,7 +711,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
               <div class="buy-link-row">
                 <div class="form-group"><label>Platform</label><input type="text" id="sl-platform" placeholder="Netflix"></div>
                 <div class="form-group"><label>Tipe</label><select id="sl-type"><option value="subscription">Subscription</option><option value="rent">Sewa</option><option value="buy">Beli</option><option value="free">Gratis</option></select></div>
-                <div class="form-group"><label>Harga</label><input type="text" id="sl-price" placeholder="Rp 54.000/bln"></div>
+                <div class="form-group"><label>Harga</label><div style="display:flex;gap:6px"><select id="sl-currency" style="width:80px;padding:10px 8px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text)"><option>Rp</option><option>USD</option><option>SGD</option><option>JPY</option></select><input type="text" id="sl-price" placeholder="54.000/bln" style="flex:1"></div></div>
                 <div class="form-group"><label>URL</label><input type="text" id="sl-url" placeholder="https://..."></div>
                 <button class="btn-add-link" onclick="addStreamLink()">+ Tambah</button>
               </div>
@@ -723,10 +723,10 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
               <div class="form-row"><div class="form-group"><label>Bahasa Original</label><input type="text" id="tl-original" placeholder="Bahasa Inggris"></div><div class="form-group"><label>Ada Terjemahan ID?</label><select id="tl-available"><option value="">Belum tahu</option><option value="yes">✓ Ada</option><option value="no">✗ Belum ada</option></select></div></div>
               <label style="font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);display:block;margin-bottom:6px">Beli Versi Original</label>
               <div class="buy-links-list" id="tlOrigBuyList"></div>
-              <div class="buy-link-row"><div class="form-group"><label>Toko</label><input type="text" id="tobl-store" placeholder="Amazon"></div><div class="form-group"><label>Harga</label><input type="text" id="tobl-price"></div><div class="form-group"><label>URL</label><input type="text" id="tobl-url"></div><button class="btn-add-link" onclick="addOrigBuyLink()">+ Tambah</button></div>
+              <div class="buy-link-row"><div class="form-group"><label>Toko</label><input type="text" id="tobl-store" placeholder="Amazon"></div><div class="form-group"><label>Harga</label><div style="display:flex;gap:6px"><select id="tobl-currency" style="width:80px;padding:10px 8px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text)"><option>Rp</option><option>USD</option><option>SGD</option><option>JPY</option></select><input type="text" id="tobl-price" placeholder="195.000" style="flex:1"></div></div><div class="form-group"><label>URL</label><input type="text" id="tobl-url"></div><button class="btn-add-link" onclick="addOrigBuyLink()">+ Tambah</button></div>
               <label style="font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);display:block;margin:12px 0 6px">Beli Versi Terjemahan</label>
               <div class="buy-links-list" id="tlBuyList"></div>
-              <div class="buy-link-row"><div class="form-group"><label>Toko</label><input type="text" id="tbl-store" placeholder="Gramedia"></div><div class="form-group"><label>Harga</label><input type="text" id="tbl-price"></div><div class="form-group"><label>URL</label><input type="text" id="tbl-url"></div><button class="btn-add-link" onclick="addTlBuyLink()">+ Tambah</button></div>
+              <div class="buy-link-row"><div class="form-group"><label>Toko</label><input type="text" id="tbl-store" placeholder="Gramedia"></div><div class="form-group"><label>Harga</label><div style="display:flex;gap:6px"><select id="tbl-currency" style="width:80px;padding:10px 8px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text)"><option>Rp</option><option>USD</option><option>SGD</option><option>JPY</option></select><input type="text" id="tbl-price" placeholder="89.000" style="flex:1"></div></div><div class="form-group"><label>URL</label><input type="text" id="tbl-url"></div><button class="btn-add-link" onclick="addTlBuyLink()">+ Tambah</button></div>
             </div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" onclick="saveReview()">Simpan Review</button><button class="btn btn-outline" onclick="resetForm()">Reset</button></div>
@@ -903,7 +903,7 @@ function showDetail(id){
         const panelId=hasId?'<div id="'+uid+'_id" class="lang-tab-panel">'+mkLinks(idLinks,'Versi terjemahan Indonesia','var(--green)')+'</div>':'';
         bottomBox='<hr class="detail-divider">'+
           '<div style="margin-bottom:12px">'+
-          '<span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark)">BAHASA BUKU <span style="color:var(--green)">🌐</span></span>'+
+          '<span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">BAHASA BUKU <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>'+
           '</div>'+
           '<div class="lang-tabs" data-uid="'+uid+'">'+tabOrig+tabId+'</div>'+
           panelOrig+panelId;
@@ -987,13 +987,13 @@ function doLogout(){s('wi_auth',false);showPage('home')}
 function switchTab(name,btn){document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.admin-section').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('at-'+name).classList.add('active');if(name==='inspire')loadTop10(false)}
 function toggleCatSections(cat){const se=document.getElementById('streamingSection'),tr=document.getElementById('translationSection');if(!se||!tr)return;se.style.display=cat==='movie'?'block':'none';tr.style.display=cat==='book'?'block':'none'}
 
-function addStreamLink(){const p=document.getElementById('sl-platform').value.trim(),t=document.getElementById('sl-type').value,pr=document.getElementById('sl-price').value.trim(),u=document.getElementById('sl-url').value.trim();if(!p)return;tempStreamLinks.push({platform:p,type:t,price:pr,url:u});renderStreamList();['sl-platform','sl-price','sl-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-type').value='subscription'}
+function addStreamLink(){const p=document.getElementById('sl-platform').value.trim(),t=document.getElementById('sl-type').value,cur=document.getElementById('sl-currency').value,pr=document.getElementById('sl-price').value.trim(),u=document.getElementById('sl-url').value.trim();if(!p)return;const fullPrice=pr?(cur+' '+pr):'';tempStreamLinks.push({platform:p,type:t,price:fullPrice,url:u});renderStreamList();['sl-platform','sl-price','sl-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-type').value='subscription'}
 function removeStreamLink(i){tempStreamLinks.splice(i,1);renderStreamList()}
 function renderStreamList(){const el=document.getElementById('streamList');if(!el)return;el.innerHTML=tempStreamLinks.map((s,i)=>`<div class="stream-admin-item"><span>${platformEmoji(s.platform)} ${s.platform} — ${s.type} ${s.price?'· '+s.price:''}</span><button class="buy-link-del" onclick="removeStreamLink(${i})">✕</button></div>`).join('')}
-function addOrigBuyLink(){const st=document.getElementById('tobl-store').value.trim(),pr=document.getElementById('tobl-price').value.trim(),u=document.getElementById('tobl-url').value.trim();if(!st)return;tempOrigBuyLinks.push({store:st,price:pr,url:u});renderOrigBuyList();['tobl-store','tobl-price','tobl-url'].forEach(id=>document.getElementById(id).value='')}
+function addOrigBuyLink(){const st=document.getElementById('tobl-store').value.trim(),cur=document.getElementById('tobl-currency').value,pr=document.getElementById('tobl-price').value.trim(),u=document.getElementById('tobl-url').value.trim();if(!st)return;const fullPrice=pr?(cur+' '+pr):'';tempOrigBuyLinks.push({store:st,price:fullPrice,url:u});renderOrigBuyList();['tobl-store','tobl-price','tobl-url'].forEach(id=>document.getElementById(id).value='')}
 function removeOrigBuyLink(i){tempOrigBuyLinks.splice(i,1);renderOrigBuyList()}
 function renderOrigBuyList(){const el=document.getElementById('tlOrigBuyList');if(!el)return;el.innerHTML=tempOrigBuyLinks.map((b,i)=>`<div class="buy-link-item"><span>${storeEmoji(b.store)} ${b.store} — ${b.price}</span><button class="buy-link-del" onclick="removeOrigBuyLink(${i})">✕</button></div>`).join('')}
-function addTlBuyLink(){const st=document.getElementById('tbl-store').value.trim(),pr=document.getElementById('tbl-price').value.trim(),u=document.getElementById('tbl-url').value.trim();if(!st)return;tempTlBuyLinks.push({store:st,price:pr,url:u});renderTlBuyList();['tbl-store','tbl-price','tbl-url'].forEach(id=>document.getElementById(id).value='')}
+function addTlBuyLink(){const st=document.getElementById('tbl-store').value.trim(),cur=document.getElementById('tbl-currency').value,pr=document.getElementById('tbl-price').value.trim(),u=document.getElementById('tbl-url').value.trim();if(!st)return;const fullPrice=pr?(cur+' '+pr):'';tempTlBuyLinks.push({store:st,price:fullPrice,url:u});renderTlBuyList();['tbl-store','tbl-price','tbl-url'].forEach(id=>document.getElementById(id).value='')}
 function removeTlBuyLink(i){tempTlBuyLinks.splice(i,1);renderTlBuyList()}
 function renderTlBuyList(){const el=document.getElementById('tlBuyList');if(!el)return;el.innerHTML=tempTlBuyLinks.map((b,i)=>`<div class="buy-link-item"><span>${storeEmoji(b.store)} ${b.store} — ${b.price}</span><button class="buy-link-del" onclick="removeTlBuyLink(${i})">✕</button></div>`).join('')}
 
