@@ -335,6 +335,13 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .top10-empty{text-align:center;padding:28px;color:var(--text-mid);font-size:.82rem}
 .top10-refresh{background:none;border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:.72rem;font-weight:500;cursor:pointer;color:var(--text-mid);transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px}
 .top10-refresh:hover{border-color:var(--brown-dark);color:var(--brown-dark)}
+.donate-box{margin-top:40px;padding:24px;background:linear-gradient(135deg,var(--cream-dark),#f5e6d0);border-radius:12px;text-align:center;border:1px solid rgba(61,35,20,.1)}
+.donate-box .donate-icon{font-size:2rem;margin-bottom:8px}
+.donate-box h4{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--brown-dark);margin-bottom:6px}
+.donate-box p{font-size:.82rem;color:var(--text-mid);margin-bottom:16px;line-height:1.6}
+.donate-btn{display:inline-flex;align-items:center;gap:8px;background:var(--brown-dark);color:var(--cream-light);padding:12px 24px;border-radius:100px;font-size:.82rem;font-weight:600;text-decoration:none;transition:all .2s;font-family:'DM Sans',sans-serif}
+.donate-btn:hover{background:var(--pink);transform:translateY(-1px)}
+.donate-btn .coffee{font-size:1rem}
 .already-reviewed{opacity:.5}
 .already-badge{font-size:.62rem;background:var(--green-light);color:var(--green);padding:2px 7px;border-radius:100px;font-weight:500}
 
@@ -371,6 +378,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
     <button onclick="navTo('home');toggleMobile()">Home</button>
     <button onclick="showPage('about');toggleMobile()">About</button>
     <button onclick="showPage('contact');toggleMobile()">Contact</button>
+    <button onclick="showPage('privacy');toggleMobile()">Privacy Policy</button>
     <button onclick="showAdminGate();toggleMobile()">Admin</button>
   </div>
 </nav>
@@ -520,6 +528,38 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
       <p><strong>Email</strong><br><a href="mailto:hello@thegoopi.com" style="color:var(--brown-dark)">hello@thegoopi.com</a></p>
       <p><strong>Instagram</strong><br><a href="https://instagram.com/thegoopi" target="_blank" style="color:var(--brown-dark)">@thegoopi</a></p>
       <p><strong>Submit Rekomendasi</strong><br>Punya buku atau film yang pengen diReview GOOPI? DM aja di Instagram atau email kami judulnya!</p>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY -->
+<div id="page-privacy" class="page">
+  <div class="about-wrap">
+    <div class="about-title" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:2.5rem">Privacy<span style="color:var(--pink)">•</span></div>
+    <div class="about-tagline">Kebijakan Privasi — Terakhir diperbarui: Juni 2025</div>
+    <div class="about-body">
+      <p>GOOPI (<strong>thegoopi.com</strong>) berkomitmen untuk melindungi privasi pengunjung. Halaman ini menjelaskan informasi apa yang kami kumpulkan dan bagaimana kami menggunakannya.</p>
+
+      <p><strong>1. Informasi yang Dikumpulkan</strong><br>
+      GOOPI tidak mengumpulkan data pribadi secara langsung. Kami menggunakan layanan pihak ketiga seperti Google Analytics dan Google AdSense yang mungkin mengumpulkan data anonim seperti alamat IP, jenis browser, dan halaman yang dikunjungi untuk keperluan analitik dan iklan.</p>
+
+      <p><strong>2. Cookies</strong><br>
+      Website ini menggunakan cookies untuk meningkatkan pengalaman pengguna. Google AdSense menggunakan cookies untuk menampilkan iklan yang relevan berdasarkan kunjungan sebelumnya. Kamu dapat menonaktifkan cookies melalui pengaturan browser kapan saja.</p>
+
+      <p><strong>3. Google AdSense</strong><br>
+      Kami menggunakan Google AdSense untuk menampilkan iklan. Google menggunakan cookies DART untuk menayangkan iklan berdasarkan kunjungan ke situs ini dan situs lain. Kamu dapat memilih keluar dari penggunaan cookie DART melalui <a href="https://policies.google.com/privacy" target="_blank" style="color:var(--brown-dark)">Google Privacy Policy</a>.</p>
+
+      <p><strong>4. Tautan Afiliasi</strong><br>
+      Beberapa link di GOOPI adalah link afiliasi (Shopee, Tokopedia, Gramedia). Jika kamu membeli melalui link tersebut, kami mungkin mendapatkan komisi kecil tanpa biaya tambahan untukmu. Ini membantu kami menjaga GOOPI tetap berjalan.</p>
+
+      <p><strong>5. Layanan Pihak Ketiga</strong><br>
+      GOOPI menggunakan Supabase untuk penyimpanan data review. Data review yang ditampilkan di website ini adalah konten editorial GOOPI dan tidak mengandung data pribadi pengunjung.</p>
+
+      <p><strong>6. Perubahan Kebijakan</strong><br>
+      Kebijakan privasi ini dapat diperbarui sewaktu-waktu. Perubahan akan ditampilkan di halaman ini dengan tanggal pembaruan terbaru.</p>
+
+      <p><strong>7. Hubungi Kami</strong><br>
+      Pertanyaan tentang kebijakan privasi? Email kami di <a href="mailto:hello@thegoopi.com" style="color:var(--brown-dark)">hello@thegoopi.com</a></p>
     </div>
   </div>
 </div>
@@ -883,6 +923,16 @@ function showDetail(id){
     ${hasScoring?`<div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:16px">Breakdown Penilaian</div>${barsHtml}`:''}
   </div>`;
 
+  const donateBox = `
+    <div class="donate-box">
+      <div class="donate-icon">☕</div>
+      <h4>Review ini membantu?</h4>
+      <p>GOOPI dibuat dengan sepenuh hati — tanpa bias, tanpa review berbayar.<br>Kalau kamu merasa terbantu, trakteer kami segelas kopi!</p>
+      <a href="https://trakteer.id/goopi" target="_blank" class="donate-btn">
+        <span class="coffee">☕</span> Trakteer GOOPI
+      </a>
+    </div>
+  `;
   document.getElementById('detailContent').innerHTML=`
     <button class="detail-back" onclick="showPage('home')">← Kembali</button>
     <div class="detail-hero" style="background:${bg};border-radius:4px;padding:28px;margin-bottom:36px">
@@ -898,6 +948,7 @@ function showDetail(id){
     ${verdictSection}
     <div class="detail-body">${bodyHtml}</div>
     ${bottomBox}
+    ${donateBox}
   `;
   // Update SEO meta for this review
   document.title = r.title + ' — ' + (r.verdict==='yes'?'Worth It!':r.verdict==='no'?'Skip Aja':'OK, BUT') + ' | GOOPI';
