@@ -403,6 +403,9 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
       @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
       @keyframes pulse{0%,100%{opacity:.18}50%{opacity:.28}}
       @keyframes drift{0%{transform:translateX(0)}50%{transform:translateX(8px)}100%{transform:translateX(0)}}
+      @keyframes float5{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(-2deg)}}
+      @keyframes float6{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+      @keyframes wiggle{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
       .hero-lineart{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
       .hero-lineart .g-books-l{animation:float1 6s ease-in-out infinite}
       .hero-lineart .g-books-r{animation:float2 7s ease-in-out infinite 1s}
@@ -414,6 +417,10 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
       .hero-lineart .g-strip-r{animation:float4 5s ease-in-out infinite 1.5s}
       .hero-lineart .g-open{animation:float2 9s ease-in-out infinite 3s}
       .hero-lineart .g-extras{animation:drift 7s ease-in-out infinite}
+      .hero-lineart .g-center-l{animation:float5 6s ease-in-out infinite 1s}
+      .hero-lineart .g-center-r{animation:float6 5s ease-in-out infinite 2s}
+      .hero-lineart .g-center-top{animation:float3 7s ease-in-out infinite 0.5s}
+      .hero-lineart .g-center-bot{animation:wiggle 8s ease-in-out infinite}
     </style>
     <svg class="hero-lineart" viewBox="0 0 1200 520" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#FBF5EA" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.22">
       <!-- Books left cluster -->
@@ -508,6 +515,56 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
         <circle cx="500" cy="420" r="2" fill="#FBF5EA"/><circle cx="700" cy="420" r="2" fill="#FBF5EA"/>
         <circle cx="150" cy="350" r="2" fill="#FBF5EA"/><circle cx="1050" cy="350" r="2" fill="#FBF5EA"/>
         <circle cx="250" cy="460" r="2" fill="#FBF5EA"/><circle cx="950" cy="460" r="2" fill="#FBF5EA"/>
+      </g>
+      <!-- Center left floating elements -->
+      <g class="g-center-l">
+        <rect x="310" y="150" width="45" height="62" rx="3"/><line x1="310" y1="150" x2="310" y2="212"/><line x1="322" y1="148" x2="322" y2="214"/>
+        <line x1="330" y1="165" x2="348" y2="165"/><line x1="330" y1="175" x2="348" y2="175"/>
+        <rect x="270" y="280" width="38" height="52" rx="3" transform="rotate(10 270 280)"/>
+        <rect x="330" y="310" width="32" height="48" rx="3" transform="rotate(-6 330 310)"/>
+        <path d="M290 420 Q315 408 340 420 Q315 430 290 420Z"/>
+        <path d="M340 420 Q365 408 390 420 Q365 430 340 420Z"/>
+        <line x1="340" y1="406" x2="340" y2="432"/>
+        <path d="M360 140 L362 148 L370 148 L364 152 L366 160 L360 156 L354 160 L356 152 L350 148 L358 148Z"/>
+        <circle cx="280" cy="200" r="18"/><circle cx="280" cy="200" r="7"/>
+        <circle cx="280" cy="186" r="3"/><circle cx="280" cy="214" r="3"/>
+        <circle cx="266" cy="200" r="3"/><circle cx="294" cy="200" r="3"/>
+      </g>
+      <!-- Center right floating elements -->
+      <g class="g-center-r">
+        <rect x="840" y="160" width="45" height="62" rx="3"/><line x1="840" y1="160" x2="840" y2="222"/><line x1="852" y1="158" x2="852" y2="224"/>
+        <line x1="860" y1="175" x2="878" y2="175"/><line x1="860" y1="185" x2="878" y2="185"/>
+        <rect x="870" y="290" width="40" height="55" rx="3" transform="rotate(-8 870 290)"/>
+        <rect x="820" y="310" width="35" height="50" rx="3" transform="rotate(5 820 310)"/>
+        <path d="M820 420 Q845 408 870 420 Q845 430 820 420Z"/>
+        <path d="M870 420 Q895 408 920 420 Q895 430 870 420Z"/>
+        <line x1="870" y1="406" x2="870" y2="432"/>
+        <path d="M840 140 L842 148 L850 148 L844 152 L846 160 L840 156 L834 160 L836 152 L830 148 L838 148Z"/>
+        <circle cx="910" cy="210" r="20"/><circle cx="910" cy="210" r="8"/>
+        <circle cx="910" cy="194" r="3"/><circle cx="910" cy="226" r="3"/>
+        <circle cx="894" cy="210" r="3"/><circle cx="926" cy="210" r="3"/>
+      </g>
+      <!-- Center top near logo -->
+      <g class="g-center-top">
+        <rect x="390" y="110" width="35" height="48" rx="3" transform="rotate(-8 390 110)"/>
+        <rect x="435" y="100" width="30" height="45" rx="3"/>
+        <rect x="730" y="100" width="35" height="48" rx="3" transform="rotate(8 730 100)"/>
+        <rect x="775" y="110" width="30" height="45" rx="3" transform="rotate(-5 775 110)"/>
+        <path d="M550 120 L552 128 L560 128 L554 132 L556 140 L550 136 L544 140 L546 132 L540 128 L548 128Z"/>
+        <path d="M650 115 L652 123 L660 123 L654 127 L656 135 L650 131 L644 135 L646 127 L640 123 L648 123Z"/>
+        <line x1="480" y1="140" x2="540" y2="140" stroke-dasharray="3 5"/>
+        <line x1="660" y1="140" x2="720" y2="140" stroke-dasharray="3 5"/>
+      </g>
+      <!-- Center bottom near search bar -->
+      <g class="g-center-bot">
+        <rect x="395" y="420" width="38" height="52" rx="3" transform="rotate(-5 395 420)"/>
+        <rect x="445" y="430" width="32" height="46" rx="3" transform="rotate(8 445 430)"/>
+        <rect x="720" y="415" width="38" height="52" rx="3" transform="rotate(5 720 415)"/>
+        <rect x="768" y="425" width="32" height="46" rx="3" transform="rotate(-8 768 425)"/>
+        <path d="M560 460 L562 468 L570 468 L564 472 L566 480 L560 476 L554 480 L556 472 L550 468 L558 468Z"/>
+        <path d="M640 455 L642 463 L650 463 L644 467 L646 475 L640 471 L634 475 L636 467 L630 463 L638 463Z"/>
+        <line x1="490" y1="470" x2="545" y2="470" stroke-dasharray="3 5"/>
+        <line x1="655" y1="470" x2="710" y2="470" stroke-dasharray="3 5"/>
       </g>
     </svg>
     <div class="hero-inner">er">er">
