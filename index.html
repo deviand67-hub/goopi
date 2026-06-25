@@ -194,7 +194,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .usb-bar-track{flex:1;height:6px;background:var(--cream-dark);border-radius:100px;overflow:hidden}
 .usb-bar-fill{height:100%;border-radius:100px}
 .usb-bar-num{font-size:.75rem;font-weight:600;width:30px;text-align:right;color:var(--text)}
-.lang-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--cream-dark);border-radius:8px 8px 0 0;padding:4px 4px 0}
+.lang-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:#F0E8D8;border-radius:8px 8px 0 0;padding:4px 4px 0}
 .lang-tab{padding:8px 16px;font-size:.78rem;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-mid);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;font-family:'DM Sans',sans-serif;border-radius:6px 6px 0 0}
 .lang-tab.active{color:var(--brown-dark);border-bottom-color:var(--brown-dark)}
 .lang-tab-panel{display:none;padding:20px 0}
@@ -1148,8 +1148,7 @@ function showDetail(id){
         // Original is Indonesian — single "Beli Buku" section, no tabs needed
         const allLinks=sortBuyLinks([...origLinks,...idLinks]);
         bottomBox='<hr class="detail-divider">'+
-          '<div style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:14px;display:flex;align-items:center;gap:10px">'+
-          'Beli Buku <span class="lang-pill available" style="font-size:.62rem;text-transform:none;letter-spacing:0">📗 Bahasa Indonesia</span></div>'+
+          '<div style="margin-bottom:12px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark)">BAHASA BUKU ' + '<svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#6B8F71\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"2\" y1=\"12\" x2=\"22\" y2=\"12\"/><path d=\"M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z\"/></svg></span></div>'+
           mkLinks(allLinks,'Buku berbahasa Indonesia','var(--brown-dark)');
       } else {
         // Foreign original — show tabs for Original and Indonesian translation
