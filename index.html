@@ -1143,7 +1143,7 @@ function showDetail(id){
     const origLinks=(tr&&tr.originalBuyLinks)||[],idLinks=(tr&&tr.buyLinks)||[];
     const uid='lt_'+r.id,origLang=(tr&&tr.originalLanguage)||'Bahasa Asli';
     const isOrigIndo=origLang.toLowerCase().includes('indonesia');
-    if(tr){
+    if(true){
       if(isOrigIndo){
         // Original is Indonesian — single "Beli Buku" section, no tabs needed
         const allLinks=sortBuyLinks([...origLinks,...idLinks]);
