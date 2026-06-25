@@ -1647,8 +1647,50 @@ document.getElementById('aboutBody').innerHTML=getAbout();
 toggleCatSections('book');
 renderHome();
 </script>
+
+<!-- DONATION MODAL -->
+<div id="donateModal" style="display:none" class="donate-modal-overlay" onclick="closeDonateModal(event)">
+  <div class="donate-modal">
+    <div class="donate-modal-header">
+      <h3>☕ Traktir GOOPI</h3>
+      <button class="donate-modal-close" onclick="closeDonateModalDirect()">✕</button>
+    </div>
+    <div id="donateMethodView" class="donate-modal-body">
+      <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:16px">Pilih metode pembayaran:</p>
+      <div class="donate-method" onclick="showDonateQR('dana')">
+        <div class="donate-method-icon" style="background:#f0f7ff"><svg width="28" height="28" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#118EEA"/><text x="20" y="26" text-anchor="middle" font-size="14" font-weight="bold" fill="white" font-family="sans-serif">D</text></svg></div>
+        <div class="donate-method-info"><div class="donate-method-name">DANA</div><div class="donate-method-desc">Scan QR code DANA</div></div>
+        <span class="donate-method-arrow">→</span>
+      </div>
+      <div class="donate-method" onclick="showDonateQR('gopay')">
+        <div class="donate-method-icon" style="background:#e8f7f0"><svg width="28" height="28" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#00AE4D"/><text x="20" y="26" text-anchor="middle" font-size="12" font-weight="bold" fill="white" font-family="sans-serif">GP</text></svg></div>
+        <div class="donate-method-info"><div class="donate-method-name">GoPay</div><div class="donate-method-desc">Scan QR code GoPay</div></div>
+        <span class="donate-method-arrow">→</span>
+      </div>
+      <div class="donate-method" onclick="showDonateQR('bank')">
+        <div class="donate-method-icon" style="background:#fdf3e8"><svg width="28" height="28" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#C4956A"/><text x="20" y="26" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="sans-serif">BNK</text></svg></div>
+        <div class="donate-method-info"><div class="donate-method-name">Bank Transfer</div><div class="donate-method-desc">Transfer ke rekening bank</div></div>
+        <span class="donate-method-arrow">→</span>
+      </div>
+      <p style="font-size:.72rem;color:var(--text-mid);text-align:center;margin-top:16px">🫶 Rp 2.000 pun SANGAT BERARTI<br><span style="font-family:'Caveat',cursive;font-size:1rem;color:var(--pink)">Terima Kasih Orang Baik :)</span></p>
+    </div>
+    <div id="donateDetailView" style="display:none" class="donate-qr-view">
+      <button class="donate-qr-back" onclick="backToMethods()">← Kembali</button>
+      <div id="donateDetailContent"></div>
+    </div>
+  </div>
+</div>
+
+<footer style="background:var(--brown-dark);padding:24px 40px;text-align:center;margin-top:60px">
+  <div style="font-family:'DM Sans',sans-serif;font-size:.75rem;color:rgba(245,237,214,.5);display:flex;gap:24px;justify-content:center;flex-wrap:wrap">
+    <span style="color:rgba(245,237,214,.8)">© 2025 GOOPI — Good Picks Only</span>
+    <a href="#" onclick="showPage('about')" style="color:rgba(245,237,214,.5);text-decoration:none">About</a>
+    <a href="#" onclick="showPage('contact')" style="color:rgba(245,237,214,.5);text-decoration:none">Contact</a>
+    <a href="#" onclick="showPage('privacy')" style="color:rgba(245,237,214,.5);text-decoration:none">Policy</a>
+  </div>
+</footer>
 </body>
-</html.card{background:var(--white);cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);display:flex;flex-direction:row;align-items:stretch}
+</html>background:var(--white);cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);display:flex;flex-direction:row;align-items:stretch}
 .card:hover{background:var(--cream-dark)}
 .card-cover{width:115px;min-width:115px;max-width:115px;flex-shrink:0;overflow:hidden}
 .card-img{width:120px;height:160px;object-fit:cover;display:block}
