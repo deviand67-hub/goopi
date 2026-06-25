@@ -902,8 +902,8 @@ function showDetail(id){
         const panelOrig='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(origLinks,'Edisi original','var(--brown-dark)')+'</div>';
         const panelId=hasId?'<div id="'+uid+'_id" class="lang-tab-panel">'+mkLinks(idLinks,'Versi terjemahan Indonesia','var(--green)')+'</div>':'';
         bottomBox='<hr class="detail-divider">'+
-          '<div style="margin-bottom:8px">'+
-          '<span style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid)">Bahasa & Beli</span>'+
+          '<div style="margin-bottom:12px">'+
+          '<span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark)">BAHASA BUKU <span style="color:var(--green)">🌐</span></span>'+
           '</div>'+
           '<div class="lang-tabs" data-uid="'+uid+'">'+tabOrig+tabId+'</div>'+
           panelOrig+panelId;
@@ -1049,7 +1049,7 @@ function toggleScoring(){
     const cat = document.getElementById('f-cat').value;
     if(cat === 'book') {
       manualCriteria = [
-        {name:'Kedalaman Isi', score:7, reason:''},
+        {name:'Substance', score:7, reason:''},
         {name:'Readable', score:7, reason:''},
         {name:'Fresh Perspective', score:7, reason:''},
         {name:'Actionable', score:7, reason:''},
