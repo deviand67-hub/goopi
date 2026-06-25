@@ -529,7 +529,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 <!-- CONTACT -->
 <div id="page-contact" class="page">
   <div class="about-wrap">
-    <div class="about-title" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:2.5rem">Contact<span style="color:var(--pink)">•</span></div>
+    <div class="about-title" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:2.5rem">Contact</div>
     <div class="about-tagline">Ada pertanyaan, kolaborasi, atau mau submit review?</div>
     <div class="about-body">
       <p>GOOPI selalu terbuka untuk kolaborasi dan masukan. Kalau kamu punya pertanyaan tentang review, ingin mengajukan rekomendasi buku atau film, atau tertarik untuk berkolaborasi — jangan ragu untuk menghubungi kami.</p>
@@ -543,7 +543,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 <!-- PRIVACY POLICY -->
 <div id="page-privacy" class="page">
   <div class="about-wrap">
-    <div class="about-title" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:2.5rem">Privacy<span style="color:var(--pink)">•</span></div>
+    <div class="about-title" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:2.5rem">Privacy Policy</div>
     <div class="about-tagline">Kebijakan Privasi — Terakhir diperbarui: Juni 2025</div>
     <div class="about-body">
       <p>GOOPI (<strong>thegoopi.com</strong>) berkomitmen untuk melindungi privasi pengunjung. Halaman ini menjelaskan informasi apa yang kami kumpulkan dan bagaimana kami menggunakannya.</p>
@@ -784,7 +784,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const g=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
 const s=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const getPass=()=>g('wi_pass')||'worthit';
-const getAbout=()=>g('wi_about')||'<p>Selamat datang di <strong>GOOPI</strong> — tempat kamu cek apakah sebuah buku atau film benar-benar layak waktu dan uang kamu.</p><p>Tidak ada review berbayar. Hanya opini jujur.</p>';
+const getAbout=()=>g('wi_about')||'<p>GOOPI hadir buat kamu yang sering nanya <em>"worth it gak ya buku ini?"</em> atau <em>"film ini bagus gak sih?"</em> sebelum beli atau nonton.</p><p>Di sini kamu bisa nemuin review yang ditulis dengan hati — bukan sekadar sinopsis, tapi beneran ngebahas apakah sesuatu layak waktu dan uang kamu.</p><p>Karena hidup terlalu singkat untuk buku yang membosankan atau film yang mengecewakan. 🤍</p>';
 
 // Supabase review functions
 let _reviewCache = null;
