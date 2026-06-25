@@ -1255,7 +1255,7 @@ function renderStreamList(){const el=document.getElementById('streamList');if(!e
     </div>
   </div>`).join('')}
 function editStreamLink(i){const s=tempStreamLinks[i];document.getElementById('sl-platform').value=s.platform||'';document.getElementById('sl-type').value=s.type||'subscription';document.getElementById('sl-price').value=s.price||'';document.getElementById('sl-url').value=s.url||'';removeStreamLink(i);}
-function addOrigBuyLink(){const st=document.getElementById('tobl-store').value.trim(),cur=document.getElementById('tobl-currency').value,pr=document.getElementById('tobl-price').value.trim(),u=document.getElementById('tobl-url').value.trim();if(!st)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempOrigBuyLinks.push({store:st,price:fullPrice,url:u});renderOrigBuyList();['tobl-store','tobl-price','tobl-url'].forEach(id=>document.getElementById(id).value='')}
+function addOrigBuyLink(){const st=document.getElementById('tobl-store').value.trim(),cur=document.getElementById('tobl-currency').value,pr=document.getElementById('tobl-price').value.trim(),u=document.getElementById('tobl-url').value.trim(),fmt=document.getElementById('tobl-format').value;if(!st)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempOrigBuyLinks.push({store:st,price:fullPrice,url:u,format:fmt});renderOrigBuyList();['tobl-store','tobl-price','tobl-url'].forEach(id=>document.getElementById(id).value='')}
 function removeOrigBuyLink(i){tempOrigBuyLinks.splice(i,1);renderOrigBuyList()}
 function renderOrigBuyList(){const el=document.getElementById('tlOrigBuyList');if(!el)return;el.innerHTML=tempOrigBuyLinks.map((b,i)=>`<div class="buy-link-item" style="flex-wrap:wrap;gap:6px">
     <span style="flex:1">${storeEmoji(b.store)} <strong>${b.store}</strong> — ${b.price}</span>
@@ -1264,8 +1264,8 @@ function renderOrigBuyList(){const el=document.getElementById('tlOrigBuyList');i
       <button class="buy-link-del" onclick="removeOrigBuyLink(${i})">✕</button>
     </div>
   </div>`).join('')}
-function editOrigBuyLink(i){const b=tempOrigBuyLinks[i];document.getElementById('tobl-store').value=b.store||'';document.getElementById('tobl-price').value=b.price||'';document.getElementById('tobl-url').value=b.url||'';removeOrigBuyLink(i);}
-function addTlBuyLink(){const st=document.getElementById('tbl-store').value.trim(),cur=document.getElementById('tbl-currency').value,pr=document.getElementById('tbl-price').value.trim(),u=document.getElementById('tbl-url').value.trim();if(!st)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempTlBuyLinks.push({store:st,price:fullPrice,url:u});renderTlBuyList();['tbl-store','tbl-price','tbl-url'].forEach(id=>document.getElementById(id).value='')}
+function editOrigBuyLink(i){const b=tempOrigBuyLinks[i];document.getElementById('tobl-store').value=b.store||'';document.getElementById('tobl-price').value=b.price||'';document.getElementById('tobl-url').value=b.url||'';document.getElementById('tobl-format').value=b.format||'';removeOrigBuyLink(i);}
+function addTlBuyLink(){const st=document.getElementById('tbl-store').value.trim(),cur=document.getElementById('tbl-currency').value,pr=document.getElementById('tbl-price').value.trim(),u=document.getElementById('tbl-url').value.trim(),fmt=document.getElementById('tbl-format').value;if(!st)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempTlBuyLinks.push({store:st,price:fullPrice,url:u,format:fmt});renderTlBuyList();['tbl-store','tbl-price','tbl-url'].forEach(id=>document.getElementById(id).value='')}
 function removeTlBuyLink(i){tempTlBuyLinks.splice(i,1);renderTlBuyList()}
 function renderTlBuyList(){const el=document.getElementById('tlBuyList');if(!el)return;el.innerHTML=tempTlBuyLinks.map((b,i)=>`<div class="buy-link-item" style="flex-wrap:wrap;gap:6px">
     <span style="flex:1">${storeEmoji(b.store)} <strong>${b.store}</strong> — ${b.price}</span>
@@ -1274,7 +1274,7 @@ function renderTlBuyList(){const el=document.getElementById('tlBuyList');if(!el)
       <button class="buy-link-del" onclick="removeTlBuyLink(${i})">✕</button>
     </div>
   </div>`).join('')}
-function editTlBuyLink(i){const b=tempTlBuyLinks[i];document.getElementById('tbl-store').value=b.store||'';document.getElementById('tbl-price').value=b.price||'';document.getElementById('tbl-url').value=b.url||'';removeTlBuyLink(i);}
+function editTlBuyLink(i){const b=tempTlBuyLinks[i];document.getElementById('tbl-store').value=b.store||'';document.getElementById('tbl-price').value=b.price||'';document.getElementById('tbl-url').value=b.url||'';document.getElementById('tbl-format').value=b.format||'';removeTlBuyLink(i);}
 
 async function aiSuggestStreaming(){alert('Fitur AI membutuhkan deploy ke server.')}
 async function aiSuggestTranslation(){alert('Fitur AI membutuhkan deploy ke server.')}
