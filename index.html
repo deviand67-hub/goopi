@@ -869,7 +869,7 @@ function showDetail(id){
     const col=c.score>=8?'var(--green)':c.score>=5?'var(--brown-light)':'var(--pink)';
     const reason=c.reason?`<div style="font-size:.7rem;color:var(--text-mid);margin-top:2px;font-style:italic">${c.reason}</div>`:'';
     return`<div class="usb-bar-row" style="align-items:flex-start">
-      <div class="usb-bar-label" style="width:150px;flex-shrink:0">${c.name}${reason}</div>
+      <div class="usb-bar-label" style="width:150px;flex-shrink:0"><strong>${c.name}</strong>${reason}</div>
       <div style="flex:1;padding-top:6px">
         <div class="usb-bar-track"><div class="usb-bar-fill" style="width:${c.score*10}%;background:${col}"></div></div>
       </div>
@@ -902,12 +902,9 @@ function showDetail(id){
         const panelOrig='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(origLinks,'Edisi original','var(--brown-dark)')+'</div>';
         const panelId=hasId?'<div id="'+uid+'_id" class="lang-tab-panel">'+mkLinks(idLinks,'Versi terjemahan Indonesia','var(--green)')+'</div>':'';
         bottomBox='<hr class="detail-divider">'+
-          '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">'+
+          '<div style="margin-bottom:8px">'+
           '<span style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid)">Bahasa & Beli</span>'+
-          '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
-          '<span class="lang-pill">'+origLang+'</span>'+
-          (hasId?'<span class="lang-pill available">✓ Ada Terjemahan ID</span>':'<span class="lang-pill unavailable">Belum Ada Terjemahan</span>')+
-          '</div></div>'+
+          '</div>'+
           '<div class="lang-tabs" data-uid="'+uid+'">'+tabOrig+tabId+'</div>'+
           panelOrig+panelId;
       }
