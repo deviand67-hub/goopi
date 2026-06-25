@@ -989,13 +989,34 @@ function toggleCatSections(cat){const se=document.getElementById('streamingSecti
 
 function addStreamLink(){const p=document.getElementById('sl-platform').value.trim(),t=document.getElementById('sl-type').value,cur=document.getElementById('sl-currency').value,pr=document.getElementById('sl-price').value.trim(),u=document.getElementById('sl-url').value.trim();if(!p)return;const fullPrice=pr?(cur+' '+pr):'';tempStreamLinks.push({platform:p,type:t,price:fullPrice,url:u});renderStreamList();['sl-platform','sl-price','sl-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-type').value='subscription'}
 function removeStreamLink(i){tempStreamLinks.splice(i,1);renderStreamList()}
-function renderStreamList(){const el=document.getElementById('streamList');if(!el)return;el.innerHTML=tempStreamLinks.map((s,i)=>`<div class="stream-admin-item"><span>${platformEmoji(s.platform)} ${s.platform} — ${s.type} ${s.price?'· '+s.price:''}</span><button class="buy-link-del" onclick="removeStreamLink(${i})">✕</button></div>`).join('')}
+function renderStreamList(){const el=document.getElementById('streamList');if(!el)return;el.innerHTML=tempStreamLinks.map((s,i)=>`<div class="stream-admin-item" style="flex-wrap:wrap;gap:6px">
+    <span style="flex:1;min-width:150px">${platformEmoji(s.platform)} <strong>${s.platform}</strong> — ${s.type}${s.price?' · '+s.price:''}</span>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-outline btn-sm" onclick="editStreamLink(${i})">Edit</button>
+      <button class="buy-link-del" onclick="removeStreamLink(${i})">✕</button>
+    </div>
+  </div>`).join('')}
+function editStreamLink(i){const s=tempStreamLinks[i];document.getElementById('sl-platform').value=s.platform||'';document.getElementById('sl-type').value=s.type||'subscription';document.getElementById('sl-price').value=s.price||'';document.getElementById('sl-url').value=s.url||'';removeStreamLink(i);}
 function addOrigBuyLink(){const st=document.getElementById('tobl-store').value.trim(),cur=document.getElementById('tobl-currency').value,pr=document.getElementById('tobl-price').value.trim(),u=document.getElementById('tobl-url').value.trim();if(!st)return;const fullPrice=pr?(cur+' '+pr):'';tempOrigBuyLinks.push({store:st,price:fullPrice,url:u});renderOrigBuyList();['tobl-store','tobl-price','tobl-url'].forEach(id=>document.getElementById(id).value='')}
 function removeOrigBuyLink(i){tempOrigBuyLinks.splice(i,1);renderOrigBuyList()}
-function renderOrigBuyList(){const el=document.getElementById('tlOrigBuyList');if(!el)return;el.innerHTML=tempOrigBuyLinks.map((b,i)=>`<div class="buy-link-item"><span>${storeEmoji(b.store)} ${b.store} — ${b.price}</span><button class="buy-link-del" onclick="removeOrigBuyLink(${i})">✕</button></div>`).join('')}
+function renderOrigBuyList(){const el=document.getElementById('tlOrigBuyList');if(!el)return;el.innerHTML=tempOrigBuyLinks.map((b,i)=>`<div class="buy-link-item" style="flex-wrap:wrap;gap:6px">
+    <span style="flex:1">${storeEmoji(b.store)} <strong>${b.store}</strong> — ${b.price}</span>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-outline btn-sm" onclick="editOrigBuyLink(${i})">Edit</button>
+      <button class="buy-link-del" onclick="removeOrigBuyLink(${i})">✕</button>
+    </div>
+  </div>`).join('')}
+function editOrigBuyLink(i){const b=tempOrigBuyLinks[i];document.getElementById('tobl-store').value=b.store||'';document.getElementById('tobl-price').value=b.price||'';document.getElementById('tobl-url').value=b.url||'';removeOrigBuyLink(i);}
 function addTlBuyLink(){const st=document.getElementById('tbl-store').value.trim(),cur=document.getElementById('tbl-currency').value,pr=document.getElementById('tbl-price').value.trim(),u=document.getElementById('tbl-url').value.trim();if(!st)return;const fullPrice=pr?(cur+' '+pr):'';tempTlBuyLinks.push({store:st,price:fullPrice,url:u});renderTlBuyList();['tbl-store','tbl-price','tbl-url'].forEach(id=>document.getElementById(id).value='')}
 function removeTlBuyLink(i){tempTlBuyLinks.splice(i,1);renderTlBuyList()}
-function renderTlBuyList(){const el=document.getElementById('tlBuyList');if(!el)return;el.innerHTML=tempTlBuyLinks.map((b,i)=>`<div class="buy-link-item"><span>${storeEmoji(b.store)} ${b.store} — ${b.price}</span><button class="buy-link-del" onclick="removeTlBuyLink(${i})">✕</button></div>`).join('')}
+function renderTlBuyList(){const el=document.getElementById('tlBuyList');if(!el)return;el.innerHTML=tempTlBuyLinks.map((b,i)=>`<div class="buy-link-item" style="flex-wrap:wrap;gap:6px">
+    <span style="flex:1">${storeEmoji(b.store)} <strong>${b.store}</strong> — ${b.price}</span>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-outline btn-sm" onclick="editTlBuyLink(${i})">Edit</button>
+      <button class="buy-link-del" onclick="removeTlBuyLink(${i})">✕</button>
+    </div>
+  </div>`).join('')}
+function editTlBuyLink(i){const b=tempTlBuyLinks[i];document.getElementById('tbl-store').value=b.store||'';document.getElementById('tbl-price').value=b.price||'';document.getElementById('tbl-url').value=b.url||'';removeTlBuyLink(i);}
 
 async function aiSuggestStreaming(){alert('Fitur AI membutuhkan deploy ke server.')}
 async function aiSuggestTranslation(){alert('Fitur AI membutuhkan deploy ke server.')}
@@ -1021,7 +1042,39 @@ async function saveReview(){
     console.error('Save error:',e);
   }
 }
-function editReview(id){const r=getReviews().find(x=>x.id===id);if(!r)return;editId=id;document.getElementById('f-cat').value=r.cat;document.getElementById('f-verdict').value=r.verdict||'maybe';document.getElementById('f-rating').value=r.rating;document.getElementById('f-title').value=r.title;document.getElementById('f-author').value=r.author;document.getElementById('f-img').value=r.img||'';document.getElementById('f-excerpt').value=r.excerpt||'';document.getElementById('f-body').value=r.body||'';tempStreamLinks=[...(r.streamLinks||[])];renderStreamList();tempTlBuyLinks=[...((r.translation&&r.translation.buyLinks)||[])];renderTlBuyList();tempOrigBuyLinks=[...((r.translation&&r.translation.originalBuyLinks)||[])];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value=(r.translation&&r.translation.originalLanguage)||'';if(tlA)tlA.value=(r.translation&&r.translation.hasIndonesian)||'';toggleCatSections(r.cat);document.getElementById('formTitle').textContent='Edit Review';switchTab('add',document.querySelector('.admin-tab'));window.scrollTo(0,0)}
+function editReview(id){
+  const r=getReviews().find(x=>x.id===id);if(!r)return;editId=id;
+  document.getElementById('f-cat').value=r.cat;
+  document.getElementById('f-verdict').value=r.verdict||'maybe';
+  document.getElementById('f-rating').value=r.rating;
+  document.getElementById('f-title').value=r.title;
+  document.getElementById('f-author').value=r.author;
+  document.getElementById('f-img').value=r.img||'';
+  document.getElementById('f-excerpt').value=r.excerpt||'';
+  document.getElementById('f-body').value=r.body||'';
+  // Restore genre
+  const fgi=document.getElementById('f-genre-input');
+  if(fgi)fgi.value=r.genre||(r.scoring&&r.scoring.genre)||'';
+  // Restore scoring
+  if(r.scoring&&r.scoring.criteria&&r.scoring.criteria.length){
+    manualCriteria=[...r.scoring.criteria.map(c=>({...c}))];
+    document.getElementById('manualScoring').style.display='block';
+    renderScoringRows();
+  }
+  // Restore links
+  tempStreamLinks=[...(r.streamLinks||r.stream_links||[])];renderStreamList();
+  tempTlBuyLinks=[...((r.translation&&r.translation.buyLinks)||[])];renderTlBuyList();
+  tempOrigBuyLinks=[...((r.translation&&r.translation.originalBuyLinks)||[])];renderOrigBuyList();
+  const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');
+  if(tlO)tlO.value=(r.translation&&r.translation.originalLanguage)||'';
+  if(tlA)tlA.value=(r.translation&&r.translation.hasIndonesian)||'';
+  // Store existing scoring to preserve it
+  window._lastScoring=r.scoring||null;
+  toggleCatSections(r.cat);
+  document.getElementById('formTitle').textContent='Edit Review';
+  switchTab('add',document.querySelector('.admin-tab'));
+  window.scrollTo(0,0);
+}
 async function deleteReview(id){if(!confirm('Hapus review ini?'))return;try{await deleteReview_db(id);await renderTable();await renderHome();}catch(e){alert('Gagal hapus: '+e.message)}}
 function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';document.getElementById('f-rating').value='5';tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI();manualCriteria=[];document.getElementById('manualScoring').style.display='none';const gi=document.getElementById('f-genre-input');if(gi)gi.value='';}
 async function renderTable(){
