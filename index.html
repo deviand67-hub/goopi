@@ -1575,6 +1575,15 @@ function copyToClipboard(text, label){
   });
 }
 
+function parseBody(text){
+  return (text||'').split('\n').filter(l=>l.trim()).map(line=>{
+    if(line.startsWith('[QUOTE:')&&line.endsWith(']')){
+      return`<div class="detail-pullquote">${line.slice(7,-1).trim()}</div>`;
+    }
+    return`<p>${line}</p>`;
+  }).join('');
+}
+
 function toggleReviewLang(){
   const wrap=document.getElementById('reviewBodyWrap');
   const btn=document.getElementById('langSwitch');
