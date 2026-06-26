@@ -347,6 +347,19 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .donate-amount-tag{background:transparent;border:none;padding:0;font-size:.95rem;font-weight:600;color:var(--text-mid);line-height:1.6;flex:1;min-width:160px}
 .donate-btn{display:inline-flex;align-items:center;gap:8px;background:var(--pink);color:var(--white);padding:13px 28px;border-radius:100px;font-size:.95rem;font-weight:700;text-decoration:none;transition:all .25s;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(212,116,140,.35);white-space:nowrap;flex-shrink:0}
 .donate-btn:hover{background:#c45f7a;transform:translateY(-2px);box-shadow:0 6px 20px rgba(212,116,140,.45)}
+/* BILINGUAL SYSTEM */
+.review-lang-toggle{display:flex;align-items:center;gap:10px;margin-bottom:24px;padding:10px 14px;background:var(--cream-dark);border-radius:100px;width:fit-content}
+.review-lang-toggle span{font-size:.75rem;font-weight:600;color:var(--text-mid);letter-spacing:.5px}
+.lang-switch{position:relative;width:44px;height:24px;background:var(--border);border-radius:100px;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
+.lang-switch.en{background:var(--green)}
+.lang-switch::after{content:'';position:absolute;width:18px;height:18px;background:white;border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.lang-switch.en::after{transform:translateX(20px)}
+.review-body-id{display:block}
+.review-body-en{display:none}
+.review-body-en-active .review-body-id{display:none}
+.review-body-en-active .review-body-en{display:block}
+.en-badge{display:inline-block;background:var(--green);color:white;font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.5px;vertical-align:middle;margin-left:6px}
+
 .donate-modal-overlay{position:fixed;inset:0;background:rgba(42,26,14,.7);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px}
 .donate-modal{background:var(--cream-light);border-radius:16px;width:100%;max-width:380px;overflow:hidden;border-top:3px solid var(--pink)}
 .donate-modal-header{background:var(--brown-dark);padding:20px 24px;display:flex;align-items:center;justify-content:space-between}
@@ -949,6 +962,11 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
             <label>Genre</label>
             <input type="text" id="f-genre-input" placeholder="e.g. Self-Help / Produktivitas">
           </div>
+          <div style="margin-top:20px;padding:16px;background:var(--cream-dark);border-radius:10px;border-left:3px solid var(--green)">
+            <div style="font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:14px">🌐 English Content (Opsional — untuk pasar US)</div>
+            <div class="form-group"><label>Excerpt (EN)</label><textarea id="f-excerpt-en" rows="2" placeholder="English hook, max 120 chars"></textarea></div>
+            <div class="form-group"><label>Review Body (EN)</label><textarea id="f-body-en" rows="8" placeholder="English review min 400 words. Use [QUOTE: text] for pullquotes."></textarea></div>
+          </div>
           <div class="form-group">
             <label style="display:flex;align-items:center;justify-content:space-between">
               <span>Scoring per Kriteria (opsional)</span>
@@ -1218,14 +1236,35 @@ function showDetail(id){
       </div>
     </div>
     ${verdictSection}
-    <div class="detail-body">${bodyHtml}</div>
+    ${(()=>{
+      const hasEn=!!(r.body_en&&r.body_en.trim());
+      const enHtml=hasEn?parseBody(r.body_en):'';
+      const toggle=hasEn?`<div class="review-lang-toggle">
+        <span style="font-size:.78rem;font-weight:600;color:var(--text-mid)">🇮🇩 Indonesia</span>
+        <button class="lang-switch" id="langSwitch" onclick="toggleReviewLang()"></button>
+        <span style="font-size:.78rem;font-weight:600;color:var(--text-mid)">🇺🇸 English</span>
+      </div>`:'';
+      return toggle+
+        '<div id="reviewBodyWrap">'+
+        '<div class="review-body-id"><div class="detail-body">'+bodyHtml+'</div></div>'+
+        (hasEn?'<div class="review-body-en"><div class="detail-body">'+enHtml+'</div></div>':'')+
+        '</div>';
+    })()}
     ${bottomBox}
     ${donateBox}
   `;
   // Update SEO meta for this review
   document.title = r.title + ' — ' + (r.verdict==='yes'?'Worth It!':r.verdict==='no'?'Skip Aja':'OK, BUT') + ' | GOOPI';
   const desc = (r.excerpt||'').slice(0,150);
-  document.querySelector('meta[name="description"]').setAttribute('content', desc + ' — Review lengkap di GOOPI.');
+  const hasEnContent=r.body_en&&r.body_en.trim().length>0;
+  const seoDesc=(r.excerpt||'').slice(0,150);
+  document.querySelector('meta[name="description"]').setAttribute('content', seoDesc + ' — Review lengkap di GOOPI.');
+  if(hasEnContent){
+    // Add hreflang for bilingual SEO
+    let hreflang=document.getElementById('hreflang-en');
+    if(!hreflang){hreflang=document.createElement('link');hreflang.id='hreflang-en';hreflang.rel='alternate';hreflang.hreflang='en';document.head.appendChild(hreflang);}
+    hreflang.href='https://www.thegoopi.com/?id='+r.id+'&lang=en';
+  }
   document.querySelector('meta[property="og:title"]').setAttribute('content', r.title + ' | GOOPI');
   document.querySelector('meta[property="og:description"]').setAttribute('content', desc);
   if(r.img){document.querySelector('meta[property="og:image"]').setAttribute('content', r.img);}
@@ -1286,7 +1325,9 @@ async function saveReview(){
   if(!title||!author||!body){document.getElementById('formErr').textContent='Judul, penulis, dan review wajib diisi.';return}
   document.getElementById('formErr').textContent='';
   const cat=document.getElementById('f-cat').value;
-  const data={title,author,body,cat,genre:document.getElementById('f-genre-input')?document.getElementById('f-genre-input').value.trim():'',verdict:document.getElementById('f-verdict').value,rating:parseInt(document.getElementById('f-rating').value),img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),scoring:window._lastScoring||getManualScoring()||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
+  const data={title,author,body,cat,genre:document.getElementById('f-genre-input')?document.getElementById('f-genre-input').value.trim():'',verdict:document.getElementById('f-verdict').value,rating:parseInt(document.getElementById('f-rating').value),img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),
+    excerpt_en:excerptEn,
+    body_en:bodyEn,scoring:window._lastScoring||getManualScoring()||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
   window._lastScoring=null;
   const isUpdate=!!editId;
   if(editId){data.id=editId;editId=null;}
@@ -1312,6 +1353,10 @@ function editReview(id){
   document.getElementById('f-img').value=r.img||'';
   document.getElementById('f-excerpt').value=r.excerpt||'';
   document.getElementById('f-body').value=r.body||'';
+  const fExcerptEn=document.getElementById('f-excerpt-en');
+  const fBodyEn=document.getElementById('f-body-en');
+  if(fExcerptEn)fExcerptEn.value=r.excerpt_en||'';
+  if(fBodyEn)fBodyEn.value=r.body_en||'';
   // Restore genre
   const fgi=document.getElementById('f-genre-input');
   if(fgi)fgi.value=r.genre||(r.scoring&&r.scoring.genre)||'';
@@ -1526,6 +1571,14 @@ function copyToClipboard(text, label){
   }).catch(()=>{
     prompt('Copy nomor ini:', text);
   });
+}
+
+function toggleReviewLang(){
+  const wrap=document.getElementById('reviewBodyWrap');
+  const btn=document.getElementById('langSwitch');
+  if(!wrap||!btn)return;
+  wrap.classList.toggle('review-body-en-active');
+  btn.classList.toggle('en');
 }
 
 function copyPrompt(){
