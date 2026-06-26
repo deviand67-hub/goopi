@@ -1657,14 +1657,66 @@ async function loadTop10(forceRefresh){
   fetchTop10('books');fetchTop10('movies');top10Cache.loadedAt=Date.now();
 }
 async function fetchTop10(type){
-  const isBook=type==='books';
-  const books=[{rank:1,title:"Atomic Habits",author:"James Clear",genre:"Self-Help",description:"Panduan membangun kebiasaan yang terjual 15 juta kopi",rating:"4.4/5",source:"Goodreads Bestseller"},{rank:2,title:"The Midnight Library",author:"Matt Haig",genre:"Fiksi Sastra",description:"Novel tentang kemungkinan hidup lain yang bisa kita jalani",rating:"3.9/5",source:"Goodreads Trending"},{rank:3,title:"Ikigai",author:"Héctor García",genre:"Self-Help",description:"Rahasia panjang umur dan kebahagiaan dari Jepang",rating:"3.8/5",source:"Populer Indonesia"},{rank:4,title:"Laut Bercerita",author:"Leila S. Chudori",genre:"Novel Sejarah",description:"Mahakarya tentang aktivis yang hilang di era Orde Baru",rating:"4.5/5",source:"Top Indonesia"},{rank:5,title:"The Power of Now",author:"Eckhart Tolle",genre:"Spiritualitas",description:"Panduan hidup di momen sekarang",rating:"4.1/5",source:"NYT Bestseller"},{rank:6,title:"Educated",author:"Tara Westover",genre:"Memoar",description:"Kisah nyata perempuan yang belajar tanpa sekolah formal",rating:"4.5/5",source:"NYT Bestseller"},{rank:7,title:"Sapiens",author:"Yuval Noah Harari",genre:"Sejarah",description:"Sejarah singkat umat manusia",rating:"4.4/5",source:"Global Bestseller"},{rank:8,title:"The Alchemist",author:"Paulo Coelho",genre:"Fiksi Filosofis",description:"Novel tentang mimpi yang terjual 65 juta kopi",rating:"3.9/5",source:"All-time Bestseller"},{rank:9,title:"Bumi Manusia",author:"Pramoedya Ananta Toer",genre:"Novel Sejarah",description:"Mahakarya sastra Indonesia yang wajib dibaca",rating:"4.6/5",source:"Top Indonesia"},{rank:10,title:"Deep Work",author:"Cal Newport",genre:"Produktivitas",description:"Cara bekerja fokus di era digital",rating:"4.2/5",source:"Goodreads Popular"}];
-  const movies=[{rank:1,title:"Dune: Part Two",director:"Denis Villeneuve",genre:"Sci-Fi",description:"Sekuel epik yang melampaui film pertamanya",rating:"8.5/10",source:"IMDb",year:"2024"},{rank:2,title:"Oppenheimer",director:"Christopher Nolan",genre:"Drama",description:"Kisah bapak bom atom, 7 Oscar",rating:"8.3/10",source:"Box Office",year:"2023"},{rank:3,title:"Past Lives",director:"Celine Song",genre:"Romance",description:"Film debut yang menyentuh tentang cinta yang tak terwujud",rating:"7.9/10",source:"A24",year:"2023"},{rank:4,title:"Poor Things",director:"Yorgos Lanthimos",genre:"Fantasy",description:"Pemenang Golden Lion Venice",rating:"7.9/10",source:"Oscar Winner",year:"2023"},{rank:5,title:"Killers of the Flower Moon",director:"Martin Scorsese",genre:"Drama",description:"Epik tentang pembunuhan sistematis suku Osage",rating:"7.7/10",source:"Apple TV+",year:"2023"},{rank:6,title:"Interstellar",director:"Christopher Nolan",genre:"Sci-Fi",description:"Klasik modern tentang cinta dan fisika",rating:"8.7/10",source:"IMDb Top 250",year:"2014"},{rank:7,title:"Parasite",director:"Bong Joon-ho",genre:"Thriller",description:"Film Korea pertama pemenang Oscar Best Picture",rating:"8.5/10",source:"IMDb Top 250",year:"2019"},{rank:8,title:"Everything Everywhere All at Once",director:"Daniels",genre:"Sci-Fi",description:"7 Oscar termasuk Best Picture",rating:"7.8/10",source:"Oscar Winner",year:"2022"},{rank:9,title:"Inception",director:"Christopher Nolan",genre:"Thriller",description:"Mimpi dalam mimpi yang selalu di watchlist",rating:"8.8/10",source:"IMDb Top 250",year:"2010"},{rank:10,title:"The Grand Budapest Hotel",director:"Wes Anderson",genre:"Comedy",description:"Visual paling ikonik dalam sinema modern",rating:"8.1/10",source:"IMDb",year:"2014"}];
-  const items=isBook?books:movies;
-  top10Cache[type]=items;
-  await new Promise(r=>setTimeout(r,300));
-  renderTop10(type,items);
+  const isBook = type==='books';
+  const container = document.getElementById('top10Container');
+  const lastUpdated = document.getElementById('top10Updated');
+
+  // Show loading
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-mid)">⏳ Memuat data terbaru...</div>';
+
+  try {
+    const res = await fetch('/api/inspirasi?type='+(isBook?'books':'movies'));
+    const json = await res.json();
+
+    if(!json.success) throw new Error(json.error||'Gagal fetch data');
+
+    const data = json.data;
+    if(lastUpdated) lastUpdated.textContent = 'Update: '+new Date(json.updated).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+
+    if(isBook){
+      container.innerHTML = data.map((b,i) => `
+        <div class="top10-item">
+          <div class="top10-rank">${i+1}</div>
+          ${b.cover ? `<img src="${b.cover}" class="top10-cover" alt="${b.title}" onerror="this.style.display='none'">` : '<div class="top10-cover-placeholder">📚</div>'}
+          <div class="top10-info">
+            <div class="top10-title">${b.title}</div>
+            <div class="top10-author">${b.author}</div>
+            <div class="top10-meta">
+              <span class="top10-badge">${b.category}</span>
+              ${b.weeksOnList > 1 ? `<span class="top10-badge" style="background:var(--cream-dark)">${b.weeksOnList} weeks on list</span>` : ''}
+            </div>
+            ${b.description ? `<div class="top10-desc">${b.description.slice(0,100)}...</div>` : ''}
+          </div>
+          ${b.buyLink ? `<a href="${b.buyLink}" target="_blank" class="top10-review-btn">Amazon →</a>` : ''}
+        </div>
+      `).join('');
+    } else {
+      container.innerHTML = data.map((m,i) => `
+        <div class="top10-item">
+          <div class="top10-rank">${i+1}</div>
+          ${m.cover ? `<img src="${m.cover}" class="top10-cover" alt="${m.title}" onerror="this.style.display='none'">` : '<div class="top10-cover-placeholder">🎬</div>'}
+          <div class="top10-info">
+            <div class="top10-title">${m.title}</div>
+            <div class="top10-meta">
+              <span class="top10-badge">⭐ ${m.rating?.toFixed(1)||'N/A'}</span>
+              ${m.releaseDate ? `<span class="top10-badge" style="background:var(--cream-dark)">${m.releaseDate.slice(0,4)}</span>` : ''}
+            </div>
+            ${m.overview ? `<div class="top10-desc">${m.overview.slice(0,100)}...</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+  } catch(err) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-mid)">
+      <div style="font-size:2rem;margin-bottom:8px">⚠️</div>
+      <div style="font-weight:600;margin-bottom:4px">Gagal memuat data</div>
+      <div style="font-size:.8rem">${err.message}</div>
+      <div style="font-size:.75rem;margin-top:8px;color:var(--text-mid)">Pastikan API key sudah diset di Vercel Environment Variables</div>
+    </div>`;
+  }
 }
+
+
 function renderTop10(type,items){
   const el=document.getElementById('top10-'+type);if(!items||!items.length){el.innerHTML='<div class="top10-empty">Tidak ada data.</div>';return}
   const reviewed=getReviews().map(r=>r.title.toLowerCase()),rankCls=i=>['gold','silver','bronze'][i]||'',isBook=type==='books';
