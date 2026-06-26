@@ -768,15 +768,15 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
       <div class="hero-eyebrow">Good Picks Only</div>
       
       <div class="hero-search">
-        <input type="text" id="heroSearch" placeholder="Cek Dulu Yuk... (Book / Movie)" onkeydown="if(event.key==='Enter')doHeroSearch()">
+        <input type="text" id="heroSearch" placeholder="Check This Out... (Book / Movie)" onkeydown="if(event.key==='Enter')doHeroSearch()">
         <button onclick="doHeroSearch()" style="font-size:1rem;padding:14px 22px">🔍</button>
       </div>
     </div>
   </div>
   <div class="filter-bar">
-    <button class="filter-chip active" onclick="setFilter('all',this)"><span class="pip" style="background:var(--brown-dark)"></span>Semua</button>
-    <button class="filter-chip" onclick="setFilter('book',this)"><span class="pip" style="background:var(--green)"></span>Buku</button>
-    <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Movie</button>
+    <button class="filter-chip active" onclick="setFilter('all',this)"><span class="pip" style="background:var(--brown-dark)"></span>All</button>
+    <button class="filter-chip" onclick="setFilter('book',this)"><span class="pip" style="background:var(--green)"></span>Books</button>
+    <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Movies</button>
   </div>
   <div class="main-section">
     <div class="section-label">Review Terbaru</div>
@@ -886,13 +886,25 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
           <div style="background:var(--cream-dark);border-radius:8px;padding:14px;margin-bottom:16px">
             <div style="font-size:.72rem;font-weight:600;color:var(--text-mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">💡 Atau generate manual via Claude.ai</div>
             <div id="promptBox" style="display:none">
-              <div style="background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">Tulis review [buku/film] "[judul]" oleh [penulis/sutradara] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI. Jujur, ada opini personal, ada kritiknya juga.
+              <div style="background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">Tulis review [buku/film] "[judul]" oleh [penulis/sutradara] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
+
+Panduan menulis review yang dipercaya:
+- Ceritakan pengalaman pribadi yang spesifik — kapan dan dalam kondisi apa kamu baca/nonton
+- Jujur ada kritiknya — minimal 1-2 hal yang kurang, ini yang bikin review kredibel
+- Spesifik, bukan generik — sebut scene/chapter/momen tertentu yang berkesan
+- Tegas di verdict — jangan abu-abu
+- Sertakan "Cocok untuk..." dan "Skip kalau..." di akhir body
 
 Berikan dalam format ini:
 
-EXCERPT: (1 kalimat hook, max 120 karakter)
+EXCERPT: (1 kalimat hook yang bikin penasaran, max 120 karakter)
 
-BODY: (min 400 kata, paragraf dipisah baris baru, sisipkan [QUOTE: teks] untuk 1 pull-quote terbaik)
+BODY: (min 500 kata, paragraf dipisah baris baru, wajib ada:
+- Paragraf 1: konteks personal — kapan/kondisi apa kamu konsumsi ini
+- Paragraf 2-4: isi/cerita tanpa spoiler, apa yang berkesan dan kenapa
+- Paragraf 5: kritik jujur — apa yang kurang atau mengecewakan
+- Paragraf 6: "Cocok untuk kamu yang... / Skip kalau kamu..."
+- Sisipkan [QUOTE: teks] untuk 1 pull-quote terbaik dari buku/film)
 
 GENRE: (max 3 kata, bahasa Indonesia)
 
@@ -901,11 +913,11 @@ RATING: (angka 1-5)
 VERDICT: (pilih: yes / maybe / no)
 
 SCORING:
-- Kedalaman Isi: [1-10] — [alasan]
-- Enak Dibaca: [1-10] — [alasan]
-- Ide Segar: [1-10] — [alasan]
-- Langsung Bisa Dipraktikkan: [1-10] — [alasan]
-- Worth the Price: [1-10] — [alasan]
+- Substance: [1-10] — [alasan spesifik]
+- Readable: [1-10] — [alasan spesifik]
+- Fresh Perspective: [1-10] — [alasan spesifik]
+- Actionable: [1-10] — [alasan spesifik]
+- Worth the Price: [1-10] — [alasan spesifik]
 
 BAHASA ORIGINAL: (bahasa apa)
 
@@ -921,7 +933,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
             <div class="step-header"><span class="step-num">1</span><span class="step-title">Info Dasar</span></div>
             <div class="step-sub">Isi judul dan pilih kategori</div>
             <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="ai-title" placeholder="e.g. Atomic Habits"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="ai-author" placeholder="e.g. James Clear"></div></div>
-            <div class="form-row"><div class="form-group"><label>Kategori</label><select id="ai-cat" onchange="toggleCatSections(this.value)"><option value="book">Buku</option><option value="movie">Movie</option></select></div><div class="form-group"><label>Tone</label><select id="ai-tone"><option value="casual">Santai</option><option value="critical">Kritis</option><option value="hype">Hype</option></select></div></div>
+            <div class="form-row"><div class="form-group"><label>Kategori</label><select id="ai-cat" onchange="toggleCatSections(this.value)"><option value="book">Books</option><option value="movie">Movies</option></select></div><div class="form-group"><label>Tone</label><select id="ai-tone"><option value="casual">Santai</option><option value="critical">Kritis</option><option value="hype">Hype</option></select></div></div>
             <button class="btn btn-primary" id="btnStep1" onclick="aiStep1()">Cari Data & Buat Skor →</button>
             <div id="step1Status" style="margin-top:10px;font-size:.78rem;display:none;color:var(--brown-dark)">Mencari data...</div>
           </div>
@@ -943,7 +955,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
         <div class="admin-card">
           <h3 id="formTitle">Tambah Review</h3>
           <div class="form-row-3">
-            <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">Buku</option><option value="movie">Movie</option></select></div>
+            <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">Books</option><option value="movie">Movies</option></select></div>
             <div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
             <div class="form-group"><label>Rating</label><select id="f-rating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div>
           </div>
@@ -1025,7 +1037,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
           <div class="top10-header">
             <div><div class="top10-title">Inspirasi Hari Ini</div><div class="top10-date" id="top10Date"></div></div>
             <div style="display:flex;gap:8px;align-items:center">
-              <div class="top10-tabs"><button class="top10-tab active" onclick="switchTop10('books',this)">Buku</button><button class="top10-tab" onclick="switchTop10('movies',this)">Movie</button>
+              <div class="top10-tabs"><button class="top10-tab active" onclick="switchTop10('books',this)">Books</button><button class="top10-tab" onclick="switchTop10('movies',this)">Movies</button>
               <button class="top10-tab" onclick="switchTop10('indonesia',this)">🇮🇩 Indonesia</button></div>
               <button class="top10-refresh" onclick="loadTop10(true)">↺ Refresh</button>
             </div>
@@ -1125,7 +1137,7 @@ function renderCards(reviews,tid){
     const bgColor=r.cat==='book'?'#E8F0E9':'#FAE8ED';
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
-    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'Buku':'Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="rating-stars">${'★'.repeat(r.rating)}${'\u2606'.repeat(5-r.rating)}</span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
+    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'Book':'Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="rating-stars">${'★'.repeat(r.rating)}${'\u2606'.repeat(5-r.rating)}</span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
   }).join('')}
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
@@ -1157,7 +1169,7 @@ function showDetail(id){
   }).join(''):'';
 
   const mkLinks=(links,note,color)=>links&&links.length
-    ?'<div class="buy-list">'+sortBuyLinks(links).map((b,i)=>{const note=b.format||b.note||'';return '<div class="buy-item"><div class="buy-store"><div class="store-logo">'+storeEmoji(b.store)+'</div><div><div class="store-name">'+b.store+(i===0?' <span class="cheapest-tag">Termurah</span>':'')+'</div><div class="store-note">'+note+'</div></div></div><div class="buy-price" style="color:'+color+'">'+b.price+'</div><a href="'+b.url+'" target="_blank" class="buy-btn" style="background:'+color+'">Beli →</a></div>'}).join('')+'</div>'
+    ?'<div class="buy-list">'+sortBuyLinks(links).map((b,i)=>{const note=b.format||b.note||'';return '<div class="buy-item"><div class="buy-store"><div class="store-logo">'+storeEmoji(b.store)+'</div><div><div class="store-name">'+b.store+(i===0?' <span class="cheapest-tag">Best Price</span>':'')+'</div><div class="store-note">'+note+'</div></div></div><div class="buy-price" style="color:'+color+'">'+b.price+'</div><a href="'+b.url+'" target="_blank" class="buy-btn" style="background:'+color+'">Buy →</a></div>'}).join('')+'</div>'
     :'<div class="no-links-msg">Belum ada link tersedia.</div>';
 
   let bottomBox='';
@@ -1170,21 +1182,21 @@ function showDetail(id){
       if(isOrigIndo){
         // Original is Indonesian — show single "Bahasa Indonesia" tab
         const allLinks=sortBuyLinks([...origLinks,...idLinks]);
-        const tabIndo='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">Bahasa Indonesia</button>';
+        const tabIndo='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">Indonesian</button>';
         const panelIndo='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(allLinks,'','var(--brown-dark)')+'</div>';
         bottomBox='<hr class="detail-divider">'+
-          '<div style="margin-bottom:12px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">BAHASA BUKU <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span></div>'+
+          '<div style="margin-bottom:12px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">BOOK LANGUAGE <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span></div>'+
           '<div class="lang-tabs" data-uid="'+uid+'">'+tabIndo+'</div>'+
           panelIndo;
       } else {
         // Foreign original — show tabs for Original and Indonesian translation
         const tabOrig='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">'+origLang+'</button>';
-        const tabId='<button class="lang-tab" data-uid="'+uid+'" data-tab="id" onclick="switchLangTabEl(this)">Bahasa Indonesia</button>';
+        const tabId='<button class="lang-tab" data-uid="'+uid+'" data-tab="id" onclick="switchLangTabEl(this)">Indonesian</button>';
         const panelOrig='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(origLinks,'Edisi original','var(--brown-dark)')+'</div>';
         const panelId='<div id="'+uid+'_id" class="lang-tab-panel">'+(hasId?mkLinks(idLinks,'Versi terjemahan Indonesia','var(--green)'):'<div class="no-links-msg">Belum ada terjemahan bahasa Indonesia.</div>')+'</div>';
         bottomBox='<hr class="detail-divider">'+
           '<div style="margin-bottom:12px">'+
-          '<span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">BAHASA BUKU <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>'+
+          '<span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">BOOK LANGUAGE <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>'+
           '</div>'+
           '<div class="lang-tabs" data-uid="'+uid+'">'+tabOrig+tabId+'</div>'+
           panelOrig+panelId;
@@ -1213,15 +1225,15 @@ function showDetail(id){
     <div class="donate-box">
       <div class="donate-box-top">
         <span class="donate-emoji">☕</span>
-        <h4>Review Ini Membantu?</h4>
-        <p>Kopi kecil darimu bikin kami semangat terus nulis.</p>
+        <h4>Did This Review Help?</h4>
+        <p>A small coffee from you keeps us writing more reviews.</p>
       </div>
       <div class="donate-box-bottom">
         <div class="donate-amounts">
-          <span class="donate-amount-tag">🫶 Rp 2.000 pun SANGAT BERARTI<br><span style="font-family:'Caveat',cursive;font-size:1.5rem;font-weight:700;color:var(--pink)">Terima Kasih Orang Baik :)</span></span>
+          <span class="donate-amount-tag">🫶 Even Rp 2,000 MEANS A LOT<br><span style="font-family:'Caveat',cursive;font-size:1.5rem;font-weight:700;color:var(--pink)">Thank You, Kind Soul :)</span></span>
         </div>
         <button onclick="openDonateModal()" class="donate-btn" style="cursor:pointer">
-          Traktir GOOPI ☕
+          Support GOOPI ☕
         </button>
       </div>
     </div>
@@ -1231,7 +1243,7 @@ function showDetail(id){
     <div class="detail-hero" style="background:${bg};border-radius:4px;padding:28px;margin-bottom:36px">
       <div class="detail-cover">${cover}</div>
       <div class="detail-info">
-        <div class="detail-cat">${r.cat==='book'?'Buku':'Movie'}</div>
+        <div class="detail-cat">${r.cat==='book'?'Book':'Movie'}</div>
         <div class="detail-title">${r.title}</div>
         <div class="detail-author">oleh ${r.author}</div>
         <div class="detail-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
@@ -1392,7 +1404,7 @@ async function renderTable(){
   const reviews=getReviews(),t=document.getElementById('adminTable');
   if(!reviews.length){t.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-mid)">Belum ada review.</div>';return}
   const vMap={yes:'Worth It',no:'Skip',maybe:'OK, BUT'};
-  t.innerHTML=reviews.map(r=>`<div class="table-row"><span><strong>${r.title}</strong><br><small style="color:var(--text-mid)">${r.author}</small></span><span>${r.cat==='book'?'Buku':'Movie'}</span><span>${'★'.repeat(r.rating)}</span><span>${vMap[r.verdict]||'—'}</span><div class="tbl-actions"><button class="btn btn-outline btn-sm" onclick="editReview('${r.id}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteReview('${r.id}')">Hapus</button></div></div>`).join('');
+  t.innerHTML=reviews.map(r=>`<div class="table-row"><span><strong>${r.title}</strong><br><small style="color:var(--text-mid)">${r.author}</small></span><span>${r.cat==='book'?'Book':'Movie'}</span><span>${'★'.repeat(r.rating)}</span><span>${vMap[r.verdict]||'—'}</span><div class="tbl-actions"><button class="btn btn-outline btn-sm" onclick="editReview('${r.id}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteReview('${r.id}')">Hapus</button></div></div>`).join('');
 }
 function saveAbout(){const txt=document.getElementById('s-about').value.trim();const html=txt.split('\n\n').filter(Boolean).map(p=>`<p>${p}</p>`).join('');s('wi_about',html);document.getElementById('aboutBody').innerHTML=html;alert('Tersimpan!')}
 function changePw(){const p1=document.getElementById('s-pw1').value,p2=document.getElementById('s-pw2').value;if(!p1||p1.length<4){document.getElementById('pwErr').textContent='Min. 4 karakter.';return}if(p1!==p2){document.getElementById('pwErr').textContent='Tidak sama.';return}s('wi_pass',p1);document.getElementById('pwErr').textContent='';document.getElementById('s-pw1').value='';document.getElementById('s-pw2').value='';alert('Password diperbarui!')}
@@ -1881,7 +1893,7 @@ renderHome();
         <div class="donate-method-info"><div class="donate-method-name">Bank Transfer</div><div class="donate-method-desc">Transfer ke rekening bank</div></div>
         <span class="donate-method-arrow">→</span>
       </div>
-      <p style="font-size:.72rem;color:var(--text-mid);text-align:center;margin-top:16px">🫶 Rp 2.000 pun SANGAT BERARTI<br><span style="font-family:'Caveat',cursive;font-size:1rem;color:var(--pink)">Terima Kasih Orang Baik :)</span></p>
+      <p style="font-size:.72rem;color:var(--text-mid);text-align:center;margin-top:16px">🫶 Even Rp 2,000 MEANS A LOT<br><span style="font-family:'Caveat',cursive;font-size:1rem;color:var(--pink)">Thank You, Kind Soul :)</span></p>
     </div>
     <div id="donateDetailView" style="display:none" class="donate-qr-view">
       <button class="donate-qr-back" onclick="backToMethods()">← Kembali</button>
