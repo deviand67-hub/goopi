@@ -1658,8 +1658,8 @@ async function loadTop10(forceRefresh){
 }
 async function fetchTop10(type){
   const isBook = type==='books';
-  const container = document.getElementById('top10Container');
-  const lastUpdated = document.getElementById('top10Updated');
+  const container = document.getElementById('top10-'+type);
+  if(!container) return;
 
   // Show loading
   container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-mid)">⏳ Memuat data terbaru...</div>';
