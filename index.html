@@ -1671,8 +1671,7 @@ async function fetchTop10(type){
     if(!json.success) throw new Error(json.error||'Gagal fetch data');
 
     const data = json.data;
-    if(lastUpdated) lastUpdated.textContent = 'Update: '+new Date(json.updated).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-
+  
     if(isBook){
       container.innerHTML = data.map((b,i) => `
         <div class="top10-item">
