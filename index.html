@@ -800,8 +800,8 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 <div id="page-contact" class="page">
   <div class="about-wrap">
     <div class="about-title" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:2.5rem">Contact</div>
-    <div class="about-tagline">Ada pertanyaan, kolaborasi, atau mau submit review?</div>
-    <div class="about-body">
+    <div class="about-tagline" id="contactTagline">Ada pertanyaan, kolaborasi, atau mau submit review?</div>
+    <div class="about-body" id="contactBody">
       <p>GOOPI selalu terbuka untuk kolaborasi dan masukan. Kalau kamu punya pertanyaan tentang review, ingin mengajukan rekomendasi buku atau film, atau tertarik untuk berkolaborasi — jangan ragu untuk menghubungi kami.</p>
       <p><strong>Email</strong><br><a href="mailto:hello@thegoopi.com" style="color:var(--brown-dark)">hello@thegoopi.com</a></p>
       <p><strong>Instagram</strong><br><a href="https://instagram.com/thegoopi" target="_blank" style="color:var(--brown-dark)">@thegoopi</a></p>
@@ -1123,8 +1123,8 @@ async function deleteReview_db(id){
   _reviewCache=null;
 }
 
-function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');
-  if(n==='home'){renderHome();updateContactPage();updatePrivacyPage();document.title='GOOPI — Good Picks Only';document.querySelector('meta[name="description"]').setAttribute('content','Review jujur buku dan film. Cek dulu sebelum beli atau nonton. Good Picks Only.');}if(n==='admin'){renderTable();document.getElementById('s-about').value=stripTags(getAbout());loadContactSettings();loadPrivacySettings()}if(n==='about')document.getElementById('aboutBody').innerHTML=getAbout();window.scrollTo(0,0)}
+function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');if(n==='contact')updateContactPage();if(n==='privacy')updatePrivacyPage();
+  if(n==='home'){renderHome();document.title='GOOPI — Good Picks Only';document.querySelector('meta[name="description"]').setAttribute('content','Review jujur buku dan film. Cek dulu sebelum beli atau nonton. Good Picks Only.');}if(n==='admin'){renderTable();document.getElementById('s-about').value=stripTags(getAbout());loadContactSettings();loadPrivacySettings()}if(n==='about')document.getElementById('aboutBody').innerHTML=getAbout();window.scrollTo(0,0)}
 function navTo(n,btn){currentFilter='all';document.querySelectorAll('.filter-chip').forEach((c,i)=>c.classList.toggle('active',i===0));showPage(n);document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
 function navCat(cat){currentFilter=cat;showPage('home');document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.textContent.toLowerCase().includes(cat==='book'?'buku':'movie')))}
 function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('open');document.getElementById('hamburger').classList.toggle('open')}
