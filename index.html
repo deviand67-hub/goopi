@@ -1057,10 +1057,10 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
           <div class="form-group"><label>Tagline (teks di bawah judul Contact)</label><input type="text" id="s-contact-tagline" placeholder="Ada pertanyaan, kolaborasi, atau mau submit review?"></div>
           <div class="form-group"><label>Teks Pembuka</label><textarea id="s-contact-body" rows="3" placeholder="Teks deskripsi utama..."></textarea></div>
           <div class="form-group"><label>Email</label><input type="text" id="s-contact-email" placeholder="hello@thegoopi.com"></div>
-          <div class="form-group"><label>Instagram</label><input type="text" id="s-contact-ig" placeholder="@thegoopi"></div>
-          <div class="form-group"><label>TikTok</label><input type="text" id="s-contact-tiktok" placeholder="@thegoopi"></div>
-          <div class="form-group"><label>Threads</label><input type="text" id="s-contact-threads" placeholder="@thegoopi"></div>
-          <div class="form-group"><label>Facebook</label><input type="text" id="s-contact-fb" placeholder="thegoopi"></div>
+          <div class="form-group"><label>Instagram</label><input type="text" id="s-contact-ig" placeholder="https://instagram.com/thegoopi"></div>
+          <div class="form-group"><label>TikTok</label><input type="text" id="s-contact-tiktok" placeholder="https://tiktok.com/@thegoopi"></div>
+          <div class="form-group"><label>Threads</label><input type="text" id="s-contact-threads" placeholder="https://threads.net/@thegoopi"></div>
+          <div class="form-group"><label>Facebook</label><input type="text" id="s-contact-fb" placeholder="https://facebook.com/thegoopi"></div>
           <button class="btn btn-primary" onclick="saveContact()">Simpan</button>
         </div>
 
@@ -1461,10 +1461,10 @@ function updateContactPage(){
   const threads=g('wi_contact_threads')||'';
   const fb=g('wi_contact_fb')||'';
   const socialsHtml=
-    (ig?`<p><strong>Instagram</strong><br><a href="https://instagram.com/${ig.replace('@','')}" target="_blank" style="color:var(--brown-dark)">${ig}</a></p>`:'')
-    +(tiktok?`<p><strong>TikTok</strong><br><a href="https://tiktok.com/${tiktok.replace('@','')}" target="_blank" style="color:var(--brown-dark)">${tiktok}</a></p>`:'')
-    +(threads?`<p><strong>Threads</strong><br><a href="https://threads.net/${threads.replace('@','')}" target="_blank" style="color:var(--brown-dark)">${threads}</a></p>`:'')
-    +(fb?`<p><strong>Facebook</strong><br><a href="https://facebook.com/${fb}" target="_blank" style="color:var(--brown-dark)">${fb}</a></p>`:'');
+    (ig?`<p><strong>Instagram</strong><br><a href="${ig}" target="_blank" style="color:var(--brown-dark)">${ig}</a></p>`:'')
+    +(tiktok?`<p><strong>TikTok</strong><br><a href="${tiktok}" target="_blank" style="color:var(--brown-dark)">${tiktok}</a></p>`:'')
+    +(threads?`<p><strong>Threads</strong><br><a href="${threads}" target="_blank" style="color:var(--brown-dark)">${threads}</a></p>`:'')
+    +(fb?`<p><strong>Facebook</strong><br><a href="${fb}" target="_blank" style="color:var(--brown-dark)">${fb}</a></p>`:'');
   if(el)el.innerHTML=`<p>${body}</p><p><strong>Email</strong><br><a href="mailto:${email}" style="color:var(--brown-dark)">${email}</a></p>${socialsHtml}`;
 }
 function updatePrivacyPage(){
