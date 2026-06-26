@@ -1054,9 +1054,11 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
 
         <div class="settings-card">
           <h3>Halaman Contact</h3>
+          <div class="form-group"><label>Tagline (teks di bawah judul Contact)</label><input type="text" id="s-contact-tagline" placeholder="Ada pertanyaan, kolaborasi, atau mau submit review?"></div>
+          <div class="form-group"><label>Teks Pembuka</label><textarea id="s-contact-body" rows="3" placeholder="Teks deskripsi utama..."></textarea></div>
           <div class="form-group"><label>Email</label><input type="text" id="s-contact-email" placeholder="hello@thegoopi.com"></div>
           <div class="form-group"><label>Instagram</label><input type="text" id="s-contact-ig" placeholder="@thegoopi"></div>
-          <div class="form-group"><label>Teks Deskripsi</label><textarea id="s-contact-body" rows="4" placeholder="Teks halaman contact..."></textarea></div>
+          <div class="form-group"><label>Teks Submit Rekomendasi</label><textarea id="s-contact-rec" rows="3" placeholder="Punya buku atau film yang pengen direview GOOPI?..."></textarea></div>
           <button class="btn btn-primary" onclick="saveContact()">Simpan</button>
         </div>
 
@@ -1425,6 +1427,8 @@ function saveContact(){
   s('wi_contact_email',document.getElementById('s-contact-email').value.trim());
   s('wi_contact_ig',document.getElementById('s-contact-ig').value.trim());
   s('wi_contact_body',document.getElementById('s-contact-body').value.trim());
+  s('wi_contact_tagline',document.getElementById('s-contact-tagline').value.trim());
+  s('wi_contact_rec',document.getElementById('s-contact-rec').value.trim());
   updateContactPage();alert('Contact berhasil disimpan!');
 }
 function savePrivacy(){
@@ -1432,8 +1436,12 @@ function savePrivacy(){
   updatePrivacyPage();alert('Privacy Policy berhasil disimpan!');
 }
 function loadContactSettings(){
-  const e=document.getElementById('s-contact-email');const i=document.getElementById('s-contact-ig');const b=document.getElementById('s-contact-body');
-  if(e)e.value=g('wi_contact_email')||'';if(i)i.value=g('wi_contact_ig')||'';if(b)b.value=g('wi_contact_body')||'';
+  const e=document.getElementById('s-contact-email');const i=document.getElementById('s-contact-ig');
+  const b=document.getElementById('s-contact-body');const t=document.getElementById('s-contact-tagline');
+  const r=document.getElementById('s-contact-rec');
+  if(e)e.value=g('wi_contact_email')||'';if(i)i.value=g('wi_contact_ig')||'';
+  if(b)b.value=g('wi_contact_body')||'';if(t)t.value=g('wi_contact_tagline')||'';
+  if(r)r.value=g('wi_contact_rec')||'';
 }
 function loadPrivacySettings(){
   const el=document.getElementById('s-privacy');if(el)el.value=g('wi_privacy')||'';
@@ -1441,9 +1449,13 @@ function loadPrivacySettings(){
 function updateContactPage(){
   const email=g('wi_contact_email')||'hello@thegoopi.com';
   const ig=g('wi_contact_ig')||'@thegoopi';
-  const body=g('wi_contact_body')||'GOOPI selalu terbuka untuk kolaborasi dan masukan.';
+  const body=g('wi_contact_body')||'GOOPI selalu terbuka untuk kolaborasi dan masukan. Kalau kamu punya pertanyaan tentang review, ingin mengajukan rekomendasi buku atau film, atau tertarik untuk berkolaborasi — jangan ragu untuk menghubungi kami.';
+  const tagline=g('wi_contact_tagline')||'Ada pertanyaan, kolaborasi, atau mau submit review?';
+  const rec=g('wi_contact_rec')||'Punya buku atau film yang pengen direview GOOPI? DM aja di Instagram atau email kami judulnya!';
   const el=document.getElementById('contactBody');
-  if(el)el.innerHTML=`<p>${body}</p><p><strong>Email</strong><br><a href="mailto:${email}" style="color:var(--brown-dark)">${email}</a></p><p><strong>Instagram</strong><br><a href="https://instagram.com/${ig.replace('@','')}" target="_blank" style="color:var(--brown-dark)">${ig}</a></p><p><strong>Submit Rekomendasi</strong><br>Punya buku atau film yang pengen direview GOOPI? DM aja di Instagram atau email judulnya!</p>`;
+  const tl=document.getElementById('contactTagline');
+  if(tl)tl.textContent=tagline;
+  if(el)el.innerHTML=`<p>${body}</p><p><strong>Email</strong><br><a href="mailto:${email}" style="color:var(--brown-dark)">${email}</a></p><p><strong>Instagram</strong><br><a href="https://instagram.com/${ig.replace('@','')}" target="_blank" style="color:var(--brown-dark)">${ig}</a></p><p><strong>Submit Rekomendasi</strong><br>${rec}</p>`;
 }
 function updatePrivacyPage(){
   const text=g('wi_privacy')||'';const el=document.getElementById('privacyBody');
