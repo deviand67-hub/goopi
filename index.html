@@ -777,6 +777,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
     <button class="filter-chip active" onclick="setFilter('all',this)"><span class="pip" style="background:var(--brown-dark)"></span>All</button>
     <button class="filter-chip" onclick="setFilter('book',this)"><span class="pip" style="background:var(--green)"></span>Books</button>
     <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Film</button>
+    <button class="filter-chip" onclick="setFilter('notes',this)"><span class="pip" style="background:#8B7BC8"></span>Notes</button>
   </div>
   <div class="main-section">
     <!-- Film sub-filter -->
@@ -1290,8 +1291,8 @@ function showDetail(id){currentReviewId=id;
         <div class="detail-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}</div>
         <div class="detail-title">${r.title}</div>
         <div class="detail-author">oleh ${r.author}</div>
-        <div class="detail-rating">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
-        <div class="detail-verdict-box ${vc.cls}">${vc.icon} ${vc.label}</div>
+        <div class="detail-rating">${isNotes?'':('★'.repeat(r.rating)+'☆'.repeat(5-r.rating))}</div>
+        ${isNotes?'':`<div class="detail-verdict-box ${vc.cls}">${vc.icon} ${vc.label}</div>`}
       </div>
     </div>
     ${verdictSection}
