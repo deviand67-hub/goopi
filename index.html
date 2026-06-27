@@ -1173,10 +1173,11 @@ function renderCards(reviews,tid){
   if(!reviews.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><span class="empty-icon">📚</span><p>Belum ada review. Tambahkan lewat Admin.</p></div>';return}
   const vMap={yes:['verdict-yes','Worth It ✓'],no:['verdict-no','Skip ✗'],maybe:['verdict-maybe','OK, BUT']};
   grid.innerHTML=reviews.map(r=>{
-    const emoji=r.cat==='book'?'📚':'🎬';
-    const bgColor=r.cat==='book'?'#E8F0E9':'#FAE8ED';
+    const emoji=r.cat==='book'?'📚':r.cat==='notes'?'📝':'🎬';
+    const bgColor=r.cat==='book'?'#E8F0E9':r.cat==='notes'?'#F0EEF8':'#FAE8ED';
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
+    const isNotes=r.cat==='notes';
     return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="rating-stars">${'★'.repeat(r.rating)}${'\u2606'.repeat(5-r.rating)}</span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
   }).join('')}
 
@@ -1251,17 +1252,17 @@ function showDetail(id){currentReviewId=id;
     const streamData=r.streamLinks||r.stream_links||[];if(hasStream)bottomBox='<hr class="detail-divider"><div style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:14px">Tonton Online</div><div class="stream-list">'+streamData.map(s=>'<div class="stream-item"><div class="stream-platform"><div class="platform-logo">'+platformEmoji(s.platform)+'</div><div><div class="platform-name">'+s.platform+'</div><div class="platform-type">'+(tl[s.type]||s.type)+'</div></div></div><div class="stream-price'+(s.type==='free'?' free':'')+'">'+(s.type==='free'?'Gratis':(s.price||'Cek harga'))+'</div>'+(s.url?'<a href="'+s.url+'" target="_blank" class="stream-btn">Tonton →</a>':'')+'</div>').join('')+'</div>';
   }
 
-  const verdictSection=`<div style="background:${vc.bg};border-radius:4px;padding:24px;margin-bottom:32px">
+  const verdictSection=isNotes?'':(`<div style="background:${vc.bg};border-radius:4px;padding:24px;margin-bottom:32px">
     <div style="display:flex;align-items:center;gap:14px;${hasScoring?`padding-bottom:20px;border-bottom:1px solid rgba(0,0,0,.08);margin-bottom:20px`:''}">
       <div style="flex:1">
-        <div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${vc.color};margin-bottom:6px">ASSESSMENT by GOOPI</div>
-        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:${vc.color}">${vc.icon} ${vc.label}</div>
+        ${isNotes?'':`<div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${vc.color};margin-bottom:6px">ASSESSMENT by GOOPI</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:${vc.color}">${vc.icon} ${vc.label}</div>`}
         ${r.genre||r.scoring?.genre?`<div style="font-size:.75rem;color:var(--text-mid);margin-top:4px">Genre: ${r.genre||r.scoring.genre}</div>`:''}
       </div>
       ${hasScoring?`<div style="text-align:center;background:rgba(255,255,255,.7);border-radius:4px;padding:10px 16px"><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:${vc.color};line-height:1">${r.scoring.total}</div><div style="font-size:.62rem;color:var(--text-mid);letter-spacing:1px">/100</div></div>`:''}
     </div>
     ${hasScoring?`${barsHtml}`:''}
-  </div>`;
+  </div>`);
 
   const donateBox = `
     <div class="donate-box">
