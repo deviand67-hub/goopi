@@ -966,8 +966,8 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
           <div class="form-row-3">
             <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">📚 Books</option><option value="movie">🎬 Movies</option><option value="series">📺 Series</option>
 <option value="notes">📝 Notes</option></select></div>
-            <div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
-            <div class="form-group"><label>Rating</label><select id="f-rating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div>
+            <div id="verdictRatingFields"><div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
+            <div class="form-group"><label>Rating</label><select id="f-rating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div></div>
           </div>
           <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="f-title"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="f-author"></div></div>
           <div class="form-group"><label>URL Cover (opsional)</label>
@@ -1229,7 +1229,7 @@ function showDetail(id){currentReviewId=id;
         const tabIndo='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">Indonesian</button>';
         const panelIndo='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(allLinks,'','var(--brown-dark)')+'</div>';
         bottomBox='<hr class="detail-divider">'+
-          '<div style="margin-bottom:12px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">'+(r.cat==='book'?'BOOK LANGUAGE':'WATCH INFO')+' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span></div>'+
+          '<div style="margin-bottom:12px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">'+(r.cat==='book'?'BOOK LANGUAGE':r.cat==='notes'?'WHERE TO FIND':'WATCH INFO')+' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span></div>'+
           '<div class="lang-tabs" data-uid="'+uid+'">'+tabIndo+'</div>'+
           panelIndo;
       } else {
@@ -1247,6 +1247,23 @@ function showDetail(id){currentReviewId=id;
           panelOrig+panelId;
       }
     }
+    } else if(r.cat==='notes'){
+    // Notes - show both buy links AND watch links if available
+    const tr=r.translation;
+    const origLinks=(tr&&tr.originalBuyLinks)||[];
+    const idLinks=(tr&&tr.buyLinks)||[];
+    const allBuyLinks=sortBuyLinks([...origLinks,...idLinks]);
+    const hasStream=(r.streamLinks||r.stream_links)&&(r.streamLinks||r.stream_links).length;
+    const streamData=r.streamLinks||r.stream_links||[];
+    const tl={subscription:'Subscription',rent:'Rent',buy:'Buy',free:'Free'};
+    let notesBottom='';
+    if(allBuyLinks.length>0){
+      notesBottom+='<hr class="detail-divider"><div style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:12px">🛒 WHERE TO BUY</div>'+mkLinks(allBuyLinks,'','var(--brown-dark)')+'</div>';
+    }
+    if(hasStream){
+      notesBottom+='<hr class="detail-divider"><div style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:12px">📺 WHERE TO WATCH</div>'+streamData.map(s=>`<div class="stream-row"><span>${s.platform}</span><span class="stream-badge">${tl[s.type]||s.type}</span></div>`).join('')+'</div>';
+    }
+    bottomBox=notesBottom;
     } else {
     // Movie
     const hasStream=(r.streamLinks||r.stream_links)&&(r.streamLinks||r.stream_links).length;
@@ -1418,9 +1435,15 @@ function setFilmSub(sub, btn){
 }
 
 function toggleCatSections(cat){
+  // Show/hide verdict and rating for notes
+  const vrf=document.getElementById('verdictRatingFields');
+  if(vrf)vrf.style.display=cat==='notes'?'none':'';
   if(cat==='series'){cat='movie';} // Series uses same fields as movie
   if(cat==='notes'){cat='book';} // Notes uses same fields as book
-  const se=document.getElementById('streamingSection'),tr=document.getElementById('translationSection');if(!se||!tr)return;se.style.display=cat==='movie'?'block':'none';tr.style.display=cat==='book'?'block':'none'}
+  const se=document.getElementById('streamingSection'),tr=document.getElementById('translationSection');if(!se||!tr)return;
+  const origCat=document.getElementById('f-cat').value;
+  if(origCat==='notes'){se.style.display='block';tr.style.display='block';}
+  else{se.style.display=cat==='movie'?'block':'none';tr.style.display=cat==='book'?'block':'none';}}
 
 function addStreamLink(){const p=document.getElementById('sl-platform').value.trim(),t=document.getElementById('sl-type').value,cur=document.getElementById('sl-currency').value,pr=document.getElementById('sl-price').value.trim(),u=document.getElementById('sl-url').value.trim();if(!p)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempStreamLinks.push({platform:p,type:t,price:fullPrice,url:u});renderStreamList();['sl-platform','sl-price','sl-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-type').value='subscription'}
 function removeStreamLink(i){tempStreamLinks.splice(i,1);renderStreamList()}
