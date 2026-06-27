@@ -1178,7 +1178,8 @@ function renderCards(reviews,tid){
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
 
-function showDetail(id){
+let currentReviewId=null;
+function showDetail(id){currentReviewId=id;
   const r=getReviews().find(x=>x.id===id);if(!r)return;
   const emoji=r.cat==='book'?'📚':'🎬';
   const bg=r.cat==='book'?'linear-gradient(135deg,var(--green-light),#d4e8d6)':'linear-gradient(135deg,var(--pink-light),#f5d0da)';
@@ -1275,7 +1276,7 @@ function showDetail(id){
     </div>
   `;
   document.getElementById('detailContent').innerHTML=`
-    <button class="detail-back" onclick="showPage('home')">← Kembali</button>
+    <button class="detail-back" onclick="showPage('home');window.history.pushState({},'','/');document.title='theGOOPI — Good Picks Only';">← Kembali</button>
     <div class="detail-hero" style="background:${bg};border-radius:4px;padding:28px;margin-bottom:36px">
       <div class="detail-cover">${cover}</div>
       <div class="detail-info">
@@ -1319,6 +1320,8 @@ function showDetail(id){
   document.querySelector('meta[property="og:title"]').setAttribute('content', r.title + ' | GOOPI');
   document.querySelector('meta[property="og:description"]').setAttribute('content', desc);
   if(r.img){document.querySelector('meta[property="og:image"]').setAttribute('content', r.img);}
+  // Update URL
+  updateReviewUrl(r, 'id');
   showPage('detail');
 }
 
@@ -1704,6 +1707,65 @@ function copyToClipboard(text, label){
   });
 }
 
+// URL ROUTING
+function slugify(title, author){
+  return (title+'-'+author).toLowerCase()
+    .replace(/[^a-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .trim();
+}
+
+function getReviewUrl(r, lang){
+  const slug = slugify(r.title, r.author);
+  return lang==='en' ? `/review/${slug}/en` : `/review/${slug}`;
+}
+
+async function handleUrlRouting(){
+  const path = window.location.pathname;
+  const isReview = path.startsWith('/review/');
+  if(!isReview) return;
+
+  // Load reviews first
+  await getReviewsAsync();
+  const reviews = getReviews();
+
+  // Extract slug from URL
+  const isEn = path.endsWith('/en');
+  const slug = path.replace('/review/','').replace('/en','');
+
+  // Find matching review
+  const review = reviews.find(r => slugify(r.title, r.author) === slug);
+  if(!review){
+    // Redirect to home if not found
+    window.history.replaceState({}, '', '/');
+    return;
+  }
+
+  // Show detail page
+  showDetail(review.id);
+
+  // If EN version requested, switch to EN
+  if(isEn && review.body_en){
+    setTimeout(()=>{
+      const wrap = document.getElementById('reviewBodyWrap');
+      const btn = document.getElementById('langSwitch');
+      if(wrap && btn){
+        wrap.classList.add('review-body-en-active');
+        btn.classList.add('en');
+      }
+    }, 100);
+  }
+}
+
+function updateReviewUrl(r, lang){
+  const url = getReviewUrl(r, lang);
+  window.history.pushState({reviewId: r.id, lang}, '', url);
+  // Update canonical
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if(canonical) canonical.href = 'https://www.thegoopi.com' + url;
+}
+
 function parseBody(text){
   return (text||'').split('\n').filter(l=>l.trim()).map(line=>{
     if(line.startsWith('[QUOTE:')&&line.endsWith(']')){
@@ -1719,6 +1781,10 @@ function toggleReviewLang(){
   if(!wrap||!btn)return;
   wrap.classList.toggle('review-body-en-active');
   btn.classList.toggle('en');
+  // Update URL based on language
+  const isEn = wrap.classList.contains('review-body-en-active');
+  const r = getReviews().find(r=>r.id===currentReviewId);
+  if(r) updateReviewUrl(r, isEn?'en':'id');
 }
 
 function copyPrompt(){
@@ -2019,6 +2085,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 document.getElementById('aboutBody').innerHTML=getAbout();
 toggleCatSections('book');
 renderHome();
+handleUrlRouting();
 </script>
 
 <!-- DONATION MODAL -->
