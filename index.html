@@ -779,7 +779,14 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
     <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Film</button>
   </div>
   <div class="main-section">
-    <div class="section-label">The Latest</div>
+    <!-- Film sub-filter -->
+  <div id="filmSubFilter" style="display:none;gap:8px;padding:0 20px 16px;flex-wrap:wrap">
+    <button class="film-sub-btn active" onclick="setFilmSub('all',this)">Semua</button>
+    <button class="film-sub-btn" onclick="setFilmSub('movie',this)">Movie</button>
+    <button class="film-sub-btn" onclick="setFilmSub('series',this)">Series</button>
+  </div>
+
+  <div class="section-label">The Latest</div>
     <div class="card-grid" id="mainGrid"></div>
   </div>
 </div>
