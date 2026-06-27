@@ -1186,8 +1186,9 @@ function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('
 let currentReviewId=null;
 function showDetail(id){currentReviewId=id;
   const r=getReviews().find(x=>x.id===id);if(!r)return;
-  const emoji=r.cat==='book'?'📚':'🎬';
-  const bg=r.cat==='book'?'linear-gradient(135deg,var(--green-light),#d4e8d6)':'linear-gradient(135deg,var(--pink-light),#f5d0da)';
+  const isNotes=r.cat==='notes';
+  const emoji=r.cat==='book'?'📚':isNotes?'📝':'🎬';
+  const bg=r.cat==='book'?'linear-gradient(135deg,var(--green-light),#d4e8d6)':isNotes?'linear-gradient(135deg,#F0EEF8,#ddd8f0)':'linear-gradient(135deg,var(--pink-light),#f5d0da)';
   const cover=r.img?`<img src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="placeholder-cover">${emoji}</div>`;
   const bodyHtml=(r.body||'').split('\n').filter(l=>l.trim()).map(line=>{
     if(line.startsWith('[QUOTE:')&&line.endsWith(']')){
@@ -1252,17 +1253,17 @@ function showDetail(id){currentReviewId=id;
     const streamData=r.streamLinks||r.stream_links||[];if(hasStream)bottomBox='<hr class="detail-divider"><div style="font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:14px">Tonton Online</div><div class="stream-list">'+streamData.map(s=>'<div class="stream-item"><div class="stream-platform"><div class="platform-logo">'+platformEmoji(s.platform)+'</div><div><div class="platform-name">'+s.platform+'</div><div class="platform-type">'+(tl[s.type]||s.type)+'</div></div></div><div class="stream-price'+(s.type==='free'?' free':'')+'">'+(s.type==='free'?'Gratis':(s.price||'Cek harga'))+'</div>'+(s.url?'<a href="'+s.url+'" target="_blank" class="stream-btn">Tonton →</a>':'')+'</div>').join('')+'</div>';
   }
 
-  const verdictSection=isNotes?'':(`<div style="background:${vc.bg};border-radius:4px;padding:24px;margin-bottom:32px">
+  const verdictSection=isNotes?'':`<div style="background:${vc.bg};border-radius:4px;padding:24px;margin-bottom:32px">
     <div style="display:flex;align-items:center;gap:14px;${hasScoring?`padding-bottom:20px;border-bottom:1px solid rgba(0,0,0,.08);margin-bottom:20px`:''}">
       <div style="flex:1">
-        ${isNotes?'':`<div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${vc.color};margin-bottom:6px">ASSESSMENT by GOOPI</div>
-        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:${vc.color}">${vc.icon} ${vc.label}</div>`}
+        <div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${vc.color};margin-bottom:6px">${isNotes?'NOTES':'ASSESSMENT by GOOPI'}</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:${vc.color}">${isNotes?r.title:(vc.icon+' '+vc.label)}</div>
         ${r.genre||r.scoring?.genre?`<div style="font-size:.75rem;color:var(--text-mid);margin-top:4px">Genre: ${r.genre||r.scoring.genre}</div>`:''}
       </div>
       ${hasScoring?`<div style="text-align:center;background:rgba(255,255,255,.7);border-radius:4px;padding:10px 16px"><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:${vc.color};line-height:1">${r.scoring.total}</div><div style="font-size:.62rem;color:var(--text-mid);letter-spacing:1px">/100</div></div>`:''}
     </div>
     ${hasScoring?`${barsHtml}`:''}
-  </div>`);
+  </div>`;
 
   const donateBox = `
     <div class="donate-box">
