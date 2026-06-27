@@ -2157,6 +2157,15 @@ document.getElementById('aboutBody').innerHTML=getAbout();
 toggleCatSections('book');
 renderHome();
 handleUrlRouting();
+
+// Global handler for external links in dynamic content
+document.addEventListener('click', function(e){
+  const a = e.target.closest('a[href^="http"]');
+  if(a && a.getAttribute('target')==='_blank'){
+    e.preventDefault();
+    window.open(a.href, '_blank', 'noopener,noreferrer');
+  }
+});
 </script>
 
 <!-- DONATION MODAL -->
