@@ -12,74 +12,35 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Fetch all reviews - select only safe columns
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/reviews?select=id,title,author,body_en,created_at&order=created_at.desc`,
+      `${SUPABASE_URL}/rest/v1/reviews?select=id,title,author,created_at`,
       {
         headers: {
           'apikey': SUPABASE_KEY,
           'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': 'application/json'
+          'Accept': 'application/json'
         }
       }
     );
 
     const data = await response.json();
-    
-    // Ensure data is array
     const reviews = Array.isArray(data) ? data : [];
 
     const reviewUrls = reviews.map(r => {
       const slug = slugify(r.title, r.author);
       const date = (r.created_at || '').slice(0, 10) || new Date().toISOString().slice(0, 10);
-
-      let urls = `  <url>
-    <loc>${base}/review/${slug}</loc>
-    <lastmod>${date}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>`;
-
-      if (r.body_en) {
-        urls += `\n  <url>
-    <loc>${base}/review/${slug}/en</loc>
-    <lastmod>${date}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>`;
-      }
-      return urls;
+      return `  <url>\n    <loc>${base}/review/${slug}</loc>\n    <lastmod>${date}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>`;
     }).join('\n');
 
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${base}/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>${base}/#about</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-${reviewUrls}
-</urlset>`;
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${base}/</loc>\n    <changefreq>daily</changefreq>\n    <priority>1.0</priority>\n  </url>\n${reviewUrls}\n</urlset>`;
 
-    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
     res.setHeader('Cache-Control', 's-maxage=3600');
     return res.status(200).send(sitemap);
 
   } catch (error) {
-    // Fallback — return basic sitemap
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${base}/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>`;
     res.setHeader('Content-Type', 'application/xml');
-    return res.status(200).send(sitemap);
+    return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${base}/</loc></url></urlset>`);
   }
 }
