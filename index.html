@@ -1279,7 +1279,7 @@ function showDetail(id){currentReviewId=id;
     </div>
   `;
   document.getElementById('detailContent').innerHTML=`
-    <button class="detail-back" onclick="showPage('home');window.history.pushState({},'','/');document.title='theGOOPI — Good Picks Only';">← Kembali</button>
+    <button class="detail-back" onclick="showPage('home');window.history.pushState({},'','/');document.title='theGOOPI — Good Picks Only';">← Back</button>
     <div class="detail-hero" style="background:${bg};border-radius:4px;padding:28px;margin-bottom:36px">
       <div class="detail-cover">${cover}</div>
       <div class="detail-info">
@@ -1749,12 +1749,12 @@ function showDonateQR(method){
         <div class="donate-account-value">${cfg.bank}</div>
       </div>
       <div class="donate-account">
-        <div class="donate-account-label">Nomor Rekening</div>
+        <div class="donate-account-label">Account Number</div>
         <div class="donate-account-value">${cfg.number}</div>
         <div class="donate-account-name">${cfg.accountName}</div>
       </div>
-      <button class="donate-copy-btn" onclick="copyToClipboard('${cfg.number}','Nomor rekening')">Copy Nomor Rekening</button>
-      <p class="donate-note">Semoga Allah ganti dengan rezeki berlimpah :)</p>`;
+      <button class="donate-copy-btn" onclick="copyToClipboard('${cfg.number}','Nomor rekening')">Copy Account Number</button>
+      <p class="donate-note">May Allah bless you with abundance in return :)</p>`;
   } else {
     const hasQR=cfg.qr&&!cfg.qr.includes('GANTI');
     content.innerHTML=`
@@ -1765,10 +1765,10 @@ function showDonateQR(method){
         :`<div class="donate-qr-placeholder"><span style="font-size:2rem">📷</span><span>QR Code belum diupload</span><span style="font-size:.65rem">Upload QR code kamu<br>dan update di DONATE_CONFIG</span></div>`
       }
       <div class="donate-account">
-        <div class="donate-account-label">Nama Penerima</div>
+        <div class="donate-account-label">Account Name</div>
         <div class="donate-account-value">${cfg.accountName}</div>
       </div>
-      <p class="donate-note">Semoga Allah ganti dengan rezeki berlimpah :)</p>`;
+      <p class="donate-note">May Allah bless you with abundance in return :)</p>`;
   }
 }
 function copyToClipboard(text, label){
@@ -2177,26 +2177,26 @@ document.addEventListener('click', function(e){
       <button class="donate-modal-close" onclick="closeDonateModalDirect()">✕</button>
     </div>
     <div id="donateMethodView" class="donate-modal-body">
-      <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:16px">Pilih metode pembayaran:</p>
+      <p style="font-size:.82rem;color:var(--text-mid);margin-bottom:16px">Choose a payment method:</p>
       <div class="donate-method" onclick="showDonateQR('dana')">
         <div class="donate-method-icon" style="background:#f0f7ff"><svg width="28" height="28" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#118EEA"/><text x="20" y="26" text-anchor="middle" font-size="14" font-weight="bold" fill="white" font-family="sans-serif">D</text></svg></div>
-        <div class="donate-method-info"><div class="donate-method-name">DANA</div><div class="donate-method-desc">Scan QR code DANA</div></div>
+        <div class="donate-method-info"><div class="donate-method-name">DANA</div><div class="donate-method-desc">Scan DANA QR code</div></div>
         <span class="donate-method-arrow">→</span>
       </div>
       <div class="donate-method" onclick="showDonateQR('gopay')">
         <div class="donate-method-icon" style="background:#e8f7f0"><svg width="28" height="28" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#00AE4D"/><text x="20" y="26" text-anchor="middle" font-size="12" font-weight="bold" fill="white" font-family="sans-serif">GP</text></svg></div>
-        <div class="donate-method-info"><div class="donate-method-name">GoPay</div><div class="donate-method-desc">Scan QR code GoPay</div></div>
+        <div class="donate-method-info"><div class="donate-method-name">GoPay</div><div class="donate-method-desc">Scan GoPay QR code</div></div>
         <span class="donate-method-arrow">→</span>
       </div>
       <div class="donate-method" onclick="showDonateQR('bank')">
         <div class="donate-method-icon" style="background:#fdf3e8"><svg width="28" height="28" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#C4956A"/><text x="20" y="26" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="sans-serif">BNK</text></svg></div>
-        <div class="donate-method-info"><div class="donate-method-name">Bank Transfer</div><div class="donate-method-desc">Transfer ke rekening bank</div></div>
+        <div class="donate-method-info"><div class="donate-method-name">Bank Transfer</div><div class="donate-method-desc">Bank account transfer</div></div>
         <span class="donate-method-arrow">→</span>
       </div>
       <p style="font-size:.72rem;color:var(--text-mid);text-align:center;margin-top:16px">🫶 Even Rp 2,000 MEANS A LOT<br><span style="font-family:'Caveat',cursive;font-size:1rem;color:var(--pink)">Thank You, Kind Soul :)</span></p>
     </div>
     <div id="donateDetailView" style="display:none" class="donate-qr-view">
-      <button class="donate-qr-back" onclick="backToMethods()">← Kembali</button>
+      <button class="donate-qr-back" onclick="backToMethods()">← Back</button>
       <div id="donateDetailContent"></div>
     </div>
   </div>
