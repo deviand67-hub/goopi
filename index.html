@@ -933,7 +933,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
             <div class="step-header"><span class="step-num">1</span><span class="step-title">Info Dasar</span></div>
             <div class="step-sub">Isi judul dan pilih kategori</div>
             <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="ai-title" placeholder="e.g. Atomic Habits"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="ai-author" placeholder="e.g. James Clear"></div></div>
-            <div class="form-row"><div class="form-group"><label>Kategori</label><select id="ai-cat" onchange="toggleCatSections(this.value)"><option value="book">Books</option><option value="movie">Movies</option></select></div><div class="form-group"><label>Tone</label><select id="ai-tone"><option value="casual">Santai</option><option value="critical">Kritis</option><option value="hype">Hype</option></select></div></div>
+            <div class="form-row"><div class="form-group"><label>Kategori</label><select id="ai-cat" onchange="toggleCatSections(this.value)"><option value="book">📚 Books</option><option value="movie">🎬 Movies</option><option value="series">📺 Series</option></select></div><div class="form-group"><label>Tone</label><select id="ai-tone"><option value="casual">Santai</option><option value="critical">Kritis</option><option value="hype">Hype</option></select></div></div>
             <button class="btn btn-primary" id="btnStep1" onclick="aiStep1()">Cari Data & Buat Skor →</button>
             <div id="step1Status" style="margin-top:10px;font-size:.78rem;display:none;color:var(--brown-dark)">Mencari data...</div>
           </div>
@@ -955,7 +955,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
         <div class="admin-card">
           <h3 id="formTitle">Tambah Review</h3>
           <div class="form-row-3">
-            <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">Books</option><option value="movie">Movies</option></select></div>
+            <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">📚 Books</option><option value="movie">🎬 Movies</option><option value="series">📺 Series</option></select></div>
             <div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
             <div class="form-group"><label>Rating</label><select id="f-rating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div>
           </div>
@@ -1044,6 +1044,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
           </div>
           <div class="top10-panel active" id="top10-books"><div class="top10-loading"><span class="spin">⟳</span>Memuat...</div></div>
           <div class="top10-panel" id="top10-movies"><div class="top10-loading"><span class="spin">⟳</span>Memuat...</div></div>
+          <div class="top10-panel" id="top10-series"><div class="top10-loading"><span class="spin">⟳</span>Memuat...</div></div>
           <div class="top10-panel" id="top10-indonesia"><div class="top10-loading"><span class="spin">⟳</span>Memuat...</div></div>
         </div>
       </div>
@@ -1765,7 +1766,7 @@ async function loadTop10(forceRefresh){
   const now=new Date();document.getElementById('top10Date').textContent=now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const cacheAge=top10Cache.loadedAt?(Date.now()-top10Cache.loadedAt)/1000/60/60:999;
   if(!forceRefresh&&cacheAge<6&&top10Cache.books&&top10Cache.movies){renderTop10('books',top10Cache.books);renderTop10('movies',top10Cache.movies);return}
-  fetchTop10('books');fetchTop10('movies');fetchIndonesia();top10Cache.loadedAt=Date.now();
+  fetchTop10('books');fetchTop10('movies');fetchTop10('series');fetchIndonesia();top10Cache.loadedAt=Date.now();
 }
 async function fetchTop10(type){
   const isBook = type==='books';
