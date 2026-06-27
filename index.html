@@ -1582,11 +1582,12 @@ function updateContactPage(){
   const threads=g('wi_contact_threads')||'';
   const fb=g('wi_contact_fb')||'';
   const getHandle=url=>{try{const u=new URL(url);const parts=u.pathname.replace(/\/$/,'').split('/').filter(Boolean);return '@'+(parts[parts.length-1]||url);}catch{return url;}};
+  const ensureUrl=url=>{if(!url)return '';if(url.startsWith('http'))return url;if(url.startsWith('@'))return 'https://instagram.com/'+url.slice(1);return 'https://'+url;};
   const socialsHtml=
-    (ig?`<p><strong>Instagram</strong><br><a href="${ig}" target="_blank" style="color:var(--brown-dark)">${getHandle(ig)}</a></p>`:'')
-    +(tiktok?`<p><strong>TikTok</strong><br><a href="${tiktok}" target="_blank" style="color:var(--brown-dark)">${getHandle(tiktok)}</a></p>`:'')
-    +(threads?`<p><strong>Threads</strong><br><a href="${threads}" target="_blank" style="color:var(--brown-dark)">${getHandle(threads)}</a></p>`:'')
-    +(fb?`<p><strong>Facebook</strong><br><a href="${fb}" target="_blank" style="color:var(--brown-dark)">${getHandle(fb)}</a></p>`:'');
+    (ig?`<p><strong>Instagram</strong><br><a href="${ensureUrl(ig)}" target="_blank" rel="noopener" style="color:var(--brown-dark)">${getHandle(ig)}</a></p>`:'')
+    +(tiktok?`<p><strong>TikTok</strong><br><a href="${ensureUrl(tiktok)}" target="_blank" rel="noopener" style="color:var(--brown-dark)">${getHandle(tiktok)}</a></p>`:'')
+    +(threads?`<p><strong>Threads</strong><br><a href="${ensureUrl(threads)}" target="_blank" rel="noopener" style="color:var(--brown-dark)">${getHandle(threads)}</a></p>`:'')
+    +(fb?`<p><strong>Facebook</strong><br><a href="${ensureUrl(fb)}" target="_blank" rel="noopener" style="color:var(--brown-dark)">${getHandle(fb)}</a></p>`:'');
   if(el)el.innerHTML=`<p>${body}</p><p><strong>Email</strong><br><a href="mailto:${email}" style="color:var(--brown-dark)">${email}</a></p>${socialsHtml}`;
 }
 function updatePrivacyPage(){
