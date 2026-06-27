@@ -79,13 +79,24 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, data: series, updated: new Date().toISOString() });
 
     } else if (type === 'indonesia') {
-      // Indonesian movies from TMDb
-      const indoRes = await fetch(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.TMDB_API_KEY}&with_original_language=id&sort_by=popularity.desc&page=1`
-      );
-      const indoData = await indoRes.json();
+      // Indonesian movies AND series from TMDb
+      const [indoMovieRes, indoSeriesRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${process.env.TMDB_API_KEY}&with_original_language=id&sort_by=popularity.desc&page=1`),
+        fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${process.env.TMDB_API_KEY}&with_original_language=id&sort_by=popularity.desc&page=1`)
+      ]);
+      const [indoMovieData, indoSeriesData] = await Promise.all([indoMovieRes.json(), indoSeriesRes.json()]);
 
-      const movies = (indoData.results || []).slice(0, 10).map(m => ({
+      const indoSeries = (indoSeriesData.results || []).slice(0, 5).map(s => ({
+        title: s.name,
+        overview: s.overview,
+        cover: s.poster_path ? `https://image.tmdb.org/t/p/w500${s.poster_path}` : null,
+        rating: s.vote_average,
+        releaseDate: s.first_air_date,
+        type: 'series'
+      }));
+
+      const indoData = indoMovieData;
+      const movies = (indoData.results || []).slice(0, 5).map(m => ({
         title: m.title,
         overview: m.overview,
         cover: m.poster_path ? `https://image.tmdb.org/t/p/w500${m.poster_path}` : null,
@@ -95,7 +106,7 @@ export default async function handler(req, res) {
         popularity: m.popularity
       }));
 
-      return res.status(200).json({ success: true, movies, books: [], updated: new Date().toISOString() });
+      return res.status(200).json({ success: true, movies, series: indoSeries, books: [], updated: new Date().toISOString() });
 
     } else {
       return res.status(400).json({ error: 'Invalid type. Use ?type=books, ?type=movies, or ?type=indonesia' });
