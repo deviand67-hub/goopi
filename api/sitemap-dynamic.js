@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const SUPABASE_URL = 'https://mkhpjhihkzapfibxdokd.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1raHBqaGloa3phcGZpYnhkb2tkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyNDIyNjEsImV4cCI6MjA2MzgxODI2MX0.NLuBOmJB3GOHSVj6RPPMS9GSwfnbvW3xdqDfhF_bJIc';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1raHBqaGloa3phcGZpYnhkb2tkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNzAzMjUsImV4cCI6MjA5Nzg0NjMyNX0.y0YzaTZ1NqXjktugCJRHdrDw9VJ1zVJ4on_EZ4vTlFA';
   const base = 'https://www.thegoopi.com';
 
   function slugify(title, author) {
