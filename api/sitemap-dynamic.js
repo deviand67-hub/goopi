@@ -11,15 +11,24 @@ export default async function handler(req, res) {
       .trim();
   }
 
+  // Debug mode
+  if (req.query.debug === '1') {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/reviews?select=id,title,author&limit=3`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Accept': 'application/json' }
+    });
+    const d = await r.json();
+    return res.status(200).json({ status: r.status, data: d });
+  }
+
   try {
-    // Fetch all reviews - select only safe columns
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/reviews?select=id,title,author,created_at`,
+      `${SUPABASE_URL}/rest/v1/reviews?select=id,title,author,created_at&limit=100`,
       {
         headers: {
           'apikey': SUPABASE_KEY,
           'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Prefer': 'return=representation'
         }
       }
     );
@@ -40,7 +49,6 @@ export default async function handler(req, res) {
     return res.status(200).send(sitemap);
 
   } catch (error) {
-    res.setHeader('Content-Type', 'application/xml');
-    return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${base}/</loc></url></urlset>`);
+    return res.status(500).json({ error: error.message });
   }
 }
