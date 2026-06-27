@@ -1349,20 +1349,19 @@ function showFilmSection(){
 
 async function renderFilm(sub){
   await loadReviews();
-  const reviews = getReviews();
+  const allReviews = getReviews();
   const filtered = sub==='all' 
-    ? reviews.filter(r=>r.cat==='movie'||r.cat==='series')
-    : reviews.filter(r=>r.cat===sub);
-  const grid = document.getElementById('mainGrid');
-  if(!grid) return;
-  if(!filtered.length){grid.innerHTML='<div class="empty-state">Belum ada review untuk kategori ini.</div>';return;}
-  grid.innerHTML = filtered.map(r=>renderCard(r)).join('');
+    ? allReviews.filter(r=>r.cat==='movie'||r.cat==='series')
+    : allReviews.filter(r=>r.cat===sub);
+  renderCards(filtered,'mainGrid');
 }
 
 function setFilmSub(sub, btn){
   document.querySelectorAll('.film-sub-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  renderFilm(sub);
+  // Update currentFilter so renderHome doesn't override
+  currentFilter = sub==='all' ? 'movie' : sub;
+  renderFilm(sub==='all' ? 'all' : sub);
 }
 
 function toggleCatSections(cat){
@@ -1859,6 +1858,27 @@ async function fetchIndonesia(){
     const books = json.books || [];
 
     let html = '';
+
+    // Indonesian Series section
+    const idSeries = json.series || [];
+    if(idSeries.length > 0){
+      html += '<div style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);margin-bottom:12px">📺 Series Indonesia Trending</div>';
+      html += idSeries.map((s,i) => `
+        <div class="top10-item">
+          <div class="top10-rank">${i+1}</div>
+          ${s.cover ? `<img src="${s.cover}" class="top10-cover" alt="${s.title}" onerror="this.style.display='none'">` : '<div class="top10-cover-placeholder">📺</div>'}
+          <div class="top10-info">
+            <div class="top10-title">${s.title}</div>
+            <div class="top10-meta">
+              <span class="top10-badge">⭐ ${s.rating?.toFixed(1)||'N/A'}</span>
+              ${s.releaseDate ? `<span class="top10-badge" style="background:var(--cream-dark)">${s.releaseDate.slice(0,4)}</span>` : ''}
+            </div>
+            ${s.overview ? `<div class="top10-desc">${s.overview.slice(0,100)}...</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+      html += '<div style="height:16px"></div>';
+    }
 
     // Indonesian Movies section
     if(movies.length > 0){
