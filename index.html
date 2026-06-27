@@ -1537,11 +1537,37 @@ function savePrivacy(){
 function loadContactSettings(){
   const e=document.getElementById('s-contact-email');const i=document.getElementById('s-contact-ig');
   const b=document.getElementById('s-contact-body');const t=document.getElementById('s-contact-tagline');
-  if(e)e.value=g('wi_contact_email')||'';if(i)i.value=g('wi_contact_ig')||'';
-  if(b)b.value=g('wi_contact_body')||'';if(t)t.value=g('wi_contact_tagline')||'';
+  const tk=document.getElementById('s-contact-tiktok');const th=document.getElementById('s-contact-threads');const fb=document.getElementById('s-contact-fb');
+  if(e)e.value=g('wi_contact_email')||'hello@thegoopi.com';
+  if(i)i.value=g('wi_contact_ig')||'';
+  if(b)b.value=g('wi_contact_body')||'theGOOPI selalu terbuka untuk kolaborasi dan masukan. Kalau kamu punya pertanyaan tentang review, ingin mengajukan rekomendasi buku, film, atau series, atau tertarik untuk berkolaborasi — jangan ragu untuk menghubungi kami.';
+  if(t)t.value=g('wi_contact_tagline')||'Ada pertanyaan, kolaborasi, atau mau submit review?';
+  if(tk)tk.value=g('wi_contact_tiktok')||'';if(th)th.value=g('wi_contact_threads')||'';if(fb)fb.value=g('wi_contact_fb')||'';
 }
 function loadPrivacySettings(){
-  const el=document.getElementById('s-privacy');if(el)el.value=g('wi_privacy')||'';
+  const el=document.getElementById('s-privacy');
+  if(el)el.value=g('wi_privacy')||`theGOOPI (www.thegoopi.com) berkomitmen untuk melindungi privasi pengunjung. Halaman ini menjelaskan informasi apa yang kami kumpulkan dan bagaimana kami menggunakannya.
+
+1. Informasi yang Dikumpulkan
+theGOOPI tidak mengumpulkan data pribadi secara langsung. Kami menggunakan layanan pihak ketiga seperti Google Analytics dan Google AdSense yang mungkin mengumpulkan data anonim seperti alamat IP, jenis browser, dan halaman yang dikunjungi untuk keperluan analitik dan iklan.
+
+2. Cookies
+Website ini menggunakan cookies untuk meningkatkan pengalaman pengguna. Google AdSense menggunakan cookies untuk menampilkan iklan yang relevan berdasarkan kunjungan sebelumnya. Kamu dapat menonaktifkan cookies melalui pengaturan browser kapan saja.
+
+3. Google AdSense
+Kami menggunakan Google AdSense untuk menampilkan iklan. Google menggunakan cookies DART untuk menayangkan iklan berdasarkan kunjungan ke situs ini dan situs lain. Kamu dapat memilih keluar melalui Google Privacy Policy.
+
+4. Tautan Afiliasi
+Beberapa link di theGOOPI adalah link afiliasi (Shopee, Tokopedia, Gramedia). Jika kamu membeli melalui link tersebut, kami mungkin mendapatkan komisi kecil tanpa biaya tambahan untukmu.
+
+5. Layanan Pihak Ketiga
+theGOOPI menggunakan Supabase untuk penyimpanan data review. Data review yang ditampilkan adalah konten editorial theGOOPI dan tidak mengandung data pribadi pengunjung.
+
+6. Perubahan Kebijakan
+Kebijakan privasi ini dapat diperbarui sewaktu-waktu. Perubahan akan ditampilkan di halaman ini.
+
+7. Hubungi Kami
+Pertanyaan tentang kebijakan privasi? Email kami di hello@thegoopi.com`;
 }
 function updateContactPage(){
   const email=g('wi_contact_email')||'hello@thegoopi.com';
