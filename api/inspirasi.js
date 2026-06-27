@@ -59,6 +59,25 @@ export default async function handler(req, res) {
 
       return res.status(200).json({ success: true, data: movies, updated: new Date().toISOString() });
 
+    } else if (type === 'series') {
+      // TMDb Trending TV Series this week
+      const seriesRes = await fetch(
+        `https://api.themoviedb.org/3/trending/tv/week?api_key=${process.env.TMDB_API_KEY}&language=en-US`
+      );
+      const seriesData = await seriesRes.json();
+
+      const series = (seriesData.results || []).slice(0, 10).map(s => ({
+        title: s.name,
+        overview: s.overview,
+        cover: s.poster_path ? `https://image.tmdb.org/t/p/w500${s.poster_path}` : null,
+        rating: s.vote_average,
+        releaseDate: s.first_air_date,
+        tmdbId: s.id,
+        popularity: s.popularity
+      }));
+
+      return res.status(200).json({ success: true, data: series, updated: new Date().toISOString() });
+
     } else if (type === 'indonesia') {
       // Indonesian movies from TMDb
       const indoRes = await fetch(
