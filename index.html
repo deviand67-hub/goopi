@@ -1786,6 +1786,7 @@ async function loadTop10(forceRefresh){
 }
 async function fetchTop10(type){
   const isBook = type==='books';
+  const isSeries = type==='series';
   const container = document.getElementById('top10-'+type);
   if(!container) return;
 
@@ -1815,6 +1816,22 @@ async function fetchTop10(type){
             ${b.description ? `<div class="top10-desc">${b.description.slice(0,100)}...</div>` : ''}
           </div>
           ${b.buyLink ? `<a href="${b.buyLink}" target="_blank" class="top10-review-btn">Amazon →</a>` : ''}
+        </div>
+      `).join('');
+    } else if(isSeries) {
+      container.innerHTML = data.map((s,i) => `
+        <div class="top10-item">
+          <div class="top10-rank">${i+1}</div>
+          ${s.cover ? `<img src="${s.cover}" class="top10-cover" alt="${s.title}" onerror="this.style.display='none'">` : '<div class="top10-cover-placeholder">📺</div>'}
+          <div class="top10-info">
+            <div class="top10-title">${s.title}</div>
+            <div class="top10-meta">
+              <span class="top10-badge">⭐ ${s.rating?.toFixed(1)||'N/A'}</span>
+              ${s.releaseDate ? `<span class="top10-badge" style="background:var(--cream-dark)">${s.releaseDate.slice(0,4)}</span>` : ''}
+              <span class="top10-badge" style="background:#F0EEF8;color:#8B7BC8">TV Series</span>
+            </div>
+            ${s.overview ? `<div class="top10-desc">${s.overview.slice(0,100)}...</div>` : ''}
+          </div>
         </div>
       `).join('');
     } else {
