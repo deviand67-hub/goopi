@@ -1743,7 +1743,7 @@ function showDonateQR(method){
   if(method==='bank'){
     content.innerHTML=`
       <div class="donate-qr-title">${cfg.emoji} ${cfg.name}</div>
-      <div class="donate-qr-sub">Transfer ke rekening berikut</div>
+      <div class="donate-qr-sub">Transfer to the following account</div>
       <div class="donate-account">
         <div class="donate-account-label">Bank</div>
         <div class="donate-account-value">${cfg.bank}</div>
@@ -1753,13 +1753,13 @@ function showDonateQR(method){
         <div class="donate-account-value">${cfg.number}</div>
         <div class="donate-account-name">${cfg.accountName}</div>
       </div>
-      <button class="donate-copy-btn" onclick="copyToClipboard('${cfg.number}','Nomor rekening')">Copy Account Number</button>
+      <button class="donate-copy-btn" onclick="copyToClipboard('${cfg.number}','Account number')">Copy Account Number</button>
       <p class="donate-note">May Allah bless you with abundance in return :)</p>`;
   } else {
     const hasQR=cfg.qr&&!cfg.qr.includes('GANTI');
     content.innerHTML=`
       <div class="donate-qr-title">${cfg.emoji} ${cfg.name}</div>
-      <div class="donate-qr-sub">Scan QR code dengan app ${cfg.name}</div>
+      <div class="donate-qr-sub">Scan QR code with the ${cfg.name} app</div>
       ${hasQR
         ?`<img src="${cfg.qr}" class="donate-qr-img" alt="QR ${cfg.name}">`
         :`<div class="donate-qr-placeholder"><span style="font-size:2rem">📷</span><span>QR Code belum diupload</span><span style="font-size:.65rem">Upload QR code kamu<br>dan update di DONATE_CONFIG</span></div>`
@@ -1775,7 +1775,7 @@ function copyToClipboard(text, label){
   navigator.clipboard.writeText(text).then(()=>{
     alert(label+' berhasil di-copy!');
   }).catch(()=>{
-    prompt('Copy nomor ini:', text);
+    prompt('Copy this number:', text);
   });
 }
 
