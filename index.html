@@ -1137,7 +1137,9 @@ async function deleteReview_db(id){
 }
 
 function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');if(n==='contact')updateContactPage();if(n==='privacy')updatePrivacyPage();
-  if(n==='home'){renderHome();document.title='GOOPI — Good Picks Only';document.querySelector('meta[name="description"]').setAttribute('content','Review jujur buku dan film. Cek dulu sebelum beli atau nonton. Good Picks Only.');}if(n==='admin'){renderTable();document.getElementById('s-about').value=stripTags(getAbout());loadContactSettings();loadPrivacySettings()}if(n==='about')document.getElementById('aboutBody').innerHTML=getAbout();window.scrollTo(0,0)}
+  if(n==='home'){renderHome();
+    const s=document.getElementById('review-schema');if(s)s.remove();
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content','https://www.thegoopi.com/');document.title='GOOPI — Good Picks Only';document.querySelector('meta[name="description"]').setAttribute('content','Review jujur buku dan film. Cek dulu sebelum beli atau nonton. Good Picks Only.');}if(n==='admin'){renderTable();document.getElementById('s-about').value=stripTags(getAbout());loadContactSettings();loadPrivacySettings()}if(n==='about')document.getElementById('aboutBody').innerHTML=getAbout();window.scrollTo(0,0)}
 function navTo(n,btn){currentFilter='all';document.querySelectorAll('.filter-chip').forEach((c,i)=>c.classList.toggle('active',i===0));showPage(n);document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
 function navCat(cat){currentFilter=cat;showPage('home');document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.textContent.toLowerCase().includes(cat==='book'?'buku':'movie')))}
 function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('open');document.getElementById('hamburger').classList.toggle('open')}
@@ -1311,6 +1313,44 @@ function showDetail(id){currentReviewId=id;
   const hasEnContent=r.body_en&&r.body_en.trim().length>0;
   const seoDesc=(r.excerpt||'').slice(0,150);
   document.querySelector('meta[name="description"]').setAttribute('content', seoDesc + ' — Review lengkap di GOOPI.');
+
+  // Inject Schema Markup (JSON-LD) for this review
+  const existingSchema = document.getElementById('review-schema');
+  if(existingSchema) existingSchema.remove();
+
+  const ratingValue = r.rating || 3;
+  const schemaType = r.cat==='book' ? 'Book' : r.cat==='series' ? 'TVSeries' : 'Movie';
+  const authorProp = r.cat==='book' ? '"author":{"@type":"Person","name":"'+r.author+'"},' : '"director":{"@type":"Person","name":"'+r.author+'"},';
+  const reviewUrl = 'https://www.thegoopi.com/review/'+slugify(r.title, r.author);
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "name": "Review: " + r.title,
+    "description": seoDesc,
+    "url": reviewUrl,
+    "datePublished": r.created_at ? r.created_at.slice(0,10) : new Date().toISOString().slice(0,10),
+    "author": {"@type": "Organization", "name": "theGOOPI"},
+    "publisher": {"@type": "Organization", "name": "theGOOPI", "url": "https://www.thegoopi.com"},
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": ratingValue,
+      "bestRating": 5,
+      "worstRating": 1
+    },
+    "itemReviewed": {
+      "@type": schemaType,
+      "name": r.title,
+      "author": {"@type": "Person", "name": r.author},
+      "image": r.img || ""
+    }
+  };
+
+  const schemaEl = document.createElement('script');
+  schemaEl.type = 'application/ld+json';
+  schemaEl.id = 'review-schema';
+  schemaEl.textContent = JSON.stringify(schema);
+  document.head.appendChild(schemaEl);
   if(hasEnContent){
     // Add hreflang for bilingual SEO
     let hreflang=document.getElementById('hreflang-en');
@@ -1320,6 +1360,10 @@ function showDetail(id){currentReviewId=id;
   document.querySelector('meta[property="og:title"]').setAttribute('content', r.title + ' | GOOPI');
   document.querySelector('meta[property="og:description"]').setAttribute('content', desc);
   if(r.img){document.querySelector('meta[property="og:image"]').setAttribute('content', r.img);}
+  // Update OG URL to review URL
+  const reviewCanonicalUrl = 'https://www.thegoopi.com/review/'+slugify(r.title, r.author);
+  document.querySelector('meta[property="og:url"]')?.setAttribute('content', reviewCanonicalUrl);
+  document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
   // Update URL
   updateReviewUrl(r, 'id');
   showPage('detail');
