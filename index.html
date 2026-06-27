@@ -1229,7 +1229,8 @@ function showDetail(id){currentReviewId=id;
           panelIndo;
       } else {
         // Foreign original — show tabs for Original and Indonesian translation
-        const tabOrig='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">'+origLang+'</button>';
+        const langLabel=origLang.toLowerCase().includes('inggris')||origLang.toLowerCase().includes('english')?'English':origLang.toLowerCase().includes('indonesia')?'Indonesian':origLang;
+        const tabOrig='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">'+langLabel+'</button>';
         const tabId='<button class="lang-tab" data-uid="'+uid+'" data-tab="id" onclick="switchLangTabEl(this)">Indonesian</button>';
         const panelOrig='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(origLinks,'Edisi original','var(--brown-dark)')+'</div>';
         const panelId='<div id="'+uid+'_id" class="lang-tab-panel">'+(hasId?mkLinks(idLinks,'Versi terjemahan Indonesia','var(--green)'):'<div class="no-links-msg">Belum ada terjemahan bahasa Indonesia.</div>')+'</div>';
