@@ -1045,6 +1045,7 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
             <div><div class="top10-title">Inspirasi Hari Ini</div><div class="top10-date" id="top10Date"></div></div>
             <div style="display:flex;gap:8px;align-items:center">
               <div class="top10-tabs"><button class="top10-tab active" onclick="switchTop10('books',this)">Books</button><button class="top10-tab" onclick="switchTop10('movies',this)">Movies</button>
+              <button class="top10-tab" onclick="switchTop10('series',this)">📺 Series</button>
               <button class="top10-tab" onclick="switchTop10('indonesia',this)">🇮🇩 Indonesia</button></div>
               <button class="top10-refresh" onclick="loadTop10(true)">↺ Refresh</button>
             </div>
@@ -1346,14 +1347,15 @@ function showFilmSection(){
   renderFilm('all');
 }
 
-function renderFilm(sub){
+async function renderFilm(sub){
+  await loadReviews();
   const reviews = getReviews();
   const filtered = sub==='all' 
     ? reviews.filter(r=>r.cat==='movie'||r.cat==='series')
     : reviews.filter(r=>r.cat===sub);
   const grid = document.getElementById('mainGrid');
   if(!grid) return;
-  if(!filtered.length){grid.innerHTML='<div class="empty-state">Belum ada review film atau series.</div>';return;}
+  if(!filtered.length){grid.innerHTML='<div class="empty-state">Belum ada review untuk kategori ini.</div>';return;}
   grid.innerHTML = filtered.map(r=>renderCard(r)).join('');
 }
 
