@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/review/:slug",
+      "destination": "/"
+    },
+    {
+      "source": "/review/:slug/en",
+      "destination": "/"
+    }
+  ]
+}
