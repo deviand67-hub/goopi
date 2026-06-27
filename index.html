@@ -47,7 +47,7 @@
   }
 }
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600&family=Caveat:wght@500;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -413,7 +413,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 <body>
 
 <nav>
-  <div class="nav-logo" onclick="showPage('home')"><span style="font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:3px;font-size:1.1rem">GOOPI</span> <span class="dot"></span></div>
+  <div class="nav-logo" onclick="showPage('home')"><span style="font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:3px;font-size:1.1rem"><sup style="font-size:.65em;font-family:'Great Vibes',cursive;font-weight:400;letter-spacing:0;opacity:.9;vertical-align:super;margin-right:2px">the</sup>GOOPI</span> <span class="dot"></span></div>
   <div class="nav-links" id="navLinks">
     <button class="nav-link active" onclick="navTo('home',this)">Home</button>
     <button class="nav-link" onclick="showPage('about')">About</button>
@@ -764,11 +764,11 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 
     </svg>
     <div class="hero-inner">
-      <h1 style="display:inline-flex;align-items:center;gap:6px">GOOPI<span style="color:var(--pink);font-size:.5em;display:block;line-height:1;margin-top:4px">●</span></h1>
+      <h1 style="display:inline-flex;align-items:center;gap:6px"><sup style="font-size:.5em;font-family:'Great Vibes',cursive;font-weight:400;letter-spacing:0;opacity:.9;position:relative;top:-0.3em;margin-right:2px">the</sup>GOOPI<span style="color:var(--pink);font-size:.5em;display:block;line-height:1;margin-top:4px">●</span></h1>
       <div class="hero-eyebrow">Good Picks Only</div>
       
       <div class="hero-search">
-        <input type="text" id="heroSearch" placeholder="Check This Out... (Book / Movie)" onkeydown="if(event.key==='Enter')doHeroSearch()">
+        <input type="text" id="heroSearch" placeholder="Search…" onkeydown="if(event.key==='Enter')doHeroSearch()">
         <button onclick="doHeroSearch()" style="font-size:1rem;padding:14px 22px">🔍</button>
       </div>
     </div>
@@ -797,7 +797,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 <!-- ABOUT -->
 <div id="page-about" class="page">
   <div class="about-wrap">
-    <div class="about-title" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:2.5rem">GOOPI<span style="color:var(--pink);font-style:normal">•</span></div>
+    <div class="about-title" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:2.5rem"><sup style="font-size:.65em;font-family:'Great Vibes',cursive;font-weight:400;letter-spacing:0;opacity:.9;vertical-align:super;margin-right:2px">the</sup>GOOPI<span style="color:var(--pink);font-style:normal">•</span></div>
     <div class="about-tagline">Good Picks Only</div>
     <div class="about-body" id="aboutBody"></div>
   </div>
@@ -872,7 +872,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 <div id="page-admin" class="page">
   <div class="admin-panel">
     <div class="admin-topbar">
-      <div class="logo" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:1.1rem;color:var(--cream-light)">GOOPI<span style="color:var(--pink)">•</span></div>
+      <div class="logo" style="font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:3px;font-size:1.1rem;color:var(--cream-light)"><sup style="font-size:.65em;font-family:'Great Vibes',cursive;font-weight:400;letter-spacing:0;opacity:.9;vertical-align:super;margin-right:2px">the</sup><sup style="font-size:.65em;font-family:'Great Vibes',cursive;font-weight:400;letter-spacing:0;opacity:.9;vertical-align:super;margin-right:2px">the</sup><sup style="font-size:.65em;font-family:'Great Vibes',cursive;font-weight:400;letter-spacing:0;opacity:.9;vertical-align:super;margin-right:2px">the</sup><sup style="font-size:.65em;font-family:'Great Vibes',cursive;font-weight:400;letter-spacing:0;opacity:.9;vertical-align:super;margin-right:2px">the</sup>GOOPI<span style="color:var(--pink)">•</span></div>
       <div style="display:flex;gap:8px"><button class="btn btn-outline btn-sm" style="color:var(--cream-light);border-color:rgba(255,255,255,.3)" onclick="showPage('home')">← Site</button><button class="btn btn-red btn-sm" onclick="doLogout()">Logout</button></div>
     </div>
     <div class="admin-body">
