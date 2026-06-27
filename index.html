@@ -1138,7 +1138,7 @@ function stripTags(h){const d=document.createElement('div');d.innerHTML=h;return
 
 async function renderHome(){
   await loadReviews();
-  const reviews=getReviews().filter(r=>currentFilter==='all'||r.cat===currentFilter);
+  const reviews=getReviews().filter(r=>currentFilter==='all'||(currentFilter==='movie'&&(r.cat==='movie'||r.cat==='series'))||r.cat===currentFilter);
   renderCards(reviews,'mainGrid');
 }
 async function loadReviews(){
@@ -1146,7 +1146,15 @@ async function loadReviews(){
   document.getElementById('mainGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-mid);font-size:.85rem">Memuat review...</div>';
   await getReviewsAsync();
 }
-function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderHome();}
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  // Show/hide film sub-filter
+  const subBar=document.getElementById('filmSubFilter');
+  if(subBar)subBar.style.display=(f==='movie')?'flex':'none';
+  renderHome();
+}
 
 function renderCards(reviews,tid){
   const grid=document.getElementById(tid);
