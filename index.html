@@ -1000,6 +1000,13 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
               <button type="button" onclick="addScoringRow()" class="btn-add-link" style="margin-top:8px">+ Tambah Kriteria</button>
             </div>
           </div>
+          <div class="form-group" id="bookSubtypeGroup" style="display:none">
+            <label>Tipe Buku</label>
+            <select id="f-book-subtype" onchange="applyDefaultCriteria()">
+              <option value="fiction">📖 Fiksi (Novel)</option>
+              <option value="nonfiction">📚 Non-Fiksi (Self-Help, Bisnis, dll)</option>
+            </select>
+          </div>
           <hr class="section-divider">
           <div id="streamingSection">
             <div class="form-group"><label>📺 Tonton Online (Film)</label>
@@ -1463,6 +1470,8 @@ function toggleCatSections(cat){
   // Show/hide verdict and rating for notes
   const vrf=document.getElementById('verdictRatingFields');
   if(vrf)vrf.style.display=cat==='notes'?'none':'';
+  const bsg=document.getElementById('bookSubtypeGroup');
+  if(bsg)bsg.style.display=cat==='book'?'block':'none';
   if(cat==='series'){cat='movie';} // Series uses same fields as movie
   if(cat==='notes'){cat='book';} // Notes uses same fields as book
   const se=document.getElementById('streamingSection'),tr=document.getElementById('translationSection');if(!se||!tr)return;
