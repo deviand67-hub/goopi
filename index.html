@@ -1524,7 +1524,7 @@ async function saveReview(){
   const bodyEn=document.getElementById('f-body-en')?.value.trim()||'';
   const data={title,author,body,cat,genre:document.getElementById('f-genre-input')?document.getElementById('f-genre-input').value.trim():'',verdict:document.getElementById('f-verdict').value,img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),
     excerpt_en:excerptEn,
-    body_en:bodyEn,scoring:window._lastScoring||getManualScoring()||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
+    body_en:bodyEn,scoring:getManualScoring()||window._lastScoring||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
   window._lastScoring=null;
   const isUpdate=!!editId;
   if(editId){data.id=editId;editId=null;}
