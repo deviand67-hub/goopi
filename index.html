@@ -1434,6 +1434,31 @@ function setFilmSub(sub, btn){
   renderFilm(sub==='all' ? 'all' : sub);
 }
 
+// Default scoring criteria per category
+const DEFAULT_CRITERIA = {
+  book_fiction: [
+    {name:'Substance', score:7, reason:''},
+    {name:'Readable', score:7, reason:''},
+    {name:'Fresh Perspective', score:7, reason:''},
+    {name:'Emotional Impact', score:7, reason:''},
+    {name:'Worth the Price', score:7, reason:''}
+  ],
+  book_nonfiction: [
+    {name:'Substance', score:7, reason:''},
+    {name:'Readable', score:7, reason:''},
+    {name:'Fresh Perspective', score:7, reason:''},
+    {name:'Actionable', score:7, reason:''},
+    {name:'Worth the Price', score:7, reason:''}
+  ],
+  movie: [
+    {name:'Cerita', score:7, reason:''},
+    {name:'Akting', score:7, reason:''},
+    {name:'Visual', score:7, reason:''},
+    {name:'Pesan', score:7, reason:''},
+    {name:'Daya Tonton Ulang', score:7, reason:''}
+  ]
+};
+
 function toggleCatSections(cat){
   // Show/hide verdict and rating for notes
   const vrf=document.getElementById('verdictRatingFields');
@@ -1443,6 +1468,8 @@ function toggleCatSections(cat){
   const se=document.getElementById('streamingSection'),tr=document.getElementById('translationSection');if(!se||!tr)return;
   const origCat=document.getElementById('f-cat').value;
   if(origCat==='notes'){se.style.display='block';tr.style.display='block';}
+  // Auto-apply default criteria if none set
+  if(!manualCriteria.length) applyDefaultCriteria();
   else{se.style.display=cat==='movie'?'block':'none';tr.style.display=cat==='book'?'block':'none';}}
 
 function addStreamLink(){const p=document.getElementById('sl-platform').value.trim(),t=document.getElementById('sl-type').value,cur=document.getElementById('sl-currency').value,pr=document.getElementById('sl-price').value.trim(),u=document.getElementById('sl-url').value.trim();if(!p)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempStreamLinks.push({platform:p,type:t,price:fullPrice,url:u});renderStreamList();['sl-platform','sl-price','sl-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-type').value='subscription'}
@@ -1660,6 +1687,16 @@ function toggleScoring(){
     renderScoringRows();
   }
 }
+function applyDefaultCriteria(){
+  const cat = document.getElementById('f-cat').value;
+  const subtype = document.getElementById('f-book-subtype')?.value || 'fiction';
+  let key = cat === 'book' ? ('book_' + subtype) : 'movie';
+  const defaults = DEFAULT_CRITERIA[key] || DEFAULT_CRITERIA.book_fiction;
+  manualCriteria = defaults.map(c => ({...c}));
+  document.getElementById('manualScoring').style.display = 'block';
+  renderScoringRows();
+}
+
 function addScoringRow(){
   manualCriteria.push({name:'', score:7, reason:''});
   renderScoringRows();
