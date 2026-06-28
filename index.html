@@ -1478,8 +1478,8 @@ function toggleCatSections(cat){
   const origCat=document.getElementById('f-cat').value;
   if(origCat==='notes'){se.style.display='block';tr.style.display='block';}
   // Auto-apply default criteria if none set
-  if(!manualCriteria.length) applyDefaultCriteria();
-  else{se.style.display=cat==='movie'?'block':'none';tr.style.display=cat==='book'?'block':'none';}}
+  else{se.style.display=cat==='movie'?'block':'none';tr.style.display=cat==='book'?'block':'none';}
+  setTimeout(()=>{ if(!manualCriteria.length) applyDefaultCriteria(); }, 100);}
 
 function addStreamLink(){const p=document.getElementById('sl-platform').value.trim(),t=document.getElementById('sl-type').value,cur=document.getElementById('sl-currency').value,pr=document.getElementById('sl-price').value.trim(),u=document.getElementById('sl-url').value.trim();if(!p)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempStreamLinks.push({platform:p,type:t,price:fullPrice,url:u});renderStreamList();['sl-platform','sl-price','sl-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('sl-type').value='subscription'}
 function removeStreamLink(i){tempStreamLinks.splice(i,1);renderStreamList()}
@@ -1699,10 +1699,11 @@ function toggleScoring(){
 function applyDefaultCriteria(){
   const cat = document.getElementById('f-cat').value;
   const subtype = document.getElementById('f-book-subtype')?.value || 'fiction';
-  let key = cat === 'book' ? ('book_' + subtype) : 'movie';
+  let key = (cat === 'book' || cat === 'notes') ? ('book_' + subtype) : 'movie';
   const defaults = DEFAULT_CRITERIA[key] || DEFAULT_CRITERIA.book_fiction;
   manualCriteria = defaults.map(c => ({...c}));
-  document.getElementById('manualScoring').style.display = 'block';
+  const ms = document.getElementById('manualScoring');
+  if(ms) ms.style.display = 'block';
   renderScoringRows();
 }
 
@@ -1742,7 +1743,7 @@ function renderScoringRows(){
   updateManualTotal();
 }
 function getManualScoring(){
-  if(!manualCriteria.length || document.getElementById('manualScoring').style.display==='none') return null;
+  if(!manualCriteria.length) return null;
   const genre = document.getElementById('f-genre-input').value.trim();
   const total = Math.round(manualCriteria.reduce((s,c)=>s+c.score,0)/manualCriteria.length*10);
   const verdict = total>=80?'yes':total>=50?'maybe':'no';
