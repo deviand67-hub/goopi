@@ -967,7 +967,17 @@ LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
             <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">📚 Books</option><option value="movie">🎬 Movies</option><option value="series">📺 Series</option>
 <option value="notes">📝 Notes</option></select></div>
             <div id="verdictRatingFields"><div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
-            <div class="form-group"><label>Rating</label><select id="f-rating"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select></div></div>
+            <div class="form-group"><label>Rating</label><select id="f-rating">
+  <option value="5">5.0 — ★★★★★</option>
+  <option value="4.5">4.5 — ★★★★½</option>
+  <option value="4">4.0 — ★★★★☆</option>
+  <option value="3.5">3.5 — ★★★½☆</option>
+  <option value="3">3.0 — ★★★☆☆</option>
+  <option value="2.5">2.5 — ★★½☆☆</option>
+  <option value="2">2.0 — ★★☆☆☆</option>
+  <option value="1.5">1.5 — ★½☆☆☆</option>
+  <option value="1">1.0 — ★☆☆☆☆</option>
+</select></div></div>
           </div>
           <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="f-title"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="f-author"></div></div>
           <div class="form-group"><label>URL Cover (opsional)</label>
@@ -1315,7 +1325,7 @@ function showDetail(id){currentReviewId=id;
         <div class="detail-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}</div>
         <div class="detail-title">${r.title}</div>
         <div class="detail-author">oleh ${r.author}</div>
-        <div class="detail-rating">${isNotes?'':('★'.repeat(r.rating)+'☆'.repeat(5-r.rating))}</div>
+        <div class="detail-rating">${isNotes?'':((()=>{const r2=r.rating||0;const full=Math.floor(r2);const half=r2%1>=0.5?1:0;const empty=5-full-half;return'★'.repeat(full)+(half?'½':'')+'☆'.repeat(empty);})())}</div>
         ${isNotes?'':`<div class="detail-verdict-box ${vc.cls}">${vc.icon} ${vc.label}</div>`}
       </div>
     </div>
