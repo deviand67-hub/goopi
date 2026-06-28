@@ -1578,7 +1578,7 @@ function editReview(id){
   window.scrollTo(0,0);
 }
 async function deleteReview(id){if(!confirm('Hapus review ini?'))return;try{await deleteReview_db(id);await renderTable();await renderHome();}catch(e){alert('Gagal hapus: '+e.message)}}
-function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';document.getElementById('f-rating').value='5';tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI();manualCriteria=[];document.getElementById('manualScoring').style.display='none';const gi=document.getElementById('f-genre-input');if(gi)gi.value='';}
+function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI();manualCriteria=[];document.getElementById('manualScoring').style.display='none';const gi=document.getElementById('f-genre-input');if(gi)gi.value='';}
 async function renderTable(){
   await getReviewsAsync();
   const reviews=getReviews(),t=document.getElementById('adminTable');
@@ -1969,8 +1969,7 @@ async function aiStep2(){
     const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
     document.getElementById('f-cat').value=cat;document.getElementById('f-title').value=title;document.getElementById('f-author').value=author||'';
     document.getElementById('f-excerpt').value=parsed.excerpt||'';document.getElementById('f-body').value=parsed.body||'';
-    document.getElementById('f-verdict').value=verdict;document.getElementById('f-rating').value=String(parsed.rating||3);
-    window._lastScoring={genre:aiGenre,criteria:[...aiScoreCriteria],total,verdict};
+    document.getElementById('f-verdict').value=verdict;window._lastScoring={genre:aiGenre,criteria:[...aiScoreCriteria],total,verdict};
     document.getElementById('step2').classList.remove('active');document.getElementById('step2').classList.add('done');
     document.getElementById('step3').style.display='block';setTimeout(()=>document.getElementById('step3').classList.add('active'),50);
     document.getElementById('formTitle').scrollIntoView({behavior:'smooth'});
