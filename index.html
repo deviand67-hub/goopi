@@ -1532,7 +1532,7 @@ async function saveReview(){
   const cat=document.getElementById('f-cat').value;
   const excerptEn=document.getElementById('f-excerpt-en')?.value.trim()||'';
   const bodyEn=document.getElementById('f-body-en')?.value.trim()||'';
-  const data={title,author,body,cat,genre:document.getElementById('f-genre-input')?document.getElementById('f-genre-input').value.trim():'',verdict:document.getElementById('f-verdict').value,rating:parseInt(document.getElementById('f-rating').value),img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),
+  const data={title,author,body,cat,genre:document.getElementById('f-genre-input')?document.getElementById('f-genre-input').value.trim():'',verdict:document.getElementById('f-verdict').value,rating:parseFloat(document.getElementById('f-rating').value),img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),
     excerpt_en:excerptEn,
     body_en:bodyEn,scoring:window._lastScoring||getManualScoring()||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
   window._lastScoring=null;
