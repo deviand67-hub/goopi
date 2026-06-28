@@ -1325,7 +1325,7 @@ function showDetail(id){currentReviewId=id;
         <div class="detail-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}</div>
         <div class="detail-title">${r.title}</div>
         <div class="detail-author">oleh ${r.author}</div>
-        <div class="detail-rating">${isNotes?'':((()=>{const r2=r.rating||0;const full=Math.floor(r2);const half=r2%1>=0.5?1:0;const empty=5-full-half;return'★'.repeat(full)+(half?'½':'')+'☆'.repeat(empty);})())}</div>
+        <div class="detail-rating">${isNotes?'':((()=>{const r2=parseFloat(r.rating)||0;const full=Math.floor(r2);const half=r2%1>=0.5?1:0;const empty=5-full-half;return'★'.repeat(full)+(half?'⯨':'')+'☆'.repeat(empty);})())}</div>
         ${isNotes?'':`<div class="detail-verdict-box ${vc.cls}">${vc.icon} ${vc.label}</div>`}
       </div>
     </div>
