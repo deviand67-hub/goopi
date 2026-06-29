@@ -890,12 +890,23 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
       <!-- ADD -->
       <div class="admin-section active" id="at-add">
         <div style="border:1px solid var(--brown-dark);border-radius:4px;padding:24px;margin-bottom:20px;background:linear-gradient(135deg,var(--cream-dark),var(--cream-light))">
+          <!-- Top-level tabs -->
+          <div style="display:flex;background:rgba(0,0,0,.06);border-radius:8px;padding:3px;gap:2px;margin-bottom:16px">
+            <button onclick="switchAiTab('generator',this)" id="aitab-generator" class="ai-main-tab" style="flex:1;background:#fff;border:none;border-radius:6px;padding:8px;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--brown);font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.1)">✨ AI Generator</button>
+            <button onclick="switchAiTab('template',this)" id="aitab-template" class="ai-main-tab" style="flex:1;background:transparent;border:none;border-radius:6px;padding:8px;font-size:.75rem;cursor:pointer;color:var(--text-mid);font-family:inherit">💡 Prompt Template</button>
+          </div>
+
+          <!-- AI Generator tab -->
+          <div id="ai-tab-generator">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span>✨</span><h3 style="margin:0;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)">AI Review Generator</h3>
           </div>
           <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:12px">AI cari data → deteksi genre → buat skor → tulis review. Semua bisa diedit.</p>
-          <div style="background:var(--cream-dark);border-radius:8px;padding:14px;margin-bottom:16px">
-            <div style="font-size:.72rem;font-weight:600;color:var(--text-mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">💡 Atau generate manual via Claude.ai</div>
+          </div>
+
+          <!-- Prompt Template tab -->
+          <div id="ai-tab-template" style="display:none">
+            <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:12px">Copy prompt lalu paste ke Claude.ai untuk generate review manual.</p>
             <div id="promptBox" style="display:none">
               <!-- Tabs -->
               <div style="display:flex;background:var(--cream-light);border-radius:8px;padding:3px;border:1px solid var(--border);margin-bottom:10px;gap:2px">
@@ -970,30 +981,9 @@ SCORING (masing-masing 0-10, total max 100):
               <button onclick="copyActivePrompt()" class="btn btn-primary btn-sm">Copy Prompt</button>
               <a href="https://claude.ai" target="_blank" class="btn btn-outline btn-sm" style="margin-left:6px">Buka Claude.ai →</a>
             </div>
-            <button onclick="document.getElementById('promptBox').style.display=document.getElementById('promptBox').style.display==='none'?'block':'none'" style="background:none;border:none;font-size:.75rem;font-weight:600;color:var(--brown-dark);cursor:pointer;padding:0">Lihat prompt template ▾</button>
-          </div>
-          <div class="ai-step active" id="step1">
-            <div class="step-header"><span class="step-num">1</span><span class="step-title">Info Dasar</span></div>
-            <div class="step-sub">Isi judul dan pilih kategori</div>
-            <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="ai-title" placeholder="e.g. Atomic Habits"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="ai-author" placeholder="e.g. James Clear"></div></div>
-            <div class="form-row"><div class="form-group"><label>Kategori</label><select id="ai-cat" onchange="toggleCatSections(this.value)"><option value="book">📚 Books</option><option value="movie">🎬 Movies</option><option value="series">📺 Series</option>
-<option value="notes">📝 Notes</option></select></div><div class="form-group"><label>Tone</label><select id="ai-tone"><option value="casual">Santai</option><option value="critical">Kritis</option><option value="hype">Hype</option></select></div></div>
-            <button class="btn btn-primary" id="btnStep1" onclick="aiStep1()">Cari Data & Buat Skor →</button>
-            <div id="step1Status" style="margin-top:10px;font-size:.78rem;display:none;color:var(--brown-dark)">Mencari data...</div>
-          </div>
-          <div class="ai-step" id="step2" style="display:none">
-            <div class="step-header"><span class="step-num">2</span><span class="step-title">Skor per Kriteria</span></div>
-            <div class="step-sub">Geser untuk edit skor</div>
-            <div id="genreDisplay"></div>
-            <div class="score-grid" id="scoreGrid"></div>
-            <div class="total-score-box"><div class="total-num" id="totalScoreNum">0</div><div class="total-info"><div class="total-label">Total / 100</div><div class="total-verdict" id="totalVerdictLabel">—</div></div><div id="totalVerdictBadge"></div></div>
-            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn btn-primary" id="btnStep2" onclick="aiStep2()">Generate Review →</button><button class="btn btn-outline" onclick="resetAI()">Mulai Ulang</button></div>
-            <div id="step2Status" style="margin-top:8px;font-size:.78rem;color:var(--brown-dark);display:none">Menulis review...</div>
-          </div>
-          <div class="ai-step" id="step3" style="display:none">
-            <div class="step-header"><span class="step-num">3</span><span class="step-title">Review Siap!</span></div>
-            <div class="step-sub">Form di bawah sudah terisi. Edit jika perlu lalu simpan.</div>
-            <div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="document.getElementById('formTitle').scrollIntoView({behavior:'smooth'})">Lihat Form ↓</button><button class="btn btn-outline" onclick="resetAI()">Buat Baru</button></div>
+            <div style="margin-top:8px">
+              
+            </div>
           </div>
         </div>
         <div class="admin-card">
@@ -2000,6 +1990,21 @@ function toggleReviewLang(){
   if(r) updateReviewUrl(r, isEn?'en':'id');
 }
 
+function switchAiTab(tab, btn){
+  ['generator','template'].forEach(t=>{
+    document.getElementById('ai-tab-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.ai-main-tab').forEach(b=>{
+    b.style.background='transparent';
+    b.style.color='var(--text-mid)';
+    b.style.fontWeight='normal';
+    b.style.boxShadow='none';
+  });
+  btn.style.background='#fff';
+  btn.style.color='var(--brown)';
+  btn.style.fontWeight='600';
+  btn.style.boxShadow='0 1px 3px rgba(0,0,0,.1)';
+}
 function switchPromptTab(tab, btn){
   ['fiction','nonfiction','movie'].forEach(t=>{
     document.getElementById('prompt-'+t).style.display = t===tab ? 'block' : 'none';
