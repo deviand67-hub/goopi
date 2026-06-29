@@ -1502,6 +1502,16 @@ function toggleCatSections(cat){
   if(vrf)vrf.style.display=cat==='notes'?'none':'';
   const bsg=document.getElementById('bookSubtypeGroup');
   if(bsg)bsg.style.display=cat==='book'?'block':'none';
+  // Reset & re-init scoring when category changes
+  const ms=document.getElementById('manualScoring');
+  if(ms){
+    if(cat==='notes'){
+      ms.style.display='none';
+      manualCriteria=[];
+    } else if(manualCriteria.length>0){
+      initDefaultCriteria(cat);
+    }
+  }
   if(cat==='series'){cat='movie';} // Series uses same fields as movie
   if(cat==='notes'){cat='book';} // Notes uses same fields as book
   const se=document.getElementById('streamingSection'),tr=document.getElementById('translationSection');if(!se||!tr)return;
