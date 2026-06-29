@@ -897,8 +897,14 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
           <div style="background:var(--cream-dark);border-radius:8px;padding:14px;margin-bottom:16px">
             <div style="font-size:.72rem;font-weight:600;color:var(--text-mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">💡 Atau generate manual via Claude.ai</div>
             <div id="promptBox" style="display:none">
-              <div style="background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">=== UNTUK BUKU (Fiction) ===
-Tulis review buku "[judul]" oleh [penulis] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
+              <!-- Tabs -->
+              <div style="display:flex;background:var(--cream-light);border-radius:8px;padding:3px;border:1px solid var(--border);margin-bottom:10px;gap:2px">
+                <button onclick="switchPromptTab('fiction',this)" id="ptab-fiction" class="prompt-tab active" style="flex:1;background:#fff;border:none;border-radius:6px;padding:6px 4px;font-size:.68rem;cursor:pointer;color:var(--brown);font-weight:600;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.1)">📚 Fiction</button>
+                <button onclick="switchPromptTab('nonfiction',this)" id="ptab-nonfiction" class="prompt-tab" style="flex:1;background:transparent;border:none;border-radius:6px;padding:6px 4px;font-size:.68rem;cursor:pointer;color:var(--text-mid);font-family:inherit">📚 Non-fiction</button>
+                <button onclick="switchPromptTab('movie',this)" id="ptab-movie" class="prompt-tab" style="flex:1;background:transparent;border:none;border-radius:6px;padding:6px 4px;font-size:.68rem;cursor:pointer;color:var(--text-mid);font-family:inherit">🎬 Movie/Series</button>
+              </div>
+              <!-- Prompt texts -->
+              <div id="prompt-fiction" style="background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">Tulis review buku "[judul]" oleh [penulis] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
 
 EXCERPT: (hook 1 kalimat, max 120 karakter)
 
@@ -918,23 +924,29 @@ SCORING (masing-masing 0-10, total max 100):
 - Originalitas: [0-10] — [alasan]
 - Relevansi & Konteks: [0-10] — [alasan]
 - Daya Baca: [0-10] — [alasan]
-- Kesan Akhir: [0-10] — [alasan]
+- Kesan Akhir: [0-10] — [alasan]</div>
+              <div id="prompt-nonfiction" style="display:none;background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">Tulis review buku non-fiction "[judul]" oleh [penulis] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
 
-=== UNTUK BUKU (Non-fiction) ===
-(Sama seperti di atas, ganti SCORING dengan:)
-- Substansi & Ide: [0-10]
-- Kedalaman Riset: [0-10]
-- Struktur & Alur: [0-10]
-- Gaya Penulisan: [0-10]
-- Pacing: [0-10]
-- Actionable / Aplikatif: [0-10]
-- Originalitas: [0-10]
-- Relevansi & Konteks: [0-10]
-- Daya Baca: [0-10]
-- Kesan Akhir: [0-10]
+EXCERPT: (hook 1 kalimat, max 120 karakter)
 
-=== UNTUK MOVIE / SERIES ===
-Tulis review [film/series] "[judul]" oleh [sutradara] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
+BODY: (min 500 kata — konteks personal, isi tanpa spoiler, kritik jujur, "Cocok untuk / Skip kalau", sisipkan [QUOTE: teks])
+
+GENRE: (max 3 kata)
+
+VERDICT: (yes / maybe / no — gunakan: >=85=yes, 70-84=maybe, <70=no)
+
+SCORING (masing-masing 0-10, total max 100):
+- Substansi & Ide: [0-10] — [alasan]
+- Kedalaman Riset: [0-10] — [alasan]
+- Struktur & Alur: [0-10] — [alasan]
+- Gaya Penulisan: [0-10] — [alasan]
+- Pacing: [0-10] — [alasan]
+- Actionable / Aplikatif: [0-10] — [alasan]
+- Originalitas: [0-10] — [alasan]
+- Relevansi & Konteks: [0-10] — [alasan]
+- Daya Baca: [0-10] — [alasan]
+- Kesan Akhir: [0-10] — [alasan]</div>
+              <div id="prompt-movie" style="display:none;background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">Tulis review [film/series] "[judul]" oleh [sutradara] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
 
 EXCERPT: (hook 1 kalimat, max 120 karakter)
 
@@ -955,7 +967,7 @@ SCORING (masing-masing 0-10, total max 100):
 - Emosi & Impact: [0-10] — [alasan]
 - Originalitas: [0-10] — [alasan]
 - Kesan Akhir: [0-10] — [alasan]</div>
-              <button onclick="copyPrompt()" class="btn btn-primary btn-sm">Copy Prompt</button>
+              <button onclick="copyActivePrompt()" class="btn btn-primary btn-sm">Copy Prompt</button>
               <a href="https://claude.ai" target="_blank" class="btn btn-outline btn-sm" style="margin-left:6px">Buka Claude.ai →</a>
             </div>
             <button onclick="document.getElementById('promptBox').style.display=document.getElementById('promptBox').style.display==='none'?'block':'none'" style="background:none;border:none;font-size:.75rem;font-weight:600;color:var(--brown-dark);cursor:pointer;padding:0">Lihat prompt template ▾</button>
@@ -1988,6 +2000,30 @@ function toggleReviewLang(){
   if(r) updateReviewUrl(r, isEn?'en':'id');
 }
 
+function switchPromptTab(tab, btn){
+  ['fiction','nonfiction','movie'].forEach(t=>{
+    document.getElementById('prompt-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.prompt-tab').forEach(b=>{
+    b.style.background='transparent';
+    b.style.color='var(--text-mid)';
+    b.style.fontWeight='normal';
+    b.style.boxShadow='none';
+  });
+  btn.style.background='#fff';
+  btn.style.color='var(--brown)';
+  btn.style.fontWeight='600';
+  btn.style.boxShadow='0 1px 3px rgba(0,0,0,.1)';
+}
+function copyActivePrompt(){
+  const active = ['fiction','nonfiction','movie'].find(t=>document.getElementById('prompt-'+t).style.display!=='none') || 'fiction';
+  const text = document.getElementById('prompt-'+active).innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = event.target;
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>btn.textContent='Copy Prompt',2000);
+  });
+}
 function copyPrompt(){
   const txt=document.getElementById('promptBox').querySelector('div').textContent;
   navigator.clipboard.writeText(txt).then(()=>alert('Prompt berhasil di-copy! Buka Claude.ai dan paste.')).catch(()=>alert('Copy manual dari kotak prompt di atas.'));
