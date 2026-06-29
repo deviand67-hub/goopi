@@ -140,6 +140,8 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .card-excerpt{font-size:.75rem;color:var(--text-mid);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5;margin-bottom:4px}
 .card-footer{display:flex;align-items:center;justify-content:space-between;padding-bottom:4px}
 .card-score{font-size:.85rem;font-weight:700;color:var(--pink)}
+.film-sub-btn{flex:1;background:transparent;border:none;border-radius:6px;padding:6px 10px;font-size:.72rem;cursor:pointer;color:var(--text-mid);font-family:inherit;font-weight:500;transition:all .15s}
+.film-sub-btn.active{background:#fff;color:var(--brown);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .card-date{font-size:.68rem;color:#B8A89A}
 .empty{padding:80px 40px;text-align:center;color:var(--text-mid)}
 .empty-icon{font-size:3rem;margin-bottom:16px;display:block;opacity:.4}
@@ -781,10 +783,11 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   </div>
   <div class="main-section">
     <!-- Film sub-filter -->
-  <div id="filmSubFilter" style="display:none;gap:8px;padding:0 20px 16px;flex-wrap:wrap">
+  <div id="filmSubFilter" style="display:none;padding:0 20px 12px"><div style="display:flex;background:var(--cream-light);border-radius:8px;padding:3px;border:1px solid var(--border)">
     <button class="film-sub-btn active" onclick="setFilmSub('all',this)">Semua</button>
     <button class="film-sub-btn" onclick="setFilmSub('movie',this)">Movie</button>
     <button class="film-sub-btn" onclick="setFilmSub('series',this)">Series</button>
+    </div>
   </div>
 
   <div class="section-label">The Latest</div>
@@ -1312,7 +1315,7 @@ function showDetail(id){currentReviewId=id;
     <div class="detail-hero" style="background:${bg};border-radius:4px;padding:28px;margin-bottom:36px">
       <div class="detail-cover">${cover}</div>
       <div class="detail-info">
-        <div class="detail-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}</div>
+        <div class="detail-cat">${r.cat==='book'?'📚 BOOK':r.cat==='series'?'📺 SERIES':r.cat==='notes'?'📝 NOTES':'🎬 MOVIE'}${(r.genre||(r.scoring&&r.scoring.genre))?' <span style="opacity:.65;font-weight:400">· '+((r.genre||(r.scoring&&r.scoring.genre))).split('/')[0].trim()+'</span>':''}</div>
         <div class="detail-title">${r.title}</div>
         <div class="detail-author">oleh ${r.author}</div>
         
@@ -1534,7 +1537,8 @@ async function saveReview(){
     resetForm();
     await renderTable();
     await renderHome();
-    alert('Review berhasil disimpan!');
+    showPage('home');
+    alert('✓ Tersimpan!');
   }catch(e){
     document.getElementById('formErr').textContent='Gagal simpan: '+(e.message||JSON.stringify(e));
     console.error('Save error:',e);
@@ -1674,26 +1678,7 @@ function toggleScoring(){
   const isHidden = el.style.display === 'none';
   el.style.display = isHidden ? 'block' : 'none';
   if(isHidden && manualCriteria.length === 0) {
-    // Add 5 default criteria based on category
-    const cat = document.getElementById('f-cat').value;
-    if(cat === 'book') {
-      manualCriteria = [
-        {name:'Substance', score:7, reason:''},
-        {name:'Readable', score:7, reason:''},
-        {name:'Fresh Perspective', score:7, reason:''},
-        {name:'Actionable', score:7, reason:''},
-        {name:'Worth the Price', score:7, reason:''}
-      ];
-    } else {
-      manualCriteria = [
-        {name:'Cerita', score:7, reason:''},
-        {name:'Akting', score:7, reason:''},
-        {name:'Visual', score:7, reason:''},
-        {name:'Pesan', score:7, reason:''},
-        {name:'Daya Tonton Ulang', score:7, reason:''}
-      ];
-    }
-    renderScoringRows();
+    initDefaultCriteria(document.getElementById('f-cat').value);
   }
 }
 function applyDefaultCriteria(){
@@ -1711,6 +1696,14 @@ function addScoringRow(){
   manualCriteria.push({name:'', score:7, reason:''});
   renderScoringRows();
 }
+function initDefaultCriteria(cat){
+  const bookCrit=['Substansi & Ide','Kedalaman Narasi','Karakter & Sudut Pandang','Plot & Struktur','Gaya Penulisan','Pacing','Originalitas','Relevansi & Konteks','Daya Baca','Kesan Akhir'];
+  const movieCrit=['Cerita & Skrip','Akting','Sinematografi','Arahan Sutradara','Musik & Sound Design','Visual & Produksi','Pacing & Editing','Emosi & Impact','Originalitas','Kesan Akhir'];
+  const crit = cat==='book'?bookCrit:movieCrit;
+  manualCriteria = crit.map(name=>({name, score:7, reason:''}));
+  document.getElementById('manualScoring').style.display='block';
+  renderScoringRows();
+}
 function removeScoringRow(i){
   manualCriteria.splice(i,1);
   renderScoringRows();
@@ -1722,7 +1715,7 @@ function updateScoringRow(i, field, val){
 }
 function updateManualTotal(){
   if(!manualCriteria.length) return;
-  const total = Math.round(manualCriteria.reduce((s,c)=>s+c.score,0)/manualCriteria.length*10);
+  const total = manualCriteria.reduce((s,c)=>s+c.score,0);
   const el = document.getElementById('manualTotal');
   if(el) el.textContent = 'Total: ' + total + '/100';
 }
@@ -1745,7 +1738,7 @@ function renderScoringRows(){
 function getManualScoring(){
   if(!manualCriteria.length) return null;
   const genre = document.getElementById('f-genre-input').value.trim();
-  const total = Math.round(manualCriteria.reduce((s,c)=>s+c.score,0)/manualCriteria.length*10);
+  const total = manualCriteria.reduce((s,c)=>s+c.score,0);
   const verdict = total>=80?'yes':total>=50?'maybe':'no';
   return {genre, criteria:manualCriteria.map(c=>({...c})), total, verdict};
 }
