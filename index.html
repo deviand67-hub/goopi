@@ -1189,7 +1189,7 @@ function renderCards(reviews,tid){
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
     const isNotes=r.cat==='notes';
-    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}${''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="card-score">${(r.scoring&&r.scoring.total)||"–"}<span style="font-size:.65rem;opacity:.7">/100</span></span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
+    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="card-score">${(r.scoring&&r.scoring.total)||"–"}<span style="font-size:.65rem;opacity:.7">/100</span></span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
   }).join('')}
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
@@ -1286,7 +1286,7 @@ function showDetail(id){currentReviewId=id;
       <div style="flex:1">
         <div style="font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${vc.color};margin-bottom:6px">${isNotes?'NOTES':'ASSESSMENT by GOOPI'}</div>
         <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:${vc.color}">${isNotes?r.title:(vc.icon+' '+vc.label)}</div>
-        ${r.genre||r.scoring?.genre?`<div style="font-size:.75rem;color:var(--text-mid);margin-top:4px">Genre: ${r.genre||r.scoring.genre}</div>`:''}
+        ${''}
       </div>
       ${hasScoring?`<div style="text-align:center;background:rgba(255,255,255,.7);border-radius:4px;padding:10px 16px"><div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:${vc.color};line-height:1">${r.scoring.total}</div><div style="font-size:.62rem;color:var(--text-mid);letter-spacing:1px">/100</div></div>`:''}
     </div>
