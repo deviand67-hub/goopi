@@ -1189,7 +1189,7 @@ function renderCards(reviews,tid){
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
     const isNotes=r.cat==='notes';
-    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="card-score">${(r.scoring&&r.scoring.total)||"–"}<span style="font-size:.65rem;opacity:.7">/100</span></span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
+    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div><div class="card-meta"><span class="card-cat">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}${''}</span><span class="verdict-pill ${vcls}">${vlbl}</span></div><div class="card-title">${r.title}</div><div class="card-author">${r.author}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="card-score">${(r.scoring&&r.scoring.total)||"–"}<span style="font-size:.65rem;opacity:.7">/100</span></span><span class="card-date">${fmtDate(r.date||r.created_at)}</span></div></div></div>`;
   }).join('')}
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
@@ -1447,25 +1447,40 @@ function setFilmSub(sub, btn){
 // Default scoring criteria per category
 const DEFAULT_CRITERIA = {
   book_fiction: [
-    {name:'Substance', score:7, reason:''},
-    {name:'Readable', score:7, reason:''},
-    {name:'Fresh Perspective', score:7, reason:''},
-    {name:'Emotional Impact', score:7, reason:''},
-    {name:'Worth the Price', score:7, reason:''}
+    {name:'Substansi & Ide', score:7, reason:''},
+    {name:'Kedalaman Narasi', score:7, reason:''},
+    {name:'Karakter & Sudut Pandang', score:7, reason:''},
+    {name:'Plot & Struktur', score:7, reason:''},
+    {name:'Gaya Penulisan', score:7, reason:''},
+    {name:'Pacing', score:7, reason:''},
+    {name:'Originalitas', score:7, reason:''},
+    {name:'Relevansi & Konteks', score:7, reason:''},
+    {name:'Daya Baca', score:7, reason:''},
+    {name:'Kesan Akhir', score:7, reason:''}
   ],
   book_nonfiction: [
-    {name:'Substance', score:7, reason:''},
-    {name:'Readable', score:7, reason:''},
-    {name:'Fresh Perspective', score:7, reason:''},
-    {name:'Actionable', score:7, reason:''},
-    {name:'Worth the Price', score:7, reason:''}
+    {name:'Substansi & Ide', score:7, reason:''},
+    {name:'Kedalaman Riset', score:7, reason:''},
+    {name:'Struktur & Alur', score:7, reason:''},
+    {name:'Gaya Penulisan', score:7, reason:''},
+    {name:'Pacing', score:7, reason:''},
+    {name:'Actionable / Aplikatif', score:7, reason:''},
+    {name:'Originalitas', score:7, reason:''},
+    {name:'Relevansi & Konteks', score:7, reason:''},
+    {name:'Daya Baca', score:7, reason:''},
+    {name:'Kesan Akhir', score:7, reason:''}
   ],
   movie: [
-    {name:'Cerita', score:7, reason:''},
+    {name:'Cerita & Skrip', score:7, reason:''},
     {name:'Akting', score:7, reason:''},
-    {name:'Visual', score:7, reason:''},
-    {name:'Pesan', score:7, reason:''},
-    {name:'Daya Tonton Ulang', score:7, reason:''}
+    {name:'Sinematografi', score:7, reason:''},
+    {name:'Arahan Sutradara', score:7, reason:''},
+    {name:'Musik & Sound Design', score:7, reason:''},
+    {name:'Visual & Produksi', score:7, reason:''},
+    {name:'Pacing & Editing', score:7, reason:''},
+    {name:'Emosi & Impact', score:7, reason:''},
+    {name:'Originalitas', score:7, reason:''},
+    {name:'Kesan Akhir', score:7, reason:''}
   ]
 };
 
