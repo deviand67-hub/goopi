@@ -1471,13 +1471,25 @@ const DEFAULT_CRITERIA = {
     {name:'Kesan Akhir', score:7, reason:''}
   ],
   movie: [
-    {name:'Cerita & Skrip', score:7, reason:''},
-    {name:'Akting', score:7, reason:''},
+    {name:'Cerita & World-Building', score:7, reason:''},
+    {name:'Akting & Cast Chemistry', score:7, reason:''},
     {name:'Sinematografi', score:7, reason:''},
-    {name:'Arahan Sutradara', score:7, reason:''},
+    {name:'Character Development', score:7, reason:''},
     {name:'Musik & Sound Design', score:7, reason:''},
-    {name:'Visual & Produksi', score:7, reason:''},
-    {name:'Pacing & Editing', score:7, reason:''},
+    {name:'Pacing per Episode', score:7, reason:''},
+    {name:'Konsistensi Antar Episode', score:7, reason:''},
+    {name:'Emosi & Impact', score:7, reason:''},
+    {name:'Originalitas', score:7, reason:''},
+    {name:'Kesan Akhir', score:7, reason:''}
+  ],
+  series: [
+    {name:'Cerita & World-Building', score:7, reason:''},
+    {name:'Akting & Cast Chemistry', score:7, reason:''},
+    {name:'Sinematografi', score:7, reason:''},
+    {name:'Character Development', score:7, reason:''},
+    {name:'Musik & Sound Design', score:7, reason:''},
+    {name:'Pacing per Episode', score:7, reason:''},
+    {name:'Konsistensi Antar Episode', score:7, reason:''},
     {name:'Emosi & Impact', score:7, reason:''},
     {name:'Originalitas', score:7, reason:''},
     {name:'Kesan Akhir', score:7, reason:''}
@@ -1689,17 +1701,20 @@ function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileRe
 // MANUAL SCORING
 let manualCriteria = [];
 function toggleScoring(){
+  const cat = document.getElementById('f-cat').value;
+  if(cat==='notes') return;
   const el = document.getElementById('manualScoring');
   const isHidden = el.style.display === 'none';
   el.style.display = isHidden ? 'block' : 'none';
   if(isHidden && manualCriteria.length === 0) {
-    initDefaultCriteria(document.getElementById('f-cat').value);
+    initDefaultCriteria(cat);
   }
 }
 function applyDefaultCriteria(){
   const cat = document.getElementById('f-cat').value;
+  if(cat==='notes') return;
   const subtype = document.getElementById('f-book-subtype')?.value || 'fiction';
-  let key = (cat === 'book' || cat === 'notes') ? ('book_' + subtype) : 'movie';
+  let key = (cat==='book') ? ('book_'+subtype) : (cat==='series' ? 'series' : 'movie');
   const defaults = DEFAULT_CRITERIA[key] || DEFAULT_CRITERIA.book_fiction;
   manualCriteria = defaults.map(c => ({...c}));
   const ms = document.getElementById('manualScoring');
@@ -1712,10 +1727,10 @@ function addScoringRow(){
   renderScoringRows();
 }
 function initDefaultCriteria(cat){
-  const bookCrit=['Substansi & Ide','Kedalaman Narasi','Karakter & Sudut Pandang','Plot & Struktur','Gaya Penulisan','Pacing','Originalitas','Relevansi & Konteks','Daya Baca','Kesan Akhir'];
-  const movieCrit=['Cerita & Skrip','Akting','Sinematografi','Arahan Sutradara','Musik & Sound Design','Visual & Produksi','Pacing & Editing','Emosi & Impact','Originalitas','Kesan Akhir'];
-  const crit = cat==='book'?bookCrit:movieCrit;
-  manualCriteria = crit.map(name=>({name, score:7, reason:''}));
+  if(cat==='notes') return; // notes = blog, no scoring
+  const subtype = document.getElementById('f-book-subtype')?.value || 'fiction';
+  let key = (cat==='book') ? ('book_'+subtype) : (cat==='series' ? 'series' : 'movie');
+  manualCriteria = (DEFAULT_CRITERIA[key] || DEFAULT_CRITERIA.book_fiction).map(c=>({...c}));
   document.getElementById('manualScoring').style.display='block';
   renderScoringRows();
 }
