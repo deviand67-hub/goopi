@@ -898,16 +898,61 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 
           <!-- AI Generator tab -->
           <div id="ai-tab-generator">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span>✨</span><h3 style="margin:0;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)">AI Review Generator</h3>
-          </div>
-          <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:12px">AI cari data → deteksi genre → buat skor → tulis review. Semua bisa diedit.</p>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span>✨</span><h3 style="margin:0;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)">AI Review Generator</h3>
+            </div>
+            <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:16px">AI cari data → deteksi genre → buat skor → tulis review. Semua bisa diedit.</p>
+            <div class="ai-step active" id="step1">
+              <div class="step-header"><span class="step-num">1</span><span class="step-title">Info Dasar</span></div>
+              <div class="step-sub">Isi judul dan pilih kategori</div>
+              <div class="form-row">
+                <div class="form-group"><label>Judul</label><input type="text" id="ai-title" placeholder="e.g. Atomic Habits"></div>
+                <div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="ai-author" placeholder="e.g. James Clear"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Kategori</label>
+                  <select id="ai-cat" onchange="toggleCatSections(this.value)">
+                    <option value="book">📚 Books</option>
+                    <option value="movie">🎬 Movies</option>
+                    <option value="series">📺 Series</option>
+                    <option value="notes">📝 Notes</option>
+                  </select>
+                </div>
+                <div class="form-group"><label>Tone</label>
+                  <select id="ai-tone">
+                    <option value="casual">Santai</option>
+                    <option value="critical">Kritis</option>
+                    <option value="hype">Hype</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn btn-primary" id="btnStep1" onclick="aiStep1()">Cari Data & Buat Skor →</button>
+              <div id="step1Status" style="margin-top:10px;font-size:.78rem;display:none;color:var(--brown-dark)">Mencari data...</div>
+            </div>
+            <div class="ai-step" id="step2" style="display:none">
+              <div class="step-header"><span class="step-num">2</span><span class="step-title">Skor per Kriteria</span></div>
+              <div class="step-sub">Geser untuk edit skor</div>
+              <div id="genreDisplay" style="margin-bottom:12px"></div>
+              <div id="scoreGrid" style="margin-bottom:12px"></div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                <div id="totalScoreNum" style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--brown)">70</div>
+                <div style="font-size:.75rem;color:var(--text-mid)">/100<br><span id="totalVerdict" style="font-weight:600"></span></div>
+              </div>
+              <button class="btn btn-primary" id="btnStep2" onclick="aiStep2()">Tulis Review →</button>
+              <div id="step2Status" style="margin-top:10px;font-size:.78rem;display:none;color:var(--brown-dark)">Menulis review...</div>
+            </div>
+            <div class="ai-step" id="step3" style="display:none">
+              <div class="step-header"><span class="step-num">3</span><span class="step-title">Review Siap</span></div>
+              <div class="step-sub">Cek dan edit sebelum simpan</div>
+              <p style="font-size:.8rem;color:var(--text-mid);margin-bottom:12px">Form di bawah sudah terisi otomatis. Scroll ke bawah untuk review dan simpan.</p>
+              <button class="btn btn-outline" onclick="resetAI()">Buat Baru</button>
+            </div>
           </div>
 
           <!-- Prompt Template tab -->
           <div id="ai-tab-template" style="display:none">
             <p style="font-size:.78rem;color:var(--text-mid);margin-bottom:12px">Copy prompt lalu paste ke Claude.ai untuk generate review manual.</p>
-            <div id="promptBox" style="display:none">
+            <div id="promptBox">
               <!-- Tabs -->
               <div style="display:flex;background:var(--cream-light);border-radius:8px;padding:3px;border:1px solid var(--border);margin-bottom:10px;gap:2px">
                 <button onclick="switchPromptTab('fiction',this)" id="ptab-fiction" class="prompt-tab active" style="flex:1;background:#fff;border:none;border-radius:6px;padding:6px 4px;font-size:.68rem;cursor:pointer;color:var(--brown);font-weight:600;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.1)">📚 Fiction</button>
