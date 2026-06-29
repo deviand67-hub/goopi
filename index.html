@@ -1779,7 +1779,7 @@ function getManualScoring(){
   if(!manualCriteria.length) return null;
   const genre = document.getElementById('f-genre-input').value.trim();
   const total = manualCriteria.reduce((s,c)=>s+c.score,0);
-  const verdict = total>=80?'yes':total>=50?'maybe':'no';
+  const verdict = total>=85?'yes':total>=70?'maybe':'no';
   return {genre, criteria:manualCriteria.map(c=>({...c})), total, verdict};
 }
 
@@ -1997,7 +1997,7 @@ async function aiStep2(){
   const toneMap={casual:'santai dan relatable',critical:'kritis dan analitis',hype:'energik dan antusias'};
   const scoresSummary=aiScoreCriteria.map(c=>c.name+': '+c.score+'/10').join(', ');
   try{
-    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in Indonesian for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scores: '+scoresSummary+'. Total: '+total+'/100. Reply ONLY valid JSON: {"excerpt":"hook max 120 chars","body":"review min 400 words paragraphs with newline use [QUOTE: text] for pullquote","rating":'+Math.round(total/20)+'}'}];
+    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in Indonesian for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scoring (10 criteria x max 10pts = 100): '+scoresSummary+'. Total: '+total+'/100. Verdict rule: >=85=Worth It, 70-84=OK BUT, <70=Skip. Reply ONLY valid JSON: {"excerpt":"hook max 120 chars","body":"review min 400 words paragraphs with newline use [QUOTE: text] for pullquote"}'}];
     const raw=await callAIMsg(step2Msg);
     const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
     document.getElementById('f-cat').value=cat;document.getElementById('f-title').value=title;document.getElementById('f-author').value=author||'';
@@ -2017,7 +2017,7 @@ function updateTotalScore(){
   const avg=aiScoreCriteria.reduce((s,c)=>s+c.score,0)/aiScoreCriteria.length,total=Math.round(avg*10);
   document.getElementById('totalScoreNum').textContent=total;
   let verdict,label,cls;
-  if(total>=80){verdict='yes';label='Worth It!';cls='yes'}else if(total>=50){verdict='maybe';label='OK, BUT';cls='maybe'}else{verdict='no';label='Skip Aja';cls='no'}
+  if(total>=85){verdict='yes';label='Worth It!';cls='yes'}else if(total>=70){verdict='maybe';label='OK, BUT';cls='maybe'}else{verdict='no';label='Skip Aja';cls='no'}
   const vEl=document.getElementById('totalVerdictLabel');vEl.textContent=label;vEl.className='total-verdict '+cls;
   document.getElementById('totalVerdictBadge').innerHTML='<span class="verdict-pill verdict-'+cls+'">'+label+'</span>';
   return{total,verdict};
