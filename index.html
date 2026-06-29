@@ -1974,11 +1974,21 @@ function copyPrompt(){
 }
 async function aiStep1(){
   const title=document.getElementById('ai-title').value.trim();if(!title){alert('Masukkan judul dulu!');return}
-  const author=document.getElementById('ai-author').value.trim(),cat=document.getElementById('ai-cat').value,catLabel=cat==='book'?'buku':'movie';
+  const author=document.getElementById('ai-author').value.trim(),cat=document.getElementById('ai-cat').value,catLabel=cat==='book'?'buku':cat==='series'?'series':'movie';
   const btn=document.getElementById('btnStep1'),status=document.getElementById('step1Status');
   btn.disabled=true;btn.textContent='⏳ Mencari data...';status.style.display='block';status.style.color='var(--brown-dark)';status.textContent='Menganalisis data...';
   try{
-    const scoreMsg=[{role:'user',content:'You are a '+catLabel+' curator. Rate "'+title+'"'+(author?' by '+author:'')+'. Reply with ONLY valid JSON no other text: {"genre":"Indonesian genre 3 words","sources":["source"],"criteria":[{"name":"name","description":"desc","score":7,"reason":"reason"},{"name":"name","description":"desc","score":7,"reason":"reason"},{"name":"name","description":"desc","score":7,"reason":"reason"},{"name":"name","description":"desc","score":7,"reason":"reason"},{"name":"name","description":"desc","score":7,"reason":"reason"}]}'}];
+    const scoreMsg=[{role:'user',content:(()=>{
+      const subtype=document.getElementById('f-book-subtype')?.value||'fiction';
+      let critKey=(cat==='book')?(('book_')+subtype):(cat==='series'?'series':'movie');
+      const critList=(DEFAULT_CRITERIA[critKey]||DEFAULT_CRITERIA.book_fiction).map(x=>x.name);
+      const critTemplate=critList.map(name=>'"'+name+'":{"score":7,"reason":"reason"}').join(',');
+      return 'You are a '+catLabel+' curator. Rate "'+title+'"'+(author?' by '+author:'')
+        +'. Use EXACTLY these 10 criteria (score 0-10 each, total max 100).'
+        +' Reply ONLY valid JSON: {"genre":"Indonesian genre max 3 words","criteria":['
+        +critList.map(name=>'{"name":"'+name+'","score":7,"reason":"reason"}').join(',')
+        +']}. Adjust scores based on your knowledge of the work.';
+    })()}];
     const raw=await callAIMsg(scoreMsg);
     const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
     aiGenre=parsed.genre||'Umum';aiScoreCriteria=parsed.criteria||[];
