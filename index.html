@@ -897,44 +897,64 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
           <div style="background:var(--cream-dark);border-radius:8px;padding:14px;margin-bottom:16px">
             <div style="font-size:.72rem;font-weight:600;color:var(--text-mid);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">💡 Atau generate manual via Claude.ai</div>
             <div id="promptBox" style="display:none">
-              <div style="background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">Tulis review [buku/film] "[judul]" oleh [penulis/sutradara] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
+              <div style="background:var(--white);border-radius:6px;padding:12px;font-size:.72rem;font-family:monospace;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:8px">=== UNTUK BUKU (Fiction) ===
+Tulis review buku "[judul]" oleh [penulis] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
 
-Panduan menulis review yang dipercaya:
-- Ceritakan pengalaman pribadi yang spesifik — kapan dan dalam kondisi apa kamu baca/nonton
-- Jujur ada kritiknya — minimal 1-2 hal yang kurang, ini yang bikin review kredibel
-- Spesifik, bukan generik — sebut scene/chapter/momen tertentu yang berkesan
-- Tegas di verdict — jangan abu-abu
-- Sertakan "Cocok untuk..." dan "Skip kalau..." di akhir body
+EXCERPT: (hook 1 kalimat, max 120 karakter)
 
-Berikan dalam format ini:
+BODY: (min 500 kata — konteks personal, isi tanpa spoiler, kritik jujur, "Cocok untuk / Skip kalau", sisipkan [QUOTE: teks])
 
-EXCERPT: (1 kalimat hook yang bikin penasaran, max 120 karakter)
+GENRE: (max 3 kata)
 
-BODY: (min 500 kata, paragraf dipisah baris baru, wajib ada:
-- Paragraf 1: konteks personal — kapan/kondisi apa kamu konsumsi ini
-- Paragraf 2-4: isi/cerita tanpa spoiler, apa yang berkesan dan kenapa
-- Paragraf 5: kritik jujur — apa yang kurang atau mengecewakan
-- Paragraf 6: "Cocok untuk kamu yang... / Skip kalau kamu..."
-- Sisipkan [QUOTE: teks] untuk 1 pull-quote terbaik dari buku/film)
+VERDICT: (yes / maybe / no — gunakan: >=85=yes, 70-84=maybe, <70=no)
 
-GENRE: (max 3 kata, bahasa Indonesia)
+SCORING (masing-masing 0-10, total max 100):
+- Substansi & Ide: [0-10] — [alasan]
+- Kedalaman Narasi: [0-10] — [alasan]
+- Karakter & Sudut Pandang: [0-10] — [alasan]
+- Plot & Struktur: [0-10] — [alasan]
+- Gaya Penulisan: [0-10] — [alasan]
+- Pacing: [0-10] — [alasan]
+- Originalitas: [0-10] — [alasan]
+- Relevansi & Konteks: [0-10] — [alasan]
+- Daya Baca: [0-10] — [alasan]
+- Kesan Akhir: [0-10] — [alasan]
 
-RATING: (angka 1-5)
+=== UNTUK BUKU (Non-fiction) ===
+(Sama seperti di atas, ganti SCORING dengan:)
+- Substansi & Ide: [0-10]
+- Kedalaman Riset: [0-10]
+- Struktur & Alur: [0-10]
+- Gaya Penulisan: [0-10]
+- Pacing: [0-10]
+- Actionable / Aplikatif: [0-10]
+- Originalitas: [0-10]
+- Relevansi & Konteks: [0-10]
+- Daya Baca: [0-10]
+- Kesan Akhir: [0-10]
 
-VERDICT: (pilih: yes / maybe / no)
+=== UNTUK MOVIE / SERIES ===
+Tulis review [film/series] "[judul]" oleh [sutradara] dalam bahasa Indonesia yang casual, relatable, dan terasa ditulis manusia bukan AI.
 
-SCORING:
-- Substance: [1-10] — [alasan spesifik]
-- Readable: [1-10] — [alasan spesifik]
-- Fresh Perspective: [1-10] — [alasan spesifik]
-- Actionable: [1-10] — [alasan spesifik]
-- Worth the Price: [1-10] — [alasan spesifik]
+EXCERPT: (hook 1 kalimat, max 120 karakter)
 
-BAHASA ORIGINAL: (bahasa apa)
+BODY: (min 500 kata — konteks personal, isi tanpa spoiler, kritik jujur, "Cocok untuk / Skip kalau", sisipkan [QUOTE: teks])
 
-TERJEMAHAN ID: (ada / belum ada)
+GENRE: (max 3 kata)
 
-LINK BELI: (Shopee, Gramedia, Tokopedia — harga perkiraan)</div>
+VERDICT: (yes / maybe / no — gunakan: >=85=yes, 70-84=maybe, <70=no)
+
+SCORING (masing-masing 0-10, total max 100):
+- Cerita & World-Building: [0-10] — [alasan]
+- Akting & Cast Chemistry: [0-10] — [alasan]
+- Sinematografi: [0-10] — [alasan]
+- Character Development: [0-10] — [alasan]
+- Musik & Sound Design: [0-10] — [alasan]
+- Pacing per Episode: [0-10] — [alasan]
+- Konsistensi Antar Episode: [0-10] — [alasan]
+- Emosi & Impact: [0-10] — [alasan]
+- Originalitas: [0-10] — [alasan]
+- Kesan Akhir: [0-10] — [alasan]</div>
               <button onclick="copyPrompt()" class="btn btn-primary btn-sm">Copy Prompt</button>
               <a href="https://claude.ai" target="_blank" class="btn btn-outline btn-sm" style="margin-left:6px">Buka Claude.ai →</a>
             </div>
