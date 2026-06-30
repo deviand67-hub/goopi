@@ -1266,7 +1266,7 @@ function renderCards(reviews,tid){
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
     const isNotes=r.cat==='notes';
-    return`<div class="nyt-item" onclick="showDetail('${r.id}')"><div class="nyt-cover">${cover}</div><div class="nyt-body"><div class="nyt-title">${r.title}</div><div class="nyt-excerpt">${r.excerpt||''}</div><div class="nyt-footer"><span class="verdict-pill ${vcls}" style="padding:3px 9px;border-radius:100px">${vlbl}</span><span class="nyt-meta">${(r.scoring&&r.scoring.total)||"–"}/100 · ${r.cat==='book'?'Book':r.cat==='series'?'Series':r.cat==='notes'?'Notes':'Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span></div></div></div>`;
+    return`<div class="nyt-item" onclick="showDetail('${r.id}')"><div class="nyt-cover">${cover}</div><div class="nyt-body"><div class="nyt-title">${r.title}</div><div class="nyt-excerpt">${r.excerpt||''}</div><div class="nyt-footer"><span class="verdict-pill ${vcls}" style="padding:3px 9px;border-radius:100px">${vlbl}</span>${r.genre?`<span class="nyt-meta">`+r.genre.split('/')[0].trim()+`</span>`:''}</div></div></div>`;
   }).join('')}
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
