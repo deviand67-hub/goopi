@@ -24,6 +24,8 @@ export default async function handler(req, res) {
     const isEn = lang === 'en';
 
     // Fetch only needed columns (no slug column in DB, so we match by computed slug in-memory)
+    const controller1 = new AbortController();
+    const timeout1 = setTimeout(() => controller1.abort(), 6000);
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/reviews?select=title,author,cat,excerpt,excerpt_en,body,body_en,img,verdict,scoring,created_at`,
       {
@@ -31,9 +33,11 @@ export default async function handler(req, res) {
           'apikey': SUPABASE_KEY,
           'Authorization': `Bearer ${SUPABASE_KEY}`,
           'Accept': 'application/json'
-        }
+        },
+        signal: controller1.signal
       }
     );
+    clearTimeout(timeout1);
     if (!response.ok) {
       throw new Error(`Supabase fetch failed: ${response.status}`);
     }
@@ -42,7 +46,10 @@ export default async function handler(req, res) {
     const r = list.find(item => slugify(item.title, item.author) === slug);
 
     // Fetch the static index.html via HTTP (avoids filesystem path issues in serverless runtime)
-    const htmlRes = await fetch(`${base}/index.html`);
+    const controller2 = new AbortController();
+    const timeout2 = setTimeout(() => controller2.abort(), 6000);
+    const htmlRes = await fetch(`${base}/index.html`, { signal: controller2.signal });
+    clearTimeout(timeout2);
     if (!htmlRes.ok) {
       throw new Error(`Failed to fetch index.html: ${htmlRes.status}`);
     }
@@ -155,6 +162,7 @@ export default async function handler(req, res) {
 
   } catch (error) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.status(500).send(`<!DOCTYPE html><html><body>Error: ${error.message}</body></html>`);
+    const msg = error.name === 'AbortError' ? 'Request timeout' : (error.message || 'Unknown error');
+    return res.status(500).send(`<!DOCTYPE html><html><body>Error: ${msg}</body></html>`);
   }
 }
