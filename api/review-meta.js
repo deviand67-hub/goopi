@@ -41,8 +41,26 @@ export default async function handler(req, res) {
     // Read the index.html directly from filesystem (bundled with the deployment)
     const fs = await import('fs');
     const path = await import('path');
-    const htmlPath = path.join(process.cwd(), 'index.html');
-    let html = fs.readFileSync(htmlPath, 'utf-8');
+    let html = null;
+    const candidatePaths = [
+      path.join(process.cwd(), 'index.html'),
+      path.join(process.cwd(), 'public', 'index.html'),
+      '/var/task/index.html',
+      '/var/task/public/index.html'
+    ];
+    for (const p of candidatePaths) {
+      try {
+        if (fs.existsSync(p)) {
+          html = fs.readFileSync(p, 'utf-8');
+          break;
+        }
+      } catch (e) { /* try next */ }
+    }
+    if (!html) {
+      // Fallback: fetch the static file via HTTP (avoid rewrite loop by using a distinct path)
+      const htmlRes = await fetch(`${base}/index.html`);
+      html = await htmlRes.text();
+    }
 
     if (!r) {
       // Review not found, serve default HTML untouched
