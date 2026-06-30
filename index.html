@@ -131,7 +131,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .card-body{padding:12px;flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
 .card-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .card-cat{font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.verdict-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:.65rem;font-weight:600;letter-spacing:.5px}
+.verdict-pill{display:inline-flex;align-items:center;gap:4px;font-size:.65rem;font-weight:600;letter-spacing:.5px;box-shadow:0 2px 4px rgba(0,0,0,.08)}
 .verdict-yes{background:var(--green-light);color:var(--green)}
 .verdict-no{background:var(--pink-light);color:var(--pink)}
 .verdict-maybe{background:#FEF3C7;color:#92400E}
@@ -1260,7 +1260,7 @@ function renderCards(reviews,tid){
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
     const isNotes=r.cat==='notes';
-    return`<div class="card" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><div style="overflow:hidden;min-height:0"><div class="card-meta" style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px"><div class="card-title" style="margin:0;flex:1">${r.title}</div><span class="verdict-pill ${vcls}" style="flex-shrink:0">${vlbl}</span></div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="card-score">${(r.scoring&&r.scoring.total)||"–"}<span style="font-size:.65rem;opacity:.7">/100</span></span><span class="card-date">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':'🎬 Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span></div></div></div>`;
+    return`<div class="card" style="position:relative" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><span class="verdict-pill ${vcls}" style="position:absolute;top:0;right:14px;border-radius:0 0 8px 8px;padding:4px 12px">${vlbl}</span><div style="overflow:hidden;min-height:0;padding-top:4px"><div class="card-title" style="margin:0 70px 4px 0">${r.title}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="card-score">${(r.scoring&&r.scoring.total)||"–"}<span style="font-size:.65rem;opacity:.7">/100</span></span><span class="card-date">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':'🎬 Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span></div></div></div>`;
   }).join('')}
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
@@ -2186,7 +2186,7 @@ function updateTotalScore(){
   let verdict,label,cls;
   if(total>=85){verdict='yes';label='Worth It!';cls='yes'}else if(total>=70){verdict='maybe';label='OK, BUT';cls='maybe'}else{verdict='no';label='Skip Aja';cls='no'}
   const vEl=document.getElementById('totalVerdictLabel');vEl.textContent=label;vEl.className='total-verdict '+cls;
-  document.getElementById('totalVerdictBadge').innerHTML='<span class="verdict-pill verdict-'+cls+'">'+label+'</span>';
+  document.getElementById('totalVerdictBadge').innerHTML='<span class="verdict-pill verdict-'+cls+'" style="padding:3px 10px;border-radius:100px">'+label+'</span>';
   return{total,verdict};
 }
 
