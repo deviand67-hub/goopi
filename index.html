@@ -1822,7 +1822,7 @@ function updateScoringRow(i, field, val){
 }
 function updateManualTotal(){
   if(!manualCriteria.length) return;
-  const total = manualCriteria.reduce((s,c)=>s+c.score,0);
+  const total = manualCriteria.reduce((s,c)=>s+(Number(c.score)||0),0);
   const el = document.getElementById('manualTotal');
   if(el) el.textContent = 'Total: ' + total + '/100';
 }
@@ -1845,7 +1845,7 @@ function renderScoringRows(){
 function getManualScoring(){
   if(!manualCriteria.length) return null;
   const genre = document.getElementById('f-genre-input').value.trim();
-  const total = manualCriteria.reduce((s,c)=>s+c.score,0);
+  const total = manualCriteria.reduce((s,c)=>s+(Number(c.score)||0),0);
   const verdict = total>=85?'yes':total>=70?'maybe':'no';
   return {genre, criteria:manualCriteria.map(c=>({...c})), total, verdict};
 }
@@ -2104,7 +2104,7 @@ async function aiStep1(){
       const fixed1=cleaned1.replace(/"((?:[^"\\]|\\.)*)"/g,(m,inner)=>'"'+inner.replace(/\n/g,'\\n').replace(/\r/g,'').replace(/\t/g,'\\t')+'"');
       parsed=JSON.parse(fixed1);
     }
-    aiGenre=parsed.genre||'Umum';aiScoreCriteria=parsed.criteria||[];
+    aiGenre=parsed.genre||'Umum';aiScoreCriteria=(parsed.criteria||[]).map(c=>({...c,score:Math.max(0,Math.min(10,Number(c.score)||7))}));
     document.getElementById('genreDisplay').innerHTML='<div class="genre-badge">🎯 '+aiGenre+'</div>';
     renderScoreGrid();updateTotalScore();
     document.getElementById('step1').classList.remove('active');document.getElementById('step1').classList.add('done');
@@ -2137,11 +2137,11 @@ async function aiStep2(){
   btn.disabled=false;btn.textContent='Generate Review →';status.style.display='none';
 }
 function resetAI(){['step1','step2','step3'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.remove('active','done');if(id!=='step1')el.style.display='none'}});const s1=document.getElementById('step1');if(s1)s1.classList.add('active');const btn=document.getElementById('btnStep1');if(btn)btn.textContent='Cari Data & Buat Skor →'}
-function renderScoreGrid(){document.getElementById('scoreGrid').innerHTML=aiScoreCriteria.map((c,i)=>`<div class="score-row"><div class="score-label">${c.name}<small>${c.description}</small>${c.reason?`<small style="color:var(--brown-mid);font-style:italic">${c.reason}</small>`:''}</div><div class="score-slider-wrap"><input type="range" min="1" max="10" value="${c.score}" class="score-slider" id="slider_${i}" oninput="updateScore(${i},this.value)"><div class="score-val" id="scoreval_${i}">${c.score}</div></div></div>`).join('')}
-function updateScore(i,val){aiScoreCriteria[i].score=parseInt(val);document.getElementById("scoreval_"+i).textContent=val;updateTotalScore()}
+function renderScoreGrid(){document.getElementById('scoreGrid').innerHTML=aiScoreCriteria.map((c,i)=>`<div class="score-row"><div class="score-label">${c.name}${c.reason?`<small style="color:var(--brown-mid);font-style:italic">${c.reason}</small>`:''}</div><div class="score-slider-wrap"><input type="range" min="0" max="10" value="${c.score}" class="score-slider" id="slider_${i}" oninput="updateScore(${i},this.value)"><div class="score-val" id="scoreval_${i}">${c.score}</div></div></div>`).join('')}
+function updateScore(i,val){aiScoreCriteria[i].score=Number(val)||0;document.getElementById("scoreval_"+i).textContent=val;updateTotalScore()}
 function updateTotalScore(){
   if(!aiScoreCriteria.length)return{total:0,verdict:'maybe'};
-  const avg=aiScoreCriteria.reduce((s,c)=>s+c.score,0)/aiScoreCriteria.length,total=Math.round(avg*10);
+  const sum=aiScoreCriteria.reduce((s,c)=>s+(Number(c.score)||0),0),total=Math.round(sum);
   document.getElementById('totalScoreNum').textContent=total;
   let verdict,label,cls;
   if(total>=85){verdict='yes';label='Worth It!';cls='yes'}else if(total>=70){verdict='maybe';label='OK, BUT';cls='maybe'}else{verdict='no';label='Skip Aja';cls='no'}
