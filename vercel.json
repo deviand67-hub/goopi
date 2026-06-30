@@ -7,6 +7,11 @@
     {
       "source": "/review/:slug",
       "destination": "/api/review-meta?slug=:slug"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap-dynamic"
     }
   ]
 }
+
