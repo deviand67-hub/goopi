@@ -122,12 +122,21 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* CARDS */
-.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:transparent}
+.card-grid{display:flex;flex-direction:column;background:transparent}
+.nyt-item{display:flex;gap:24px;padding:28px 0;border-bottom:1px solid var(--border);cursor:pointer;align-items:flex-start}
+.nyt-item:first-child{padding-top:0}
+.nyt-cover{width:140px;min-width:140px;flex-shrink:0}
+.nyt-cover img{width:100%;height:auto;display:block;border-radius:3px}
+.nyt-body{flex:1;min-width:0}
+.nyt-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:600;line-height:1.25;color:var(--text);margin-bottom:8px}
+.nyt-excerpt{font-size:.92rem;color:var(--text-mid);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nyt-footer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nyt-meta{font-size:.72rem;color:#B8A89A;letter-spacing:.3px}
 .card{background:#FFFFFF;cursor:pointer;transition:all .2s;display:flex;flex-direction:row;align-items:stretch;border-radius:12px;overflow:hidden;border:1.5px solid var(--green);height:160px}
 .card:nth-child(even){border-color:var(--brown-light)}
 .card:hover{background:#FAE8ED;box-shadow:0 4px 20px rgba(212,116,140,.15);transform:translateY(-2px)}
-.card-img{width:100%;height:160px;object-fit:cover;display:block;object-position:center top}
-.card-img-placeholder{width:100%;height:100%;min-height:140px;display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--cream-dark)}
+.card-img{width:100%;height:auto;object-fit:cover;display:block;object-position:center top;border-radius:3px;aspect-ratio:2/3}
+.card-img-placeholder{width:100%;aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--cream-dark);border-radius:3px}
 .card-body{padding:12px;flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden}
 .card-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .card-cat{font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -400,14 +409,11 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   .hamburger{display:flex}
   .hero{padding:64px 24px 56px}
   .filter-bar,.main-section,.detail-wrap,.about-wrap,.search-wrap{padding-left:20px;padding-right:20px}
-  .card-grid{grid-template-columns:1fr;gap:14px}
-  .card{height:200px;flex-direction:row}
-  .card-cover{width:150px;min-width:150px;max-width:150px}
-  .card-img{width:100%;height:100%;min-height:200px}
-  .card-body{padding:12px 16px;overflow:hidden}
-  .card-title{font-size:.95rem;line-height:1.25;-webkit-line-clamp:4;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
-  .card-author{font-size:.72rem}
-  .card-excerpt{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-size:.74rem}
+  .nyt-item{gap:14px;padding:20px 0}
+  .nyt-cover{width:90px;min-width:90px}
+  .nyt-title{font-size:1.05rem;margin-bottom:6px}
+  .nyt-excerpt{font-size:.82rem;margin-bottom:8px;-webkit-line-clamp:3}
+  .nyt-meta{font-size:.68rem}
   .detail-hero{grid-template-columns:1fr;gap:20px}
   .placeholder-cover{width:100%;height:200px}
   .form-row,.form-row-3{grid-template-columns:1fr}
@@ -1260,7 +1266,7 @@ function renderCards(reviews,tid){
     const cover=r.img?`<img class="card-img" src="${r.img}" alt="${r.title}" onerror="this.style.display='none'">`:`<div class="card-img-placeholder" style="background:${bgColor}">${emoji}</div>`;
     const[vcls,vlbl]=vMap[r.verdict]||vMap.maybe;
     const isNotes=r.cat==='notes';
-    return`<div class="card" style="position:relative" onclick="showDetail('${r.id}')"><div class="card-cover">${cover}</div><div class="card-body"><span class="verdict-pill ${vcls}" style="position:absolute;top:0;right:14px;border-radius:0 0 8px 8px;padding:4px 12px">${vlbl}</span><div style="overflow:hidden;min-height:0;padding-top:26px"><div class="card-title" style="margin:0 0 4px 0">${r.title}</div><div class="card-excerpt">${r.excerpt||''}</div></div><div class="card-footer"><span class="card-score">${(r.scoring&&r.scoring.total)||"–"}<span style="font-size:.65rem;opacity:.7">/100</span></span><span class="card-date">${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':'🎬 Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span></div></div></div>`;
+    return`<div class="nyt-item" onclick="showDetail('${r.id}')"><div class="nyt-cover">${cover}</div><div class="nyt-body"><div class="nyt-title">${r.title}</div><div class="nyt-excerpt">${r.excerpt||''}</div><div class="nyt-footer"><span class="verdict-pill ${vcls}" style="padding:3px 9px;border-radius:100px">${vlbl}</span><span class="nyt-meta">${(r.scoring&&r.scoring.total)||"–"}/100 · ${r.cat==='book'?'Book':r.cat==='series'?'Series':r.cat==='notes'?'Notes':'Movie'}${r.genre?' · '+r.genre.split('/')[0].trim():''}</span></div></div></div>`;
   }).join('')}
 
 function fmtDate(iso){if(!iso)return'';return new Date(iso).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
