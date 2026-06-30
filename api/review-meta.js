@@ -23,9 +23,9 @@ export default async function handler(req, res) {
     const { slug, lang } = req.query;
     const isEn = lang === 'en';
 
-    // Fetch all reviews (no slug column in DB, so we match by computed slug)
+    // Fetch only needed columns (no slug column in DB, so we match by computed slug in-memory)
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/reviews?select=*`,
+      `${SUPABASE_URL}/rest/v1/reviews?select=title,author,cat,excerpt,excerpt_en,body,body_en,img,verdict,scoring,created_at`,
       {
         headers: {
           'apikey': SUPABASE_KEY,
@@ -34,15 +34,19 @@ export default async function handler(req, res) {
         }
       }
     );
+    if (!response.ok) {
+      throw new Error(`Supabase fetch failed: ${response.status}`);
+    }
     const reviews = await response.json();
     const list = Array.isArray(reviews) ? reviews : [];
     const r = list.find(item => slugify(item.title, item.author) === slug);
 
-    // Read the index.html directly from filesystem (bundled with the deployment)
-    const fs = await import('fs');
-    const path = await import('path');
-    const htmlPath = path.join(process.cwd(), 'index.html');
-    let html = fs.readFileSync(htmlPath, 'utf-8');
+    // Fetch the static index.html via HTTP (avoids filesystem path issues in serverless runtime)
+    const htmlRes = await fetch(`${base}/index.html`);
+    if (!htmlRes.ok) {
+      throw new Error(`Failed to fetch index.html: ${htmlRes.status}`);
+    }
+    let html = await htmlRes.text();
 
     if (!r) {
       // Review not found, serve default HTML untouched
