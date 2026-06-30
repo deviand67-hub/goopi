@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: Sitemap: https://www.thegoopi.com/api/sitemap-dynamic
-
+Sitemap: https://www.thegoopi.com/sitemap.xml
