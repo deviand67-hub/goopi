@@ -2086,7 +2086,7 @@ async function aiStep1(){
   try{
     let detectedSubtype='fiction';
     if(cat==='book'){
-      const subMsg=[{role:'user',content:'For the book "'+title+'"'+(author?' by '+author:'')+', answer 3 things. Reply using EXACTLY this format, no extra text:\nTYPE: [fiction or nonfiction]\nORIGINAL_LANGUAGE: [original language name, e.g. English, Indonesian, Japanese]\nINDONESIAN_TRANSLATION: [yes, no, or unknown]'}];
+      const subMsg=[{role:'user',content:'For the book "'+title+'"'+(author?' by '+author:'')+', answer 3 things based on your best knowledge (always give your best guess, never say unknown). Reply using EXACTLY this format, no extra text:\nTYPE: [fiction or nonfiction]\nORIGINAL_LANGUAGE: [your best guess of the original language, e.g. English, Indonesian, Japanese - infer from author name/title/context if unsure]\nINDONESIAN_TRANSLATION: [yes or no - your best guess]'}];
       try{
         const subRaw=await callAIMsg(subMsg);
         const typeMatch=subRaw.match(/TYPE:\s*([^\n]+)/i);
@@ -2094,7 +2094,10 @@ async function aiStep1(){
         const transMatch=subRaw.match(/INDONESIAN_TRANSLATION:\s*([^\n]+)/i);
         if(typeMatch && /nonfiction|non-fiction/i.test(typeMatch[1])) detectedSubtype='nonfiction';
         const origLangEl=document.getElementById('tl-original');
-        if(origLangEl && langMatch) origLangEl.value=langMatch[1].trim();
+        if(origLangEl && langMatch){
+          const lang=langMatch[1].trim();
+          if(lang && !/unknown|tidak diketahui|n\/a/i.test(lang)) origLangEl.value=lang;
+        }
         const tlAvailEl=document.getElementById('tl-available');
         if(tlAvailEl && transMatch){
           const t=transMatch[1].trim().toLowerCase();
