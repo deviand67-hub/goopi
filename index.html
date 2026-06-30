@@ -400,10 +400,14 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   .hamburger{display:flex}
   .hero{padding:64px 24px 56px}
   .filter-bar,.main-section,.detail-wrap,.about-wrap,.search-wrap{padding-left:20px;padding-right:20px}
-  .card-grid{grid-template-columns:1fr}
-  .card{height:auto;min-height:150px}
-  .card-cover{width:110px;min-width:110px;max-width:110px}
-  .card-img{height:100%;min-height:150px}
+  .card-grid{grid-template-columns:1fr 1fr;gap:12px}
+  .card{height:auto;min-height:280px;flex-direction:column}
+  .card-cover{width:100%;min-width:100%;max-width:100%}
+  .card-img{width:100%;height:200px;min-height:200px}
+  .card-body{padding:10px}
+  .card-title{font-size:.85rem;line-height:1.25;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+  .card-author{font-size:.7rem}
+  .card-excerpt{display:none}
   .detail-hero{grid-template-columns:1fr;gap:20px}
   .placeholder-cover{width:100%;height:200px}
   .form-row,.form-row-3{grid-template-columns:1fr}
@@ -2139,7 +2143,7 @@ async function aiStep2(){
   const toneMap={casual:'santai dan relatable',critical:'kritis dan analitis',hype:'energik dan antusias'};
   const scoresSummary=aiScoreCriteria.map(c=>c.name+': '+c.score+'/10').join(', ');
   try{
-    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in Indonesian for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scoring (10 criteria x max 10pts = 100): '+scoresSummary+'. Total: '+total+'/100. Verdict rule: >=85=Worth It, 70-84=OK BUT, <70=Skip. Reply using EXACTLY this plain text format, no JSON, no markdown, no extra text before or after:\n\nTITLE: [original title] — [punchy 3-5 word verdict/hook in Indonesian, e.g. Worth Banget or Bikin Mikir Ulang or Hype Doang]\nEXCERPT: [hook max 120 chars]\n===BODY===\n[review min 400 words, paragraphs separated by blank lines, use [QUOTE: text] for pullquote]\n===END==='}];
+    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in Indonesian for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scoring (10 criteria x max 10pts = 100): '+scoresSummary+'. Total: '+total+'/100. Verdict rule: >=85=Worth It, 70-84=OK BUT, <70=Skip. Reply using EXACTLY this plain text format, no JSON, no markdown, no extra text before or after:\n\nTITLE: [original title] — [a SHORT, intriguing hook in casual Indonesian, 3-7 words, that makes readers curious enough to click — NOT mocking, NOT negative, NOT condescending toward the book/movie or its fans, even if your review is critical. Focus on curiosity and specificity, not snark. Bad examples (too generic): \\"Hangat tapi Tidak Membakar\\", \\"Worth Banget\\". Bad examples (too mocking/negative): \\"Plot Twist-nya? Meh.\\", \\"Annoying Tapi Aku Tetep Suka\\", \\"Karakternya Bikin Gemes Pengen Lempar Buku\\". Good examples (curiosity-driven, specific, respectful): \\"Endingnya Bikin Aku Mikir 2 Hari\\", \\"Bagian Tengahnya Ternyata Penting Banget\\", \\"Twist yang Nggak Kelihatan Sampai Akhir\\", \\"Karakter Ini Lebih Kompleks dari Dugaanku\\". Reference something concrete from the review content that creates curiosity, written in a warm and inviting tone]\nEXCERPT: [hook max 120 chars]\n===BODY===\n[review min 400 words, paragraphs separated by blank lines, use [QUOTE: text] for pullquote]\n===END==='}];
     const raw=await callAIMsg(step2Msg);
     const titleMatch=raw.match(/TITLE:\s*([^\n]+)/);
     const excerptMatch=raw.match(/EXCERPT:\s*([^\n]+)/);
