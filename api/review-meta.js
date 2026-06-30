@@ -149,21 +149,24 @@ export default async function handler(req, res) {
     html = html.replace('<body>', `<body>\n${reviewSchema}`);
 
     // Strip the admin panel section entirely from review pages — not relevant for public/crawler view
-    const adminStart = html.indexOf('<div id="page-admin"');
-    if (adminStart !== -1) {
-      // Find the matching closing </div> using regex matchAll (fast, avoids char-by-char timeout)
+    function stripSection(htmlStr, marker) {
+      const start = htmlStr.indexOf(marker);
+      if (start === -1) return htmlStr;
       const tagRegex = /<div\b|<\/div>/g;
-      tagRegex.lastIndex = adminStart;
-      let depth = 0, adminEnd = -1, match;
-      while ((match = tagRegex.exec(html)) !== null) {
+      tagRegex.lastIndex = start;
+      let depth = 0, end = -1, match;
+      while ((match = tagRegex.exec(htmlStr)) !== null) {
         if (match[0] === '<div') depth++;
         else depth--;
-        if (depth === 0) { adminEnd = match.index + match[0].length; break; }
+        if (depth === 0) { end = match.index + match[0].length; break; }
       }
-      if (adminEnd !== -1) {
-        html = html.slice(0, adminStart) + html.slice(adminEnd);
-      }
+      if (end === -1) return htmlStr;
+      return htmlStr.slice(0, start) + htmlStr.slice(end);
     }
+
+    // Strip admin panel and homepage shell — not relevant for review detail pages (crawler/share preview)
+    html = stripSection(html, '<div id="page-admin"');
+    html = stripSection(html, '<div id="page-home"');
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
