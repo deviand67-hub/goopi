@@ -2096,7 +2096,14 @@ async function aiStep1(){
         +']}. Adjust scores based on your knowledge of the work.';
     })()}];
     const raw=await callAIMsg(scoreMsg);
-    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const cleaned1=raw.replace(/```json|```/g,'').trim();
+    let parsed;
+    try{
+      parsed=JSON.parse(cleaned1);
+    }catch(parseErr){
+      const fixed1=cleaned1.replace(/"((?:[^"\\]|\\.)*)"/g,(m,inner)=>'"'+inner.replace(/\n/g,'\\n').replace(/\r/g,'').replace(/\t/g,'\\t')+'"');
+      parsed=JSON.parse(fixed1);
+    }
     aiGenre=parsed.genre||'Umum';aiScoreCriteria=parsed.criteria||[];
     document.getElementById('genreDisplay').innerHTML='<div class="genre-badge">🎯 '+aiGenre+'</div>';
     renderScoreGrid();updateTotalScore();
@@ -2113,9 +2120,17 @@ async function aiStep2(){
   const toneMap={casual:'santai dan relatable',critical:'kritis dan analitis',hype:'energik dan antusias'};
   const scoresSummary=aiScoreCriteria.map(c=>c.name+': '+c.score+'/10').join(', ');
   try{
-    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in Indonesian for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scoring (10 criteria x max 10pts = 100): '+scoresSummary+'. Total: '+total+'/100. Verdict rule: >=85=Worth It, 70-84=OK BUT, <70=Skip. Reply ONLY valid JSON: {"excerpt":"hook max 120 chars","body":"review min 400 words paragraphs with newline use [QUOTE: text] for pullquote"}'}];
+    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in Indonesian for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scoring (10 criteria x max 10pts = 100): '+scoresSummary+'. Total: '+total+'/100. Verdict rule: >=85=Worth It, 70-84=OK BUT, <70=Skip. Reply ONLY valid JSON with properly escaped newlines as \\n inside the body string (not literal line breaks): {"excerpt":"hook max 120 chars","body":"review min 400 words, paragraphs separated by \\n\\n, use [QUOTE: text] for pullquote"}'}];
     const raw=await callAIMsg(step2Msg);
-    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const cleaned=raw.replace(/```json|```/g,'').trim();
+    let parsed;
+    try{
+      parsed=JSON.parse(cleaned);
+    }catch(parseErr){
+      // Fallback: escape literal newlines/tabs inside string values that break JSON
+      const fixed=cleaned.replace(/"((?:[^"\\]|\\.)*)"/g,(m,inner)=>'"'+inner.replace(/\n/g,'\\n').replace(/\r/g,'').replace(/\t/g,'\\t')+'"');
+      parsed=JSON.parse(fixed);
+    }
     document.getElementById('f-cat').value=cat;document.getElementById('f-title').value=title;document.getElementById('f-author').value=author||'';
     document.getElementById('f-excerpt').value=parsed.excerpt||'';document.getElementById('f-body').value=parsed.body||'';
     document.getElementById('f-verdict').value=verdict;window._lastScoring={genre:aiGenre,criteria:[...aiScoreCriteria],total,verdict};
