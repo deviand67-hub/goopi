@@ -2084,17 +2084,23 @@ async function aiStep1(){
   const btn=document.getElementById('btnStep1'),status=document.getElementById('step1Status');
   btn.disabled=true;btn.textContent='⏳ Mencari data...';status.style.display='block';status.style.color='var(--brown-dark)';status.textContent='Menganalisis data...';
   try{
-    const scoreMsg=[{role:'user',content:(()=>{
-      const subtype=document.getElementById('f-book-subtype')?.value||'fiction';
-      let critKey=(cat==='book')?(('book_')+subtype):(cat==='series'?'series':'movie');
-      const critList=(DEFAULT_CRITERIA[critKey]||DEFAULT_CRITERIA.book_fiction).map(x=>x.name);
-      const critTemplate=critList.map(name=>'"'+name+'":{"score":7,"reason":"reason"}').join(',');
-      return 'You are a '+catLabel+' curator. Rate "'+title+'"'+(author?' by '+author:'')
-        +'. Use EXACTLY these 10 criteria (score 0-10 each, total max 100).'
-        +' Reply ONLY valid JSON: {"genre":"Indonesian genre max 3 words","criteria":['
-        +critList.map(name=>'{"name":"'+name+'","score":7,"reason":"reason"}').join(',')
-        +']}. Adjust scores based on your knowledge of the work.';
-    })()}];
+    let detectedSubtype='fiction';
+    if(cat==='book'){
+      const subMsg=[{role:'user',content:'Is the book "'+title+'"'+(author?' by '+author:'')+' fiction or non-fiction? Reply with ONLY one word: fiction or nonfiction'}];
+      try{
+        const subRaw=await callAIMsg(subMsg);
+        if(/nonfiction|non-fiction/i.test(subRaw)) detectedSubtype='nonfiction';
+      }catch(e){}
+      const subEl=document.getElementById('f-book-subtype');
+      if(subEl){subEl.value=detectedSubtype;subEl.dispatchEvent(new Event('change'));}
+    }
+    const critKeyFinal=(cat==='book')?('book_'+detectedSubtype):(cat==='series'?'series':'movie');
+    const critListFinal=(DEFAULT_CRITERIA[critKeyFinal]||DEFAULT_CRITERIA.book_fiction).map(x=>x.name);
+    const scoreMsg=[{role:'user',content:'You are a '+catLabel+' curator. Rate "'+title+'"'+(author?' by '+author:'')
+      +'. Use EXACTLY these 10 criteria (score 0-10 each, total max 100).'
+      +' Reply ONLY valid JSON: {"genre":"Indonesian genre max 3 words","criteria":['
+      +critListFinal.map(name=>'{"name":"'+name+'","score":7,"reason":"reason"}').join(',')
+      +']}. Adjust scores based on your knowledge of the work.'}];
     const raw=await callAIMsg(scoreMsg);
     const cleaned1=raw.replace(/```json|```/g,'').trim();
     let parsed;
@@ -2130,6 +2136,21 @@ async function aiStep2(){
     document.getElementById('f-cat').value=cat;document.getElementById('f-title').value=title;document.getElementById('f-author').value=author||'';
     document.getElementById('f-excerpt').value=excerpt;document.getElementById('f-body').value=body;
     document.getElementById('f-verdict').value=verdict;window._lastScoring={genre:aiGenre,criteria:[...aiScoreCriteria],total,verdict};
+    const genreEl=document.getElementById('f-genre-input');if(genreEl)genreEl.value=aiGenre;
+    manualCriteria=[...aiScoreCriteria];
+    const msEl=document.getElementById('manualScoring');if(msEl)msEl.style.display='block';
+    renderScoringRows();
+    // Auto-translate to English
+    status.textContent='⏳ Menerjemahkan ke Inggris...';
+    try{
+      const transMsg=[{role:'user',content:'Translate this Indonesian book/movie review to natural English. Reply using EXACTLY this format, no JSON, no extra text:\n\nEXCERPT_EN: [translated excerpt]\n===BODY_EN===\n[translated body, keep [QUOTE: text] markers as-is but translate the quote content too]\n===END===\n\nOriginal excerpt: '+excerpt+'\n\nOriginal body: '+body}];
+      const transRaw=await callAIMsg(transMsg);
+      const exEnMatch=transRaw.match(/EXCERPT_EN:\s*([^\n]+)/);
+      const bodyEnMatch=transRaw.match(/===BODY_EN===([\s\S]*?)===END===/);
+      const exEnEl=document.getElementById('f-excerpt-en'),bodyEnEl=document.getElementById('f-body-en');
+      if(exEnEl&&exEnMatch)exEnEl.value=exEnMatch[1].trim();
+      if(bodyEnEl&&bodyEnMatch)bodyEnEl.value=bodyEnMatch[1].trim();
+    }catch(transErr){console.error('Translation failed:',transErr)}
     document.getElementById('step2').classList.remove('active');document.getElementById('step2').classList.add('done');
     document.getElementById('step3').style.display='block';setTimeout(()=>document.getElementById('step3').classList.add('active'),50);
     document.getElementById('formTitle').scrollIntoView({behavior:'smooth'});
