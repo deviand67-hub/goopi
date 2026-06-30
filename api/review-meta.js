@@ -41,26 +41,8 @@ export default async function handler(req, res) {
     // Read the index.html directly from filesystem (bundled with the deployment)
     const fs = await import('fs');
     const path = await import('path');
-    let html = null;
-    const candidatePaths = [
-      path.join(process.cwd(), 'index.html'),
-      path.join(process.cwd(), 'public', 'index.html'),
-      '/var/task/index.html',
-      '/var/task/public/index.html'
-    ];
-    for (const p of candidatePaths) {
-      try {
-        if (fs.existsSync(p)) {
-          html = fs.readFileSync(p, 'utf-8');
-          break;
-        }
-      } catch (e) { /* try next */ }
-    }
-    if (!html) {
-      // Fallback: fetch the static file via HTTP (avoid rewrite loop by using a distinct path)
-      const htmlRes = await fetch(`${base}/index.html`);
-      html = await htmlRes.text();
-    }
+    const htmlPath = path.join(process.cwd(), 'index.html');
+    let html = fs.readFileSync(htmlPath, 'utf-8');
 
     if (!r) {
       // Review not found, serve default HTML untouched
@@ -145,6 +127,24 @@ export default async function handler(req, res) {
 </noscript>`;
 
     html = html.replace('<body>', `<body>\n${reviewSchema}`);
+
+    // Strip the admin panel section entirely from review pages — not relevant for public/crawler view
+    const adminStart = html.indexOf('<div id="page-admin"');
+    if (adminStart !== -1) {
+      // Find the matching closing </div> by tracking nesting depth
+      let depth = 0, i = adminStart, adminEnd = -1;
+      while (i < html.length) {
+        if (html.startsWith('<div', i)) depth++;
+        else if (html.startsWith('</div>', i)) {
+          depth--;
+          if (depth === 0) { adminEnd = i + 6; break; }
+        }
+        i++;
+      }
+      if (adminEnd !== -1) {
+        html = html.slice(0, adminStart) + html.slice(adminEnd);
+      }
+    }
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
