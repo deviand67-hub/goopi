@@ -131,15 +131,14 @@ export default async function handler(req, res) {
     // Strip the admin panel section entirely from review pages — not relevant for public/crawler view
     const adminStart = html.indexOf('<div id="page-admin"');
     if (adminStart !== -1) {
-      // Find the matching closing </div> by tracking nesting depth
-      let depth = 0, i = adminStart, adminEnd = -1;
-      while (i < html.length) {
-        if (html.startsWith('<div', i)) depth++;
-        else if (html.startsWith('</div>', i)) {
-          depth--;
-          if (depth === 0) { adminEnd = i + 6; break; }
-        }
-        i++;
+      // Find the matching closing </div> using regex matchAll (fast, avoids char-by-char timeout)
+      const tagRegex = /<div\b|<\/div>/g;
+      tagRegex.lastIndex = adminStart;
+      let depth = 0, adminEnd = -1, match;
+      while ((match = tagRegex.exec(html)) !== null) {
+        if (match[0] === '<div') depth++;
+        else depth--;
+        if (depth === 0) { adminEnd = match.index + match[0].length; break; }
       }
       if (adminEnd !== -1) {
         html = html.slice(0, adminStart) + html.slice(adminEnd);
