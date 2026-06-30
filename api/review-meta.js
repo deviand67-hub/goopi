@@ -165,8 +165,27 @@ export default async function handler(req, res) {
     }
 
     // Strip admin panel and homepage shell — not relevant for review detail pages (crawler/share preview)
+    function emptySection(htmlStr, marker) {
+      const start = htmlStr.indexOf(marker);
+      if (start === -1) return htmlStr;
+      const tagRegex = /<div\b|<\/div>/g;
+      tagRegex.lastIndex = start;
+      let depth = 0, end = -1, match;
+      while ((match = tagRegex.exec(htmlStr)) !== null) {
+        if (match[0] === '<div') depth++;
+        else depth--;
+        if (depth === 0) { end = match.index + match[0].length; break; }
+      }
+      if (end === -1) return htmlStr;
+      // Keep the opening tag itself (up to its closing '>'), drop everything inside, keep the closing </div>
+      const openTagEnd = htmlStr.indexOf('>', start) + 1;
+      return htmlStr.slice(0, openTagEnd) + htmlStr.slice(end - 6, end);
+    }
+
+    // Strip admin panel entirely (not needed in DOM at all for review pages)
     html = stripSection(html, '<div id="page-admin"');
-    html = stripSection(html, '<div id="page-home"');
+    // Empty (not remove) the homepage shell — keeps the element for JS navigation, but no content for crawlers
+    html = emptySection(html, '<div id="page-home"');
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
