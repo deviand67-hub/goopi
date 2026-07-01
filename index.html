@@ -2127,11 +2127,13 @@ async function aiStep1(){
     }
     const critKeyFinal=(cat==='book')?('book_'+detectedSubtype):(cat==='series'?'series':'movie');
     const critListFinal=(DEFAULT_CRITERIA[critKeyFinal]||DEFAULT_CRITERIA.book_fiction).map(x=>x.name);
-    const scoreMsg=[{role:'user',content:'You are a '+catLabel+' curator. Rate "'+title+'"'+(author?' by '+author:'')
-      +'. Use EXACTLY these 10 criteria (score 0-10 each, total max 100).'
-      +' Reply ONLY valid JSON: {"genre":"Indonesian genre max 3 words","criteria":['
-      +critListFinal.map(name=>'{"name":"'+name+'","score":7,"reason":"reason"}').join(',')
-      +']}. Adjust scores based on your knowledge of the work.'}];
+    const scoreMsg=[{role:'user',content:'You are a '+catLabel+' curator with deep knowledge of "'+title+'"'+(author?' by '+author:'')+'. '
+      +'Score EXACTLY these 10 criteria based on your actual assessment of this specific work (0-10 each, integers). '
+      +'CRITICAL: scores MUST vary realistically between criteria (e.g. 6, 9, 7, 8, 5...) based on the real strengths and weaknesses of this work — do NOT give the same score to every criterion, and do NOT default to 7. '
+      +'If a work is genuinely excellent in a category, score 8-10. If mediocre, score 4-6. If weak, score 1-3. '
+      +'Reply ONLY valid JSON: {"genre":"Indonesian genre max 3 words","criteria":['
+      +critListFinal.map(name=>'{"name":"'+name+'","score":<your_actual_score_here>,"reason":"brief specific reason in Indonesian"}').join(',')
+      +']}'}];
     const raw=await callAIMsg(scoreMsg);
     const cleaned1=raw.replace(/```json|```/g,'').trim();
     let parsed;
