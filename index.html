@@ -1581,15 +1581,15 @@ const DEFAULT_CRITERIA = {
   ]
 };
 
-function toggleCatSections(cat){
+function toggleCatSections(cat, preserveScoring){
   // Show/hide verdict and rating for notes
   const vrf=document.getElementById('verdictRatingFields');
   if(vrf)vrf.style.display=cat==='notes'?'none':'';
   const bsg=document.getElementById('bookSubtypeGroup');
   if(bsg)bsg.style.display=cat==='book'?'block':'none';
-  // Reset & re-init scoring when category changes
+  // Reset & re-init scoring when category changes (skip if preserving existing scoring, e.g. when editing)
   const ms=document.getElementById('manualScoring');
-  if(ms){
+  if(ms && !preserveScoring){
     if(cat==='notes'){
       ms.style.display='none';
       manualCriteria=[];
@@ -1698,7 +1698,7 @@ function editReview(id){
   if(tlA)tlA.value=(r.translation&&r.translation.hasIndonesian)||'';
   // Store existing scoring to preserve it
   window._lastScoring=r.scoring||null;
-  toggleCatSections(r.cat);
+  toggleCatSections(r.cat, true);
   document.getElementById('formTitle').textContent='Edit Review';
   switchTab('add',document.querySelector('.admin-tab'));
   window.scrollTo(0,0);
