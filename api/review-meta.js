@@ -45,6 +45,16 @@ export default async function handler(req, res) {
     const list = Array.isArray(reviews) ? reviews : [];
     const r = list.find(item => slugify(item.title, item.author) === slug);
 
+    if (req.query.debug === '1') {
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).json({
+        requestedSlug: slug,
+        matched: !!r,
+        matchedData: r || null,
+        availableSlugs: list.map(item => ({ title: item.title, author: item.author, slug: slugify(item.title, item.author) }))
+      });
+    }
+
 
 
     // Fetch the static index.html via HTTP (avoids filesystem path issues in serverless runtime)
