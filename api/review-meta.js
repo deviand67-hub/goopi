@@ -182,7 +182,7 @@ ${JSON.stringify(jsonLdObj).replace(/</g, '\\u003c')}
     html = emptySection(html, '<div id="page-home"');
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=3600');
+    res.setHeader('Cache-Control', 'no-store');
     return res.status(200).send(html);
 
   } catch (error) {
