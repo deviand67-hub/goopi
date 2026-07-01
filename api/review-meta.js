@@ -181,6 +181,11 @@ ${JSON.stringify(jsonLdObj).replace(/</g, '\\u003c')}
     // Empty (not remove) the homepage shell — keeps the element for JS navigation, but no content for crawlers
     html = emptySection(html, '<div id="page-home"');
 
+    if (req.query.debughtml === '1') {
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      return res.status(200).send(`HTML_LENGTH: ${html.length}\n\nLAST_500_CHARS:\n${html.slice(-500)}\n\nFIRST_1000_CHARS:\n${html.slice(0, 1000)}`);
+    }
+
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).send(html);
