@@ -178,7 +178,8 @@ ${JSON.stringify(jsonLdObj).replace(/</g, '\\u003c')}
     }
 
     // Strip admin panel entirely (not needed in DOM at all for review pages)
-    html = stripSection(html, '<div id="page-admin"');
+    // Note: page-admin is intentionally left untouched (not stripped) — stripping it broke
+    // client-side navigation to the admin panel from review pages, same issue as page-home before.
     // Empty (not remove) the homepage shell — keeps the element for JS navigation, but no content for crawlers
     // Note: page-home is intentionally left untouched (not emptied) — emptying it broke
     // client-side navigation since renderHome() depends on #mainGrid and other elements existing in the DOM.
