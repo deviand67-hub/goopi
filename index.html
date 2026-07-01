@@ -1213,6 +1213,17 @@ async function getReviewsAsync(){
     const{data,error}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
     if(error){console.error('Supabase error:',JSON.stringify(error));_reviewCache=[];return[];}
     _reviewCache=data||[];
+    // Auto-publish: any scheduled review whose time has passed becomes published in the DB
+    const now=new Date();
+    const dueForPublish=_reviewCache.filter(r=>r.status==='scheduled'&&r.scheduled_at&&new Date(r.scheduled_at)<=now);
+    if(dueForPublish.length){
+      for(const r of dueForPublish){
+        try{
+          await sb.from('reviews').update({status:'published'}).eq('id',r.id);
+          r.status='published'; // reflect immediately in local cache too
+        }catch(e){console.error('Auto-publish failed for',r.id,e.message);}
+      }
+    }
     return _reviewCache;
   }catch(e){console.error('Supabase exception:',e.message);_reviewCache=[];return[];}
 }
