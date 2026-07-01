@@ -45,15 +45,7 @@ export default async function handler(req, res) {
     const list = Array.isArray(reviews) ? reviews : [];
     const r = list.find(item => slugify(item.title, item.author) === slug);
 
-    if (req.query.debug === '1') {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).json({
-        requestedSlug: slug,
-        matched: !!r,
-        matchedData: r || null,
-        availableSlugs: list.map(item => ({ title: item.title, author: item.author, slug: slugify(item.title, item.author) }))
-      });
-    }
+
 
 
 
@@ -115,30 +107,29 @@ export default async function handler(req, res) {
 
     // Inject a visible noscript fallback + JSON-LD Review schema right after <body>
     const schemaType = r.cat === 'book' ? 'Book' : r.cat === 'series' ? 'TVSeries' : 'Movie';
-    const authorProp = r.cat === 'book'
-      ? `"author":{"@type":"Person","name":"${escapeHtml(r.author || '')}"},`
-      : `"director":{"@type":"Person","name":"${escapeHtml(r.author || '')}"},`;
     const ratingValue = score ? (score / 20).toFixed(1) : '3';
 
+    const jsonLdObj = {
+      "@context": "https://schema.org",
+      "@type": "Review",
+      "itemReviewed": {
+        "@type": schemaType,
+        "name": r.title,
+        [r.cat === 'book' ? 'author' : 'director']: { "@type": "Person", "name": r.author || '' },
+        "image": image
+      },
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": ratingValue,
+        "bestRating": "5"
+      },
+      "author": { "@type": "Organization", "name": "GOOPI" },
+      "reviewBody": description,
+      "datePublished": (r.created_at || '').slice(0, 10)
+    };
+
     const reviewSchema = `<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Review",
-  "itemReviewed": {
-    "@type": "${schemaType}",
-    "name": "${escapeHtml(r.title)}",
-    ${authorProp}
-    "image": "${escapeHtml(image)}"
-  },
-  "reviewRating": {
-    "@type": "Rating",
-    "ratingValue": "${ratingValue}",
-    "bestRating": "5"
-  },
-  "author": {"@type": "Organization", "name": "GOOPI"},
-  "reviewBody": "${escapeHtml(description)}",
-  "datePublished": "${(r.created_at || '').slice(0,10)}"
-}
+${JSON.stringify(jsonLdObj).replace(/</g, '\\u003c')}
 </script>
 <noscript>
 <div style="padding:40px;font-family:sans-serif;max-width:700px;margin:0 auto">
