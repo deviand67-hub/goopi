@@ -1134,7 +1134,7 @@ SCORING (masing-masing 0-10, total max 100):
       <!-- MANAGE -->
       <div class="admin-section" id="at-manage">
         <div class="admin-card" style="padding:0;overflow:hidden">
-          <div style="padding:20px 24px;border-bottom:1px solid var(--border)"><h3 style="margin:0">Semua Review</h3></div>
+          <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between"><h3 style="margin:0">Semua Review</h3><span id="reviewCount" style="font-size:.8rem;color:var(--text-mid);background:var(--cream-light);padding:4px 12px;border-radius:100px;font-weight:600"></span></div>
           <div style="padding:16px"><div class="table-head"><span>Judul</span><span>Tipe</span><span>Rating</span><span>Verdict</span><span>Aksi</span></div><div id="adminTable"></div></div>
         </div>
       </div>
@@ -1734,6 +1734,15 @@ function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach
 async function renderTable(){
   await getReviewsAsync();
   const reviews=getReviews(),t=document.getElementById('adminTable');
+  const cntEl=document.getElementById('reviewCount');
+  if(cntEl){
+    const draftCount=reviews.filter(r=>r.status==='draft').length;
+    const schedCount=reviews.filter(r=>r.status==='scheduled').length;
+    let parts=[reviews.length+' total'];
+    if(draftCount)parts.push(draftCount+' draft');
+    if(schedCount)parts.push(schedCount+' terjadwal');
+    cntEl.textContent=parts.join(' · ');
+  }
   if(!reviews.length){t.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-mid)">Belum ada review.</div>';return}
   const vMap={yes:'Worth It',no:'Skip',maybe:'OK, BUT'};
   t.innerHTML=reviews.map(r=>{
