@@ -1057,6 +1057,9 @@ SCORING (masing-masing 0-10, total max 100):
             <div id="verdictRatingFields"><div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
             </div>
           </div>
+          <div class="form-row"><div class="form-group"><label>Status</label><select id="f-status" onchange="toggleScheduleField()"><option value="published">🟢 Publish Sekarang</option><option value="draft">📝 Simpan sebagai Draft</option><option value="scheduled">🕐 Jadwalkan</option></select></div>
+            <div class="form-group" id="scheduleFieldGroup" style="display:none"><label>Jadwal Publish</label><input type="datetime-local" id="f-scheduled-at"></div>
+          </div>
           <div class="form-row"><div class="form-group"><label>Judul</label><input type="text" id="f-title"></div><div class="form-group"><label>Penulis / Sutradara</label><input type="text" id="f-author"></div></div>
           <div class="form-group"><label>URL Cover (opsional)</label>
 <div style="display:flex;gap:8px;align-items:center">
@@ -1246,7 +1249,13 @@ function stripTags(h){const d=document.createElement('div');d.innerHTML=h;return
 
 async function renderHome(){
   await loadReviews();
-  const reviews=getReviews().filter(r=>currentFilter==='all'||(currentFilter==='movie'&&(r.cat==='movie'||r.cat==='series'))||r.cat===currentFilter);
+  const now=new Date();
+  const isVisible=r=>{
+    if(!r.status||r.status==='published')return true;
+    if(r.status==='scheduled'&&r.scheduled_at)return new Date(r.scheduled_at)<=now;
+    return false; // draft
+  };
+  const reviews=getReviews().filter(r=>isVisible(r)).filter(r=>currentFilter==='all'||(currentFilter==='movie'&&(r.cat==='movie'||r.cat==='series'))||r.cat===currentFilter);
   renderCards(reviews,'mainGrid');
 }
 async function loadReviews(){
@@ -1581,6 +1590,11 @@ const DEFAULT_CRITERIA = {
   ]
 };
 
+function toggleScheduleField(){
+  const status=document.getElementById('f-status').value;
+  const grp=document.getElementById('scheduleFieldGroup');
+  if(grp)grp.style.display=status==='scheduled'?'block':'none';
+}
 function toggleCatSections(cat, preserveScoring){
   // Show/hide verdict and rating for notes
   const vrf=document.getElementById('verdictRatingFields');
@@ -1647,7 +1661,11 @@ async function saveReview(){
   const cat=document.getElementById('f-cat').value;
   const excerptEn=document.getElementById('f-excerpt-en')?.value.trim()||'';
   const bodyEn=document.getElementById('f-body-en')?.value.trim()||'';
+  const statusVal=document.getElementById('f-status')?.value||'published';
+  const scheduledAtVal=document.getElementById('f-scheduled-at')?.value||null;
   const data={title,author,body,cat,genre:document.getElementById('f-genre-input')?document.getElementById('f-genre-input').value.trim():'',verdict:document.getElementById('f-verdict').value,img:document.getElementById('f-img').value.trim(),excerpt:document.getElementById('f-excerpt').value.trim(),
+    status:statusVal,
+    scheduled_at:statusVal==='scheduled'&&scheduledAtVal?new Date(scheduledAtVal).toISOString():null,
     excerpt_en:excerptEn,
     body_en:bodyEn,scoring:getManualScoring()||window._lastScoring||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
   window._lastScoring=null;
@@ -1673,6 +1691,14 @@ function editReview(id){
   
   document.getElementById('f-title').value=r.title;
   document.getElementById('f-author').value=r.author;
+  const fStatus=document.getElementById('f-status');
+  if(fStatus)fStatus.value=r.status||'published';
+  const fSchedAt=document.getElementById('f-scheduled-at');
+  if(fSchedAt && r.scheduled_at){
+    const d=new Date(r.scheduled_at);
+    fSchedAt.value=d.toISOString().slice(0,16);
+  }
+  toggleScheduleField();
   document.getElementById('f-img').value=r.img||'';
   document.getElementById('f-excerpt').value=r.excerpt||'';
   document.getElementById('f-body').value=r.body||'';
@@ -1704,13 +1730,19 @@ function editReview(id){
   window.scrollTo(0,0);
 }
 async function deleteReview(id){if(!confirm('Hapus review ini?'))return;try{await deleteReview_db(id);await renderTable();await renderHome();}catch(e){alert('Gagal hapus: '+e.message)}}
-function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI();manualCriteria=[];document.getElementById('manualScoring').style.display='none';const gi=document.getElementById('f-genre-input');if(gi)gi.value='';}
+function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';const fSt=document.getElementById('f-status');if(fSt)fSt.value='published';const fSch=document.getElementById('f-scheduled-at');if(fSch)fSch.value='';toggleScheduleField();tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI();manualCriteria=[];document.getElementById('manualScoring').style.display='none';const gi=document.getElementById('f-genre-input');if(gi)gi.value='';}
 async function renderTable(){
   await getReviewsAsync();
   const reviews=getReviews(),t=document.getElementById('adminTable');
   if(!reviews.length){t.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-mid)">Belum ada review.</div>';return}
   const vMap={yes:'Worth It',no:'Skip',maybe:'OK, BUT'};
-  t.innerHTML=reviews.map(r=>`<div class="table-row"><span><strong>${r.title}</strong><br><small style="color:var(--text-mid)">${r.author}</small></span><span>${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}</span><span>${(r.scoring&&r.scoring.total)||"–"}</span><span>${vMap[r.verdict]||'—'}</span><div class="tbl-actions"><button class="btn btn-outline btn-sm" onclick="editReview('${r.id}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteReview('${r.id}')">Hapus</button></div></div>`).join('');
+  t.innerHTML=reviews.map(r=>{
+    const statusBadge=r.status==='draft'?'<span style="background:#E5E5E5;color:#666;padding:2px 8px;border-radius:10px;font-size:.68rem">📝 Draft</span>'
+      :r.status==='scheduled'?'<span style="background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:10px;font-size:.68rem">🕐 '+(r.scheduled_at?fmtDate(r.scheduled_at):'Scheduled')+'</span>'
+      :'<span style="background:var(--green-light);color:var(--green);padding:2px 8px;border-radius:10px;font-size:.68rem">🟢 Live</span>';
+    const dateStr=fmtDate(r.created_at)+(r.created_at?' '+new Date(r.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'');
+    return `<div class="table-row"><span><strong>${r.title}</strong><br><small style="color:var(--text-mid)">${r.author}</small><br><small style="color:var(--text-mid);font-size:.68rem">${dateStr}</small></span><span>${r.cat==='book'?'📚 Book':r.cat==='series'?'📺 Series':r.cat==='notes'?'📝 Notes':r.cat==='series'?'Series':'Movie'}</span><span>${(r.scoring&&r.scoring.total)||"–"}</span><span>${statusBadge}</span><div class="tbl-actions"><button class="btn btn-outline btn-sm" onclick="editReview('${r.id}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteReview('${r.id}')">Hapus</button></div></div>`;
+  }).join('');
 }
 function saveContact(){
   s('wi_contact_email',document.getElementById('s-contact-email').value.trim());
