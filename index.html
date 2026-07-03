@@ -1587,7 +1587,23 @@ function renderDetailCatMenu(activeCat){
   const el=document.getElementById('detailCatMenu');
   if(!el)return;
   const cats=[{key:'book',label:'📚 Books'},{key:'movie',label:'🎬 Movies'},{key:'series',label:'📺 Series'},{key:'notes',label:'📝 Notes'}];
-  el.innerHTML=cats.map(c=>`<a class="detail-cat-link ${c.key===activeCat?'active':''}" onclick="currentFilter='${c.key}';showPage('home')">${c.label}</a>`).join('');
+  el.innerHTML=cats.map(c=>`<a class="detail-cat-link ${c.key===activeCat?'active':''}" onclick="goToCategory('${c.key}')">${c.label}</a>`).join('');
+}
+function goToCategory(cat){
+  showPage('home');
+  const chipMap={book:1,movie:2,series:2,notes:3}; // series shares the 'Film' chip with movie
+  const chips=document.querySelectorAll('.filter-chip');
+  const chipIndex=chipMap[cat];
+  const targetChip=chipIndex!==undefined?chips[chipIndex]:chips[0];
+  if(targetChip){
+    setFilter(cat==='series'?'movie':cat, targetChip);
+    if(cat==='series'){
+      setTimeout(()=>{
+        const seriesBtn=document.querySelector('.film-sub-btn[onclick*="series"]');
+        if(seriesBtn)setFilmSub('series',seriesBtn);
+      },50);
+    }
+  }
 }
 function renderDetailWorthItSidebar(excludeId){
   const el=document.getElementById('detailWorthItSidebar');
