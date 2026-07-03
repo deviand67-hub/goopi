@@ -1454,8 +1454,7 @@ function showDetail(id){currentReviewId=id;
       <div class="detail-info">
         <div class="detail-cat">${r.cat==='book'?'📚 BOOK':r.cat==='series'?'📺 SERIES':r.cat==='notes'?'📝 NOTES':'🎬 MOVIE'}${(r.genre||(r.scoring&&r.scoring.genre))?' <span style="opacity:.65;font-weight:400">· '+((r.genre||(r.scoring&&r.scoring.genre))).split('/')[0].trim()+'</span>':''}</div>
         <div class="detail-title">${r.title}</div>
-        <div class="detail-author">oleh ${r.author}</div>
-        ${r.created_at?`<div style="font-size:.78rem;color:var(--text-mid);margin-bottom:16px;margin-top:-14px">${fmtDate(r.created_at)}</div>`:''}
+        <div class="detail-author">Author: ${r.author}</div>
         
         ${isNotes?'':`<div class="detail-verdict-box ${vc.cls}">${vc.icon} ${vc.label}</div>`}
       </div>
@@ -1476,6 +1475,10 @@ function showDetail(id){currentReviewId=id;
         '</div>';
     })()}
     ${bottomBox}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:.78rem;color:var(--text-mid)">
+      <span>${r.created_at?fmtDate(r.created_at):''}</span>
+      <span>Reviewed by GOOPI</span>
+    </div>
     ${donateBox}
   `;
   // Update SEO meta for this review
