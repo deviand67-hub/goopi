@@ -1455,6 +1455,7 @@ function showDetail(id){currentReviewId=id;
         <div class="detail-cat">${r.cat==='book'?'📚 BOOK':r.cat==='series'?'📺 SERIES':r.cat==='notes'?'📝 NOTES':'🎬 MOVIE'}${(r.genre||(r.scoring&&r.scoring.genre))?' <span style="opacity:.65;font-weight:400">· '+((r.genre||(r.scoring&&r.scoring.genre))).split('/')[0].trim()+'</span>':''}</div>
         <div class="detail-title">${r.title}</div>
         <div class="detail-author">oleh ${r.author}</div>
+        ${r.created_at?`<div style="font-size:.78rem;color:var(--text-mid);margin-bottom:16px;margin-top:-14px">${fmtDate(r.created_at)}</div>`:''}
         
         ${isNotes?'':`<div class="detail-verdict-box ${vc.cls}">${vc.icon} ${vc.label}</div>`}
       </div>
