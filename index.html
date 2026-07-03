@@ -1264,6 +1264,14 @@ async function deleteReview_db(id){
 }
 
 function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');if(n==='contact')updateContactPage();if(n==='privacy')updatePrivacyPage();
+  // Update browser URL to match the active page (except 'detail', which manages its own URL via showDetail)
+  if(n!=='detail'){
+    const urlMap={home:'/',about:'/#about',contact:'/#contact',privacy:'/#privacy',admin:'/#admin'};
+    const targetUrl=urlMap[n]||'/';
+    if(window.location.pathname+window.location.hash!==targetUrl){
+      history.pushState({page:n},'',targetUrl);
+    }
+  }
   if(n==='home'){renderHome();
     const s=document.getElementById('review-schema');if(s)s.remove();
     document.querySelector('meta[property="og:url"]')?.setAttribute('content','https://www.thegoopi.com/');document.title='GOOPI — Good Picks Only';document.querySelector('meta[name="description"]').setAttribute('content','Review jujur buku dan film. Cek dulu sebelum beli atau nonton. Good Picks Only.');}if(n==='admin'){renderTable();document.getElementById('s-about').value=stripTags(getAbout());loadContactSettings();loadPrivacySettings()}if(n==='about')document.getElementById('aboutBody').innerHTML=getAbout();window.scrollTo(0,0)}
@@ -1496,6 +1504,10 @@ function showDetail(id){currentReviewId=id;
   const schemaType = r.cat==='book' ? 'Book' : r.cat==='series' ? 'TVSeries' : 'Movie';
   const authorProp = r.cat==='book' ? '"author":{"@type":"Person","name":"'+r.author+'"},' : '"director":{"@type":"Person","name":"'+r.author+'"},';
   const reviewUrl = 'https://www.thegoopi.com/review/'+slugify(r.title, r.author);
+  const reviewPath = '/review/'+slugify(r.title, r.author);
+  if(window.location.pathname!==reviewPath){
+    history.pushState({page:'detail',id:id},'',reviewPath);
+  }
 
   const schema = {
     "@context": "https://schema.org",
@@ -2546,6 +2558,20 @@ document.getElementById('aboutBody').innerHTML=getAbout();
 toggleCatSections('book');
 renderHome();
 handleUrlRouting();
+
+window.addEventListener('popstate',(e)=>{
+  const path=window.location.pathname;
+  if(path.startsWith('/review/')){
+    handleUrlRouting();
+  } else if(path==='/'||path===''){
+    showPage('home');
+  } else if(window.location.hash){
+    const hashPage=window.location.hash.replace('#','');
+    if(['about','contact','privacy','admin'].includes(hashPage)){
+      showPage(hashPage);
+    }
+  }
+});
 
 // Global handler for external links in dynamic content
 document.addEventListener('click', function(e){
