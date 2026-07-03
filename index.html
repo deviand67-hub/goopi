@@ -169,7 +169,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .detail-wrap{max-width:780px;margin:0 auto;padding:48px 40px}
 .detail-layout{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:220px 1fr 280px;gap:32px;align-items:start;padding:0 24px}
 .detail-layout .detail-wrap{padding:48px 0;max-width:none}
-.detail-sidebar-left,.detail-sidebar-right{position:sticky;top:24px}
+.detail-sidebar-left,.detail-sidebar-right{position:sticky;top:48px;margin-top:48px}
 .detail-cat-link{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:6px;font-size:.82rem;color:var(--text-mid);cursor:pointer;text-decoration:none}
 .detail-cat-link:hover{background:var(--cream-dark)}
 .detail-cat-link.active{background:var(--brown-dark);color:#fff;font-weight:600}
@@ -1797,6 +1797,10 @@ async function saveReview(){
   try{
     await saveReview_db(data, isUpdate);
     resetForm();
+    currentFilter='all';
+    document.querySelectorAll('.filter-chip').forEach((c,i)=>c.classList.toggle('active',i===0));
+    const subBar=document.getElementById('filmSubFilter');
+    if(subBar)subBar.style.display='none';
     await renderTable();
     await renderHome();
     showPage('home');
