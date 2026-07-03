@@ -128,13 +128,21 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .sidebar-item-cover img{width:100%;height:100%;object-fit:cover}
 .sidebar-item-title{font-size:.78rem;font-weight:600;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .sidebar-item-meta{font-size:.68rem;color:var(--text-mid);margin-top:2px}
-.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.related-card{cursor:pointer}
+.related-carousel{display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding-bottom:4px}
+.related-carousel::-webkit-scrollbar{display:none}
+.related-card{cursor:pointer;flex:0 0 140px;width:140px}
 .related-card-cover{width:100%;aspect-ratio:2/3;border-radius:6px;overflow:hidden;background:var(--cream-dark);margin-bottom:8px}
 .related-card-cover img{width:100%;height:100%;object-fit:cover}
 .related-card-title{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:2px}
 .related-card-meta{font-size:.7rem;color:var(--text-mid)}
-@media(max-width:700px){.related-grid{grid-template-columns:repeat(2,1fr)}}
+.related-nav{display:flex;gap:6px}
+.related-nav-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--text-mid);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.related-nav-btn:hover{background:var(--brown-dark);color:#fff;border-color:var(--brown-dark)}
+.pagination-btn{min-width:36px;height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--text-mid);font-size:.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.pagination-btn:hover:not(:disabled){background:var(--cream-dark)}
+.pagination-btn.active{background:var(--brown-dark);color:#fff;border-color:var(--brown-dark);font-weight:600}
+.pagination-btn:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:700px){.related-card{flex:0 0 110px;width:110px}}
 @media(max-width:900px){.main-section{grid-template-columns:1fr}.sidebar-widget{position:static}}
 
 /* CARDS */
@@ -1239,7 +1247,8 @@ SCORING (masing-masing 0-10, total max 100):
 </div>
 
 <script>
-let currentFilter='all',editId=null;
+let currentFilter='all',editId=null,currentPage=1;
+const REVIEWS_PER_PAGE=10;
 let tempBuyLinks=[],tempStreamLinks=[],tempTlBuyLinks=[],tempOrigBuyLinks=[],tempEnBuyLinks=[];
 let aiScoreCriteria=[],aiGenre='';
 let top10Cache={books:null,movies:null,loadedAt:null};
@@ -1318,6 +1327,33 @@ function toggleMobile(){document.getElementById('mobileMenu').classList.toggle('
 function closeMobile(){document.getElementById('mobileMenu').classList.remove('open');document.getElementById('hamburger').classList.remove('open')}
 function stripTags(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent}
 
+function renderPaginationControls(totalPages){
+  const grid=document.getElementById('mainGrid');
+  if(!grid)return;
+  let existing=document.getElementById('paginationControls');
+  if(existing)existing.remove();
+  if(totalPages<=1)return;
+  const wrap=document.createElement('div');
+  wrap.id='paginationControls';
+  wrap.style.cssText='display:flex;align-items:center;justify-content:center;gap:8px;margin-top:32px;flex-wrap:wrap';
+  let html='';
+  html+=`<button class="pagination-btn" ${currentPage===1?'disabled':''} onclick="goToPage(${currentPage-1})">‹ Sebelumnya</button>`;
+  for(let i=1;i<=totalPages;i++){
+    if(i===1||i===totalPages||Math.abs(i-currentPage)<=1){
+      html+=`<button class="pagination-btn ${i===currentPage?'active':''}" onclick="goToPage(${i})">${i}</button>`;
+    } else if(Math.abs(i-currentPage)===2){
+      html+='<span style="color:var(--text-mid);padding:0 4px">…</span>';
+    }
+  }
+  html+=`<button class="pagination-btn" ${currentPage===totalPages?'disabled':''} onclick="goToPage(${currentPage+1})">Selanjutnya ›</button>`;
+  wrap.innerHTML=html;
+  grid.insertAdjacentElement('afterend',wrap);
+}
+function goToPage(p){
+  currentPage=p;
+  renderHome();
+  document.querySelector('.main-section')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
 async function renderHome(){
   await loadReviews();
   const now=new Date();
@@ -1326,8 +1362,14 @@ async function renderHome(){
     if(r.status==='scheduled'&&r.scheduled_at)return new Date(r.scheduled_at)<=now;
     return false; // draft
   };
-  const reviews=getReviews().filter(r=>isVisible(r)).filter(r=>currentFilter==='all'||(currentFilter==='movie'&&(r.cat==='movie'||r.cat==='series'))||r.cat===currentFilter);
-  renderCards(reviews,'mainGrid');
+  const allFiltered=getReviews().filter(r=>isVisible(r)).filter(r=>currentFilter==='all'||(currentFilter==='movie'&&(r.cat==='movie'||r.cat==='series'))||r.cat===currentFilter);
+  const totalPages=Math.max(1,Math.ceil(allFiltered.length/REVIEWS_PER_PAGE));
+  if(currentPage>totalPages)currentPage=totalPages;
+  if(currentPage<1)currentPage=1;
+  const startIdx=(currentPage-1)*REVIEWS_PER_PAGE;
+  const pageReviews=allFiltered.slice(startIdx,startIdx+REVIEWS_PER_PAGE);
+  renderCards(pageReviews,'mainGrid');
+  renderPaginationControls(totalPages);
   renderWorthItSidebar();
 }
 function renderWorthItSidebar(){
@@ -1353,6 +1395,7 @@ async function loadReviews(){
 }
 function setFilter(f,btn){
   currentFilter=f;
+  currentPage=1;
   document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
   btn.classList.add('active');
   // Show/hide film sub-filter
@@ -1616,6 +1659,12 @@ function goToCategory(cat){
     }
   }
 }
+function scrollRelated(uid,dir){
+  const el=document.getElementById(uid);
+  if(!el)return;
+  const cardWidth=el.querySelector('.related-card')?.offsetWidth||160;
+  el.scrollBy({left:dir*(cardWidth+16)*2,behavior:'smooth'});
+}
 function buildRelatedSection(r){
   const now=new Date();
   const isVisible=x=>{
@@ -1623,11 +1672,10 @@ function buildRelatedSection(r){
     if(x.status==='scheduled'&&x.scheduled_at)return new Date(x.scheduled_at)<=now;
     return false;
   };
-  // Prefer same category, exclude current review, take up to 4 random-ish picks (most recent first, then shuffle a bit)
   const sameCategory=getReviews().filter(x=>isVisible(x)&&x.id!==r.id&&x.cat===r.cat);
   const others=getReviews().filter(x=>isVisible(x)&&x.id!==r.id&&x.cat!==r.cat);
-  const pool=[...sameCategory,...others].slice(0,8);
-  const picks=pool.sort(()=>Math.random()-0.5).slice(0,4);
+  const pool=[...sameCategory,...others];
+  const picks=pool.sort(()=>Math.random()-0.5).slice(0,8);
   if(!picks.length)return '';
   const cards=picks.map(x=>{
     const cover=x.img?`<img src="${x.img}" alt="${x.title}">`:'';
@@ -1638,9 +1686,19 @@ function buildRelatedSection(r){
       <div class="related-card-meta">${x.author||''} · ${vLabel}</div>
     </div>`;
   }).join('');
+  const relUid='rel_'+r.id;
   return `<hr class="detail-divider">
-    <div style="margin-bottom:16px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark)">YOU MIGHT LIKE THESE</span></div>
-    <div class="related-grid">${cards}</div>`;
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark)">YOU MIGHT LIKE THESE</span>
+      <div class="related-nav">
+        <button class="related-nav-btn" onclick="scrollRelated('${relUid}',-1)" aria-label="Sebelumnya">‹</button>
+        <button class="related-nav-btn" onclick="scrollRelated('${relUid}',1)" aria-label="Selanjutnya">›</button>
+      </div>
+    </div>
+    <div class="related-carousel" id="${relUid}">${cards}</div>
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn btn-outline btn-sm" onclick="currentFilter='all';showPage('home')">Lihat Semua Review →</button>
+    </div>`;
 }
 function renderDetailWorthItSidebar(excludeId){
   const el=document.getElementById('detailWorthItSidebar');
@@ -1672,7 +1730,7 @@ function doLogin(){if(document.getElementById('loginPw').value===getPass()){s('w
 function doLogout(){s('wi_auth',false);showPage('home')}
 
 function switchTab(name,btn){document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.admin-section').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('at-'+name).classList.add('active');if(name==='inspire')loadTop10(false)}
-function showFilmSection(){
+async function showFilmSection(){
   // Set active filter to movie
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   const movieBtn = document.querySelector('[data-cat="movie"]');
@@ -1681,16 +1739,28 @@ function showFilmSection(){
   const subBar = document.getElementById('filmSubFilter');
   if(subBar) subBar.style.display='flex';
   // Show all film content (movie + series)
-  renderFilm('all');
+  await renderFilm('all');
 }
 
 async function renderFilm(sub){
   await loadReviews();
-  const allReviews = getReviews();
+  const now=new Date();
+  const isVisible=r=>{
+    if(!r.status||r.status==='published')return true;
+    if(r.status==='scheduled'&&r.scheduled_at)return new Date(r.scheduled_at)<=now;
+    return false;
+  };
+  const allReviews = getReviews().filter(isVisible);
   const filtered = sub==='all' 
     ? allReviews.filter(r=>r.cat==='movie'||r.cat==='series')
     : allReviews.filter(r=>r.cat===sub);
-  renderCards(filtered,'mainGrid');
+  const totalPages=Math.max(1,Math.ceil(filtered.length/REVIEWS_PER_PAGE));
+  if(currentPage>totalPages)currentPage=totalPages;
+  if(currentPage<1)currentPage=1;
+  const startIdx=(currentPage-1)*REVIEWS_PER_PAGE;
+  const pageReviews=filtered.slice(startIdx,startIdx+REVIEWS_PER_PAGE);
+  renderCards(pageReviews,'mainGrid');
+  renderPaginationControls(totalPages);
 }
 
 function setFilmSub(sub, btn){
@@ -1698,6 +1768,7 @@ function setFilmSub(sub, btn){
   btn.classList.add('active');
   // Update currentFilter so renderHome doesn't override
   currentFilter = sub==='all' ? 'movie' : sub;
+  currentPage=1;
   renderFilm(sub==='all' ? 'all' : sub);
 }
 
