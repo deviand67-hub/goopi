@@ -128,21 +128,22 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .sidebar-item-cover img{width:100%;height:100%;object-fit:cover}
 .sidebar-item-title{font-size:.78rem;font-weight:600;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .sidebar-item-meta{font-size:.68rem;color:var(--text-mid);margin-top:2px}
-.related-carousel{display:flex;gap:16px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding-bottom:4px}
-.related-carousel::-webkit-scrollbar{display:none}
-.related-card{cursor:pointer;flex:0 0 140px;width:140px}
+.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
+.related-card{cursor:pointer}
 .related-card-cover{width:100%;aspect-ratio:2/3;border-radius:6px;overflow:hidden;background:var(--cream-dark);margin-bottom:8px}
 .related-card-cover img{width:100%;height:100%;object-fit:cover}
 .related-card-title{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:2px}
 .related-card-meta{font-size:.7rem;color:var(--text-mid)}
-.related-nav{display:flex;gap:6px}
-.related-nav-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--text-mid);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.related-nav-btn:hover{background:var(--brown-dark);color:#fff;border-color:var(--brown-dark)}
+.related-see-more{display:flex;align-items:center;justify-content:center;text-align:center;aspect-ratio:2/3;border:1px dashed var(--border);border-radius:6px;color:var(--brown-dark);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s}
+.related-see-more:hover{background:var(--cream-dark)}
+.related-dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
+.related-dot{width:8px;height:8px;border-radius:50%;border:none;background:var(--border);cursor:pointer;padding:0;transition:all .15s}
+.related-dot.active{background:var(--brown-dark);width:20px;border-radius:4px}
 .pagination-btn{min-width:36px;height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--text-mid);font-size:.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
 .pagination-btn:hover:not(:disabled){background:var(--cream-dark)}
 .pagination-btn.active{background:var(--brown-dark);color:#fff;border-color:var(--brown-dark);font-weight:600}
 .pagination-btn:disabled{opacity:.4;cursor:not-allowed}
-@media(max-width:700px){.related-card{flex:0 0 110px;width:110px}}
+@media(max-width:700px){.related-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){.main-section{grid-template-columns:1fr}.sidebar-widget{position:static}}
 
 /* CARDS */
@@ -183,7 +184,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 /* DETAIL */
 .detail-wrap{max-width:780px;margin:0 auto;padding:48px 40px}
 .detail-layout{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:220px 1fr 280px;gap:32px;align-items:start;padding:0 24px}
-.detail-layout .detail-wrap{padding:48px 0;max-width:none}
+.detail-layout .detail-wrap{padding:48px 0;max-width:720px;margin:48px 0 0 0}
 .detail-sidebar-left,.detail-sidebar-right{position:sticky;top:48px;margin-top:48px}
 .detail-cat-link{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:6px;font-size:.82rem;color:var(--text-mid);cursor:pointer;text-decoration:none}
 .detail-cat-link:hover{background:var(--cream-dark)}
@@ -1636,6 +1637,7 @@ function showDetail(id){currentReviewId=id;
   showPage('detail');
   renderDetailCatMenu(r.cat);
   renderDetailWorthItSidebar(id);
+  renderRelatedPage('rel_'+id,1);
 }
 function renderDetailCatMenu(activeCat){
   const el=document.getElementById('detailCatMenu');
@@ -1659,12 +1661,7 @@ function goToCategory(cat){
     }
   }
 }
-function scrollRelated(uid,dir){
-  const el=document.getElementById(uid);
-  if(!el)return;
-  const cardWidth=el.querySelector('.related-card')?.offsetWidth||160;
-  el.scrollBy({left:dir*(cardWidth+16)*2,behavior:'smooth'});
-}
+let relatedPicksCache={};
 function buildRelatedSection(r){
   const now=new Date();
   const isVisible=x=>{
@@ -1675,9 +1672,23 @@ function buildRelatedSection(r){
   const sameCategory=getReviews().filter(x=>isVisible(x)&&x.id!==r.id&&x.cat===r.cat);
   const others=getReviews().filter(x=>isVisible(x)&&x.id!==r.id&&x.cat!==r.cat);
   const pool=[...sameCategory,...others];
-  const picks=pool.sort(()=>Math.random()-0.5).slice(0,8);
+  const picks=pool.sort(()=>Math.random()-0.5).slice(0,7); // 4 on page 1 + 3 on page 2 = 7 total
   if(!picks.length)return '';
-  const cards=picks.map(x=>{
+  const relUid='rel_'+r.id;
+  relatedPicksCache[relUid]=picks;
+  return `<hr class="detail-divider">
+    <div style="margin-bottom:16px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark)">YOU MIGHT LIKE THESE</span></div>
+    <div id="${relUid}_wrap"></div>`;
+}
+function renderRelatedPage(uid,page){
+  const picks=relatedPicksCache[uid];
+  if(!picks)return;
+  const wrap=document.getElementById(uid+'_wrap');
+  if(!wrap)return;
+  const pageSize=page===1?4:3;
+  const startIdx=page===1?0:4;
+  const pageItems=picks.slice(startIdx,startIdx+pageSize);
+  const cards=pageItems.map(x=>{
     const cover=x.img?`<img src="${x.img}" alt="${x.title}">`:'';
     const vLabel=x.verdict==='yes'?'Worth It':x.verdict==='no'?'Not for Everyone':'OK, BUT';
     return `<div class="related-card" onclick="showDetail('${x.id}')">
@@ -1686,19 +1697,17 @@ function buildRelatedSection(r){
       <div class="related-card-meta">${x.author||''} · ${vLabel}</div>
     </div>`;
   }).join('');
-  const relUid='rel_'+r.id;
-  return `<hr class="detail-divider">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark)">YOU MIGHT LIKE THESE</span>
-      <div class="related-nav">
-        <button class="related-nav-btn" onclick="scrollRelated('${relUid}',-1)" aria-label="Sebelumnya">‹</button>
-        <button class="related-nav-btn" onclick="scrollRelated('${relUid}',1)" aria-label="Selanjutnya">›</button>
-      </div>
+  const hasPage2=picks.length>4;
+  const isLastPage=page===2||!hasPage2;
+  const seeMoreBtn=isLastPage?`<a class="related-see-more" onclick="currentFilter='all';showPage('home')">See More →</a>`:'';
+  const pageDots=hasPage2?`<div class="related-dots">
+      <button class="related-dot ${page===1?'active':''}" onclick="renderRelatedPage('${uid}',1)" aria-label="Halaman 1"></button>
+      <button class="related-dot ${page===2?'active':''}" onclick="renderRelatedPage('${uid}',2)" aria-label="Halaman 2"></button>
+    </div>`:'';
+  wrap.innerHTML=`<div class="related-grid-wrap">
+      <div class="related-grid">${cards}${seeMoreBtn}</div>
     </div>
-    <div class="related-carousel" id="${relUid}">${cards}</div>
-    <div style="text-align:center;margin-top:20px">
-      <button class="btn btn-outline btn-sm" onclick="currentFilter='all';showPage('home')">Lihat Semua Review →</button>
-    </div>`;
+    ${pageDots}`;
 }
 function renderDetailWorthItSidebar(excludeId){
   const el=document.getElementById('detailWorthItSidebar');
