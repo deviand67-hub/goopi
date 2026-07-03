@@ -128,6 +128,13 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .sidebar-item-cover img{width:100%;height:100%;object-fit:cover}
 .sidebar-item-title{font-size:.78rem;font-weight:600;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .sidebar-item-meta{font-size:.68rem;color:var(--text-mid);margin-top:2px}
+.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.related-card{cursor:pointer}
+.related-card-cover{width:100%;aspect-ratio:2/3;border-radius:6px;overflow:hidden;background:var(--cream-dark);margin-bottom:8px}
+.related-card-cover img{width:100%;height:100%;object-fit:cover}
+.related-card-title{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:2px}
+.related-card-meta{font-size:.7rem;color:var(--text-mid)}
+@media(max-width:700px){.related-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){.main-section{grid-template-columns:1fr}.sidebar-widget{position:static}}
 
 /* CARDS */
@@ -461,6 +468,9 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   <button class="hamburger" id="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
   <div class="mobile-menu" id="mobileMenu">
     <button onclick="navTo('home');closeMobile()">Home</button>
+    <button onclick="goToCategory('book');closeMobile()">📚 Books</button>
+    <button onclick="goToCategory('movie');closeMobile()">🎬 Film</button>
+    <button onclick="goToCategory('notes');closeMobile()">📝 Notes</button>
     <button onclick="showPage('about');closeMobile()">About</button>
     <button onclick="showPage('contact');closeMobile()">Contact</button>
     <button onclick="showPage('privacy');closeMobile()">Policy</button>
@@ -1514,6 +1524,7 @@ function showDetail(id){currentReviewId=id;
       <span>${r.created_at?fmtDate(r.created_at):''}</span>
       <span>Reviewed by GOOPI</span>
     </div>
+    ${buildRelatedSection(r)}
     ${donateBox}
   `;
   // Update SEO meta for this review
@@ -1597,13 +1608,39 @@ function goToCategory(cat){
   const targetChip=chipIndex!==undefined?chips[chipIndex]:chips[0];
   if(targetChip){
     setFilter(cat==='series'?'movie':cat, targetChip);
-    if(cat==='series'){
+    if(cat==='movie'||cat==='series'){
       setTimeout(()=>{
-        const seriesBtn=document.querySelector('.film-sub-btn[onclick*="series"]');
-        if(seriesBtn)setFilmSub('series',seriesBtn);
+        const subBtn=document.querySelector('.film-sub-btn[onclick*="'+cat+'"]');
+        if(subBtn)setFilmSub(cat,subBtn);
       },50);
     }
   }
+}
+function buildRelatedSection(r){
+  const now=new Date();
+  const isVisible=x=>{
+    if(!x.status||x.status==='published')return true;
+    if(x.status==='scheduled'&&x.scheduled_at)return new Date(x.scheduled_at)<=now;
+    return false;
+  };
+  // Prefer same category, exclude current review, take up to 4 random-ish picks (most recent first, then shuffle a bit)
+  const sameCategory=getReviews().filter(x=>isVisible(x)&&x.id!==r.id&&x.cat===r.cat);
+  const others=getReviews().filter(x=>isVisible(x)&&x.id!==r.id&&x.cat!==r.cat);
+  const pool=[...sameCategory,...others].slice(0,8);
+  const picks=pool.sort(()=>Math.random()-0.5).slice(0,4);
+  if(!picks.length)return '';
+  const cards=picks.map(x=>{
+    const cover=x.img?`<img src="${x.img}" alt="${x.title}">`:'';
+    const vLabel=x.verdict==='yes'?'Worth It':x.verdict==='no'?'Not for Everyone':'OK, BUT';
+    return `<div class="related-card" onclick="showDetail('${x.id}')">
+      <div class="related-card-cover">${cover}</div>
+      <div class="related-card-title">${x.title}</div>
+      <div class="related-card-meta">${x.author||''} · ${vLabel}</div>
+    </div>`;
+  }).join('');
+  return `<hr class="detail-divider">
+    <div style="margin-bottom:16px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark)">YOU MIGHT LIKE THESE</span></div>
+    <div class="related-grid">${cards}</div>`;
 }
 function renderDetailWorthItSidebar(excludeId){
   const el=document.getElementById('detailWorthItSidebar');
