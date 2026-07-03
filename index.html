@@ -174,8 +174,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 .detail-cat-link:hover{background:var(--cream-dark)}
 .detail-cat-link.active{background:var(--brown-dark);color:#fff;font-weight:600}
 @media(max-width:1100px){.detail-layout{grid-template-columns:1fr}.detail-sidebar-left,.detail-sidebar-right{position:static;display:none}}
-.detail-back{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:500;color:var(--text-mid);cursor:pointer;margin-bottom:36px;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color .2s;letter-spacing:.5px}
-.detail-back:hover{color:var(--brown-dark)}
+
 .detail-hero{margin-bottom:40px;display:grid;grid-template-columns:160px 1fr;gap:32px;align-items:start}
 .detail-cover img{width:100%;border-radius:4px;box-shadow:0 8px 40px rgba(61,35,20,.15)}
 .placeholder-cover{width:160px;height:220px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:4rem;background:var(--cream-dark)}
@@ -1485,7 +1484,6 @@ function showDetail(id){currentReviewId=id;
     </div>
   `;
   document.getElementById('detailContent').innerHTML=`
-    <button class="detail-back" onclick="showPage('home');window.history.pushState({},'','/');document.title='theGOOPI — Good Picks Only';">← Back</button>
     <div class="detail-hero" style="background:${bg};border-radius:4px;padding:28px;margin-bottom:36px">
       <div class="detail-cover">${cover}</div>
       <div class="detail-info">
