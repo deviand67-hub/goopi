@@ -167,6 +167,13 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 
 /* DETAIL */
 .detail-wrap{max-width:780px;margin:0 auto;padding:48px 40px}
+.detail-layout{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:220px 1fr 280px;gap:32px;align-items:start;padding:0 24px}
+.detail-layout .detail-wrap{padding:48px 0;max-width:none}
+.detail-sidebar-left,.detail-sidebar-right{position:sticky;top:24px}
+.detail-cat-link{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:6px;font-size:.82rem;color:var(--text-mid);cursor:pointer;text-decoration:none}
+.detail-cat-link:hover{background:var(--cream-dark)}
+.detail-cat-link.active{background:var(--brown-dark);color:#fff;font-weight:600}
+@media(max-width:1100px){.detail-layout{grid-template-columns:1fr}.detail-sidebar-left,.detail-sidebar-right{position:static;display:none}}
 .detail-back{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:500;color:var(--text-mid);cursor:pointer;margin-bottom:36px;background:none;border:none;font-family:'DM Sans',sans-serif;transition:color .2s;letter-spacing:.5px}
 .detail-back:hover{color:var(--brown-dark)}
 .detail-hero{margin-bottom:40px;display:grid;grid-template-columns:160px 1fr;gap:32px;align-items:start}
@@ -829,7 +836,23 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
 </div>
 
 <!-- DETAIL -->
-<div id="page-detail" class="page"><div class="detail-wrap" id="detailContent"></div></div>
+<div id="page-detail" class="page">
+  <div class="detail-layout">
+    <div class="detail-sidebar-left">
+      <div class="sidebar-widget">
+        <div class="sidebar-widget-title">📂 Kategori</div>
+        <div id="detailCatMenu"></div>
+      </div>
+    </div>
+    <div class="detail-wrap" id="detailContent"></div>
+    <div class="detail-sidebar-right">
+      <div class="sidebar-widget">
+        <div class="sidebar-widget-title">✓ Worth It Picks</div>
+        <div id="detailWorthItSidebar"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ABOUT -->
 <div id="page-about" class="page">
@@ -1069,7 +1092,7 @@ SCORING (masing-masing 0-10, total max 100):
           <div class="form-row-3">
             <div class="form-group"><label>Kategori</label><select id="f-cat" onchange="toggleCatSections(this.value)"><option value="book">📚 Books</option><option value="movie">🎬 Movies</option><option value="series">📺 Series</option>
 <option value="notes">📝 Notes</option></select></div>
-            <div id="verdictRatingFields"><div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Skip Aja</option></select></div>
+            <div id="verdictRatingFields"><div class="form-group"><label>Verdict</label><select id="f-verdict"><option value="yes">✓ Worth It!</option><option value="maybe">~ OK, BUT</option><option value="no">✗ Not for Everyone</option></select></div>
             </div>
           </div>
           <div class="form-row"><div class="form-group"><label>Status</label><select id="f-status" onchange="toggleScheduleField()"><option value="published">🟢 Publish Sekarang</option><option value="draft">📝 Simpan sebagai Draft</option><option value="scheduled">🕐 Jadwalkan</option></select></div>
@@ -1131,6 +1154,7 @@ SCORING (masing-masing 0-10, total max 100):
             <div class="form-group"><label>📖 Bahasa & Terjemahan (Buku)</label>
               <div style="margin-bottom:12px"><button class="ai-suggest-btn" id="btnSuggestTranslation" onclick="aiSuggestTranslation()">✨ AI Deteksi Bahasa</button></div>
               <div class="form-row"><div class="form-group"><label>Bahasa Original</label><input type="text" id="tl-original" placeholder="Bahasa Inggris"></div><div class="form-group"><label>Ada Terjemahan ID?</label><select id="tl-available"><option value="">Belum tahu</option><option value="yes">✓ Ada</option><option value="no">✗ Belum ada</option></select></div></div>
+              <div class="form-row"><div class="form-group"><label>Ada Terjemahan Inggris?</label><select id="tl-available-en"><option value="">Belum tahu</option><option value="yes">✓ Ada</option><option value="no">✗ Belum ada</option></select></div></div>
               <label style="font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);display:block;margin-bottom:6px">Beli Versi Original</label>
               <div class="buy-links-list" id="tlOrigBuyList"></div>
               <div class="form-group" style="display:flex;gap:8px;flex-wrap:wrap"><div style="flex:2;min-width:120px"><label>Toko</label><input type="text" id="tobl-store" placeholder="Amazon" style="width:100%"></div><div style="flex:1;min-width:100px"><label>Format</label><select id="tobl-format" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text)"><option value="">Format</option><option value="Softcover">Softcover</option><option value="Hardcover">Hardcover</option><option value="Digital">Digital</option></select></div></div>
@@ -1139,6 +1163,10 @@ SCORING (masing-masing 0-10, total max 100):
               <div class="buy-links-list" id="tlBuyList"></div>
               <div class="form-group" style="display:flex;gap:8px;flex-wrap:wrap"><div style="flex:2;min-width:120px"><label>Toko</label><input type="text" id="tbl-store" placeholder="Gramedia" style="width:100%"></div><div style="flex:1;min-width:100px"><label>Format</label><select id="tbl-format" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text)"><option value="">Format</option><option value="Softcover">Softcover</option><option value="Hardcover">Hardcover</option><option value="Digital">Digital</option></select></div></div>
               <div class="buy-link-row"><div class="form-group"><label>Harga</label><div style="display:flex;gap:6px"><select id="tbl-currency" style="width:80px;padding:10px 8px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text)"><option>Rp</option><option>USD</option><option>SGD</option><option>JPY</option></select><input type="text" id="tbl-price" placeholder="89.000" style="flex:1"></div></div><div class="form-group"><label>URL</label><input type="text" id="tbl-url"></div><button class="btn-add-link" onclick="addTlBuyLink()">+ Tambah</button></div>
+              <label style="font-size:.68rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-mid);display:block;margin:12px 0 6px">Beli Versi Terjemahan Inggris</label>
+              <div class="buy-links-list" id="tlEnBuyList"></div>
+              <div class="form-group" style="display:flex;gap:8px;flex-wrap:wrap"><div style="flex:2;min-width:120px"><label>Toko</label><input type="text" id="tebl-store" placeholder="Amazon" style="width:100%"></div><div style="flex:1;min-width:100px"><label>Format</label><select id="tebl-format" style="width:100%;padding:10px 8px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text)"><option value="">Format</option><option value="Softcover">Softcover</option><option value="Hardcover">Hardcover</option><option value="Digital">Digital</option></select></div></div>
+              <div class="buy-link-row"><div class="form-group"><label>Harga</label><div style="display:flex;gap:6px"><select id="tebl-currency" style="width:80px;padding:10px 8px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--text)"><option>Rp</option><option>USD</option><option>SGD</option><option>JPY</option></select><input type="text" id="tebl-price" placeholder="15.99" style="flex:1"></div></div><div class="form-group"><label>URL</label><input type="text" id="tebl-url"></div><button class="btn-add-link" onclick="addEnBuyLink()">+ Tambah</button></div>
             </div>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" onclick="saveReview()">Simpan Review</button><button class="btn btn-outline" onclick="resetForm()">Reset</button></div>
@@ -1203,7 +1231,7 @@ SCORING (masing-masing 0-10, total max 100):
 
 <script>
 let currentFilter='all',editId=null;
-let tempBuyLinks=[],tempStreamLinks=[],tempTlBuyLinks=[],tempOrigBuyLinks=[];
+let tempBuyLinks=[],tempStreamLinks=[],tempTlBuyLinks=[],tempOrigBuyLinks=[],tempEnBuyLinks=[];
 let aiScoreCriteria=[],aiGenre='';
 let top10Cache={books:null,movies:null,loadedAt:null};
 
@@ -1327,7 +1355,7 @@ function setFilter(f,btn){
 function renderCards(reviews,tid){
   const grid=document.getElementById(tid);
   if(!reviews.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><span class="empty-icon">📚</span><p>Belum ada review. Tambahkan lewat Admin.</p></div>';return}
-  const vMap={yes:['verdict-yes','Worth It ✓'],no:['verdict-no','Skip ✗'],maybe:['verdict-maybe','OK, BUT']};
+  const vMap={yes:['verdict-yes','Worth It ✓'],no:['verdict-no','Not for Everyone ✗'],maybe:['verdict-maybe','OK, BUT']};
   grid.innerHTML=reviews.map(r=>{
     const emoji=r.cat==='book'?'📚':r.cat==='notes'?'📝':'🎬';
     const bgColor=r.cat==='book'?'#E8F0E9':r.cat==='notes'?'#F0EEF8':'#FAE8ED';
@@ -1352,7 +1380,7 @@ function showDetail(id){currentReviewId=id;
     }
     return`<p>${line}</p>`;
   }).join('');
-  const vConf={yes:{icon:'✓',label:'Worth It!',cls:'yes',color:'var(--green)',bg:'var(--green-light)'},no:{icon:'✗',label:'Skip Aja',cls:'no',color:'var(--pink)',bg:'var(--pink-light)'},maybe:{icon:'~',label:'OK, BUT',cls:'maybe',color:'#92400E',bg:'#FEF3C7'}};
+  const vConf={yes:{icon:'✓',label:'Worth It!',cls:'yes',color:'var(--green)',bg:'var(--green-light)'},no:{icon:'✗',label:'Not for Everyone',cls:'no',color:'var(--pink)',bg:'var(--pink-light)'},maybe:{icon:'~',label:'OK, BUT',cls:'maybe',color:'#92400E',bg:'#FEF3C7'}};
   const vc=vConf[r.verdict]||vConf.maybe;
   const hasScoring=r.scoring&&r.scoring.criteria&&r.scoring.criteria.length;
   const barsHtml=hasScoring?r.scoring.criteria.map(c=>{
@@ -1373,34 +1401,35 @@ function showDetail(id){currentReviewId=id;
 
   let bottomBox='';
   if(r.cat==='book'){
-    const tr=r.translation,hasId=tr&&tr.hasIndonesian==='yes';
-    const origLinks=(tr&&tr.originalBuyLinks)||[],idLinks=(tr&&tr.buyLinks)||[];
+    const tr=r.translation,hasId=tr&&tr.hasIndonesian==='yes',hasEn=tr&&tr.hasEnglish==='yes';
+    const origLinks=(tr&&tr.originalBuyLinks)||[],idLinks=(tr&&tr.buyLinks)||[],enLinks=(tr&&tr.enBuyLinks)||[];
     const uid='lt_'+r.id,origLang=(tr&&tr.originalLanguage)||'Bahasa Asli';
     const isOrigIndo=origLang.toLowerCase().includes('indonesia');
+    const isOrigEnglish=origLang.toLowerCase().includes('inggris')||origLang.toLowerCase().includes('english');
     if(true){
-      if(isOrigIndo){
-        // Original is Indonesian — show single "Bahasa Indonesia" tab
-        const allLinks=sortBuyLinks([...origLinks,...idLinks]);
-        const tabIndo='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">Indonesian</button>';
-        const panelIndo='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(allLinks,'','var(--brown-dark)')+'</div>';
-        bottomBox='<hr class="detail-divider">'+
-          '<div style="margin-bottom:12px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">'+(r.cat==='book'?'BOOK LANGUAGE':r.cat==='notes'?'WHERE TO FIND':'WATCH INFO')+' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span></div>'+
-          '<div class="lang-tabs" data-uid="'+uid+'">'+tabIndo+'</div>'+
-          panelIndo;
-      } else {
-        // Foreign original — show tabs for Original and Indonesian translation
-        const langLabel=origLang.toLowerCase().includes('inggris')||origLang.toLowerCase().includes('english')?'English':origLang.toLowerCase().includes('indonesia')?'Indonesian':origLang;
-        const tabOrig='<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">'+langLabel+'</button>';
-        const tabId='<button class="lang-tab" data-uid="'+uid+'" data-tab="id" onclick="switchLangTabEl(this)">Indonesian</button>';
-        const panelOrig='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(origLinks,'Edisi original','var(--brown-dark)')+'</div>';
-        const panelId='<div id="'+uid+'_id" class="lang-tab-panel">'+(hasId?mkLinks(idLinks,'Versi terjemahan Indonesia','var(--green)'):'<div class="no-links-msg">Belum ada terjemahan bahasa Indonesia.</div>')+'</div>';
-        bottomBox='<hr class="detail-divider">'+
-          '<div style="margin-bottom:12px">'+
-          '<span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">BOOK LANGUAGE <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>'+
-          '</div>'+
-          '<div class="lang-tabs" data-uid="'+uid+'">'+tabOrig+tabId+'</div>'+
-          panelOrig+panelId;
+      const langLabel=isOrigEnglish?'English':isOrigIndo?'Indonesian':origLang;
+      const tabs=[];
+      const panels=[];
+      // Tab 1: Original (always shown)
+      tabs.push('<button class="lang-tab active" data-uid="'+uid+'" data-tab="orig" onclick="switchLangTabEl(this)">'+langLabel+'</button>');
+      panels.push('<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(origLinks,isOrigIndo?'':'Edisi original','var(--brown-dark)')+'</div>');
+      // Tab 2: English — only if original is NOT English, and hasEnglish is yes
+      if(!isOrigEnglish && hasEn){
+        tabs.push('<button class="lang-tab" data-uid="'+uid+'" data-tab="en" onclick="switchLangTabEl(this)">English</button>');
+        panels.push('<div id="'+uid+'_en" class="lang-tab-panel">'+mkLinks(enLinks,'Versi terjemahan Inggris','var(--brown-dark)')+'</div>');
       }
+      // Tab 3: Indonesian — only if original is NOT Indonesian
+      if(!isOrigIndo){
+        tabs.push('<button class="lang-tab" data-uid="'+uid+'" data-tab="id" onclick="switchLangTabEl(this)">Indonesian</button>');
+        panels.push('<div id="'+uid+'_id" class="lang-tab-panel">'+(hasId?mkLinks(idLinks,'Versi terjemahan Indonesia','var(--green)'):'<div class="no-links-msg">Belum ada terjemahan bahasa Indonesia.</div>')+'</div>');
+      } else {
+        // Original IS Indonesian — merge id links into the orig panel since they're the same language
+        panels[0]='<div id="'+uid+'_orig" class="lang-tab-panel active">'+mkLinks(sortBuyLinks([...origLinks,...idLinks]),'','var(--brown-dark)')+'</div>';
+      }
+      bottomBox='<hr class="detail-divider">'+
+        '<div style="margin-bottom:12px"><span style="font-size:1rem;font-weight:700;letter-spacing:1px;color:var(--brown-dark);display:inline-flex;align-items:center;gap:6px">'+(r.cat==='book'?'BOOK LANGUAGE':r.cat==='notes'?'WHERE TO FIND':'WATCH INFO')+' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B8F71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span></div>'+
+        '<div class="lang-tabs" data-uid="'+uid+'">'+tabs.join('')+'</div>'+
+        panels.join('');
     }
     } else if(r.cat==='notes'){
     // Notes - show both buy links AND watch links if available
@@ -1490,7 +1519,7 @@ function showDetail(id){currentReviewId=id;
     ${donateBox}
   `;
   // Update SEO meta for this review
-  document.title = r.title + ' — ' + (r.verdict==='yes'?'Worth It!':r.verdict==='no'?'Skip Aja':'OK, BUT') + ' | GOOPI';
+  document.title = r.title + ' — ' + (r.verdict==='yes'?'Worth It!':r.verdict==='no'?'Not for Everyone':'OK, BUT') + ' | GOOPI';
   const desc = (r.excerpt||'').slice(0,150);
   const hasEnContent=r.body_en&&r.body_en.trim().length>0;
   const seoDesc=(r.excerpt||'').slice(0,150);
@@ -1553,6 +1582,30 @@ function showDetail(id){currentReviewId=id;
   // Update URL
   updateReviewUrl(r, 'id');
   showPage('detail');
+  renderDetailCatMenu(r.cat);
+  renderDetailWorthItSidebar(id);
+}
+function renderDetailCatMenu(activeCat){
+  const el=document.getElementById('detailCatMenu');
+  if(!el)return;
+  const cats=[{key:'book',label:'📚 Books'},{key:'movie',label:'🎬 Movies'},{key:'series',label:'📺 Series'},{key:'notes',label:'📝 Notes'}];
+  el.innerHTML=cats.map(c=>`<a class="detail-cat-link ${c.key===activeCat?'active':''}" onclick="currentFilter='${c.key}';showPage('home')">${c.label}</a>`).join('');
+}
+function renderDetailWorthItSidebar(excludeId){
+  const el=document.getElementById('detailWorthItSidebar');
+  if(!el)return;
+  const now=new Date();
+  const isVisible=r=>{
+    if(!r.status||r.status==='published')return true;
+    if(r.status==='scheduled'&&r.scheduled_at)return new Date(r.scheduled_at)<=now;
+    return false;
+  };
+  const picks=getReviews().filter(r=>isVisible(r)&&r.verdict==='yes'&&r.id!==excludeId).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,5);
+  if(!picks.length){el.innerHTML='<div style="font-size:.75rem;color:var(--text-mid)">Belum ada pick.</div>';return}
+  el.innerHTML=picks.map(r=>{
+    const cover=r.img?`<img src="${r.img}" alt="${r.title}">`:'';
+    return `<div class="sidebar-item" onclick="showDetail('${r.id}')"><div class="sidebar-item-cover">${cover}</div><div><div class="sidebar-item-title">${r.title}</div><div class="sidebar-item-meta">${r.author||''}</div></div></div>`;
+  }).join('');
 }
 
 function switchLangTab(uid,tab,btn){['orig','id'].forEach(t=>{const el=document.getElementById(uid+'_'+t);if(el)el.classList.remove('active')});const target=document.getElementById(uid+'_'+tab);if(target)target.classList.add('active');if(btn){btn.closest('.lang-tabs').querySelectorAll('.lang-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active')}}
@@ -1699,6 +1752,16 @@ function renderOrigBuyList(){const el=document.getElementById('tlOrigBuyList');i
     </div>
   </div>`).join('')}
 function editOrigBuyLink(i){const b=tempOrigBuyLinks[i];document.getElementById('tobl-store').value=b.store||'';document.getElementById('tobl-price').value=b.price||'';document.getElementById('tobl-url').value=b.url||'';document.getElementById('tobl-format').value=b.format||'';removeOrigBuyLink(i);}
+function renderEnBuyList(){const el=document.getElementById('tlEnBuyList');if(!el)return;el.innerHTML=tempEnBuyLinks.map((b,i)=>`<div class="buy-link-item" style="flex-wrap:wrap;gap:6px">
+    <span style="flex:1">${storeEmoji(b.store)} <strong>${b.store}</strong> — ${b.price}</span>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-outline btn-sm" onclick="editEnBuyLink(${i})">Edit</button>
+      <button class="buy-link-del" onclick="removeEnBuyLink(${i})">✕</button>
+    </div>
+  </div>`).join('')}
+function addEnBuyLink(){const st=document.getElementById('tebl-store').value.trim(),cur=document.getElementById('tebl-currency').value,pr=document.getElementById('tebl-price').value.trim(),u=document.getElementById('tebl-url').value.trim(),fmt=document.getElementById('tebl-format').value;if(!st)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempEnBuyLinks.push({store:st,price:fullPrice,url:u,format:fmt});renderEnBuyList();['tebl-store','tebl-price','tebl-url'].forEach(id=>document.getElementById(id).value='')}
+function removeEnBuyLink(i){tempEnBuyLinks.splice(i,1);renderEnBuyList()}
+function editEnBuyLink(i){const b=tempEnBuyLinks[i];document.getElementById('tebl-store').value=b.store||'';document.getElementById('tebl-price').value=b.price||'';document.getElementById('tebl-url').value=b.url||'';document.getElementById('tebl-format').value=b.format||'';removeEnBuyLink(i);}
 function addTlBuyLink(){const st=document.getElementById('tbl-store').value.trim(),cur=document.getElementById('tbl-currency').value,pr=document.getElementById('tbl-price').value.trim(),u=document.getElementById('tbl-url').value.trim(),fmt=document.getElementById('tbl-format').value;if(!st)return;const fullPrice=pr?(pr.includes(cur)||pr.match(/^[A-Z]/)?pr:cur+' '+pr):'';tempTlBuyLinks.push({store:st,price:fullPrice,url:u,format:fmt});renderTlBuyList();['tbl-store','tbl-price','tbl-url'].forEach(id=>document.getElementById(id).value='')}
 function removeTlBuyLink(i){tempTlBuyLinks.splice(i,1);renderTlBuyList()}
 function renderTlBuyList(){const el=document.getElementById('tlBuyList');if(!el)return;el.innerHTML=tempTlBuyLinks.map((b,i)=>`<div class="buy-link-item" style="flex-wrap:wrap;gap:6px">
@@ -1726,7 +1789,7 @@ async function saveReview(){
     status:statusVal,
     scheduled_at:statusVal==='scheduled'&&scheduledAtVal?new Date(scheduledAtVal).toISOString():null,
     excerpt_en:excerptEn,
-    body_en:bodyEn,scoring:getManualScoring()||window._lastScoring||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks]}:null};
+    body_en:bodyEn,scoring:getManualScoring()||window._lastScoring||null,stream_links:cat==='movie'?[...tempStreamLinks]:null,translation:cat==='book'?{originalLanguage:document.getElementById('tl-original').value.trim(),hasIndonesian:document.getElementById('tl-available').value,hasEnglish:document.getElementById('tl-available-en')?.value||'',buyLinks:[...tempTlBuyLinks],originalBuyLinks:[...tempOrigBuyLinks],enBuyLinks:[...tempEnBuyLinks]}:null};
   window._lastScoring=null;
   const isUpdate=!!editId;
   if(editId){data.id=editId;editId=null;}
@@ -1778,9 +1841,12 @@ function editReview(id){
   tempStreamLinks=[...(r.streamLinks||r.stream_links||[])];renderStreamList();
   tempTlBuyLinks=[...((r.translation&&r.translation.buyLinks)||[])];renderTlBuyList();
   tempOrigBuyLinks=[...((r.translation&&r.translation.originalBuyLinks)||[])];renderOrigBuyList();
+  tempEnBuyLinks=[...((r.translation&&r.translation.enBuyLinks)||[])];renderEnBuyList();
   const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');
   if(tlO)tlO.value=(r.translation&&r.translation.originalLanguage)||'';
   if(tlA)tlA.value=(r.translation&&r.translation.hasIndonesian)||'';
+  const tlAEn=document.getElementById('tl-available-en');
+  if(tlAEn)tlAEn.value=(r.translation&&r.translation.hasEnglish)||'';
   // Store existing scoring to preserve it
   window._lastScoring=r.scoring||null;
   toggleCatSections(r.cat, true);
@@ -1789,7 +1855,7 @@ function editReview(id){
   window.scrollTo(0,0);
 }
 async function deleteReview(id){if(!confirm('Hapus review ini?'))return;try{await deleteReview_db(id);await renderTable();await renderHome();}catch(e){alert('Gagal hapus: '+e.message)}}
-function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';const fSt=document.getElementById('f-status');if(fSt)fSt.value='published';const fSch=document.getElementById('f-scheduled-at');if(fSch)fSch.value='';toggleScheduleField();tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available');if(tlO)tlO.value='';if(tlA)tlA.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI();manualCriteria=[];document.getElementById('manualScoring').style.display='none';const gi=document.getElementById('f-genre-input');if(gi)gi.value='';}
+function resetForm(){['f-title','f-author','f-img','f-excerpt','f-body'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='book';document.getElementById('f-verdict').value='yes';const fSt=document.getElementById('f-status');if(fSt)fSt.value='published';const fSch=document.getElementById('f-scheduled-at');if(fSch)fSch.value='';toggleScheduleField();tempBuyLinks=[];tempStreamLinks=[];renderStreamList();tempTlBuyLinks=[];renderTlBuyList();tempOrigBuyLinks=[];renderOrigBuyList();tempEnBuyLinks=[];renderEnBuyList();const tlO=document.getElementById('tl-original'),tlA=document.getElementById('tl-available'),tlAEn=document.getElementById('tl-available-en');if(tlO)tlO.value='';if(tlA)tlA.value='';if(tlAEn)tlAEn.value='';editId=null;document.getElementById('formTitle').textContent='Tambah Review';document.getElementById('formErr').textContent='';toggleCatSections('book');resetAI();manualCriteria=[];document.getElementById('manualScoring').style.display='none';const gi=document.getElementById('f-genre-input');if(gi)gi.value='';}
 async function renderTable(){
   await getReviewsAsync();
   const reviews=getReviews(),t=document.getElementById('adminTable');
@@ -1803,7 +1869,7 @@ async function renderTable(){
     cntEl.textContent=parts.join(' · ');
   }
   if(!reviews.length){t.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-mid)">Belum ada review.</div>';return}
-  const vMap={yes:'Worth It',no:'Skip',maybe:'OK, BUT'};
+  const vMap={yes:'Worth It',no:'Not for Everyone',maybe:'OK, BUT'};
   t.innerHTML=reviews.map(r=>{
     const statusBadge=r.status==='draft'?'<span style="background:#E5E5E5;color:#666;padding:2px 8px;border-radius:10px;font-size:.68rem">📝 Draft</span>'
       :r.status==='scheduled'?'<span style="background:#DBEAFE;color:#1D4ED8;padding:2px 8px;border-radius:10px;font-size:.68rem">🕐 '+(r.scheduled_at?fmtDate(r.scheduled_at):'Scheduled')+'</span>'
@@ -2315,7 +2381,7 @@ function updateTotalScore(){
   const sum=aiScoreCriteria.reduce((s,c)=>s+(Number(c.score)||0),0),total=Math.round(sum);
   document.getElementById('totalScoreNum').textContent=total;
   let verdict,label,cls;
-  if(total>=85){verdict='yes';label='Worth It!';cls='yes'}else if(total>=70){verdict='maybe';label='OK, BUT';cls='maybe'}else{verdict='no';label='Skip Aja';cls='no'}
+  if(total>=85){verdict='yes';label='Worth It!';cls='yes'}else if(total>=70){verdict='maybe';label='OK, BUT';cls='maybe'}else{verdict='no';label='Not for Everyone';cls='no'}
   const vEl=document.getElementById('totalVerdictLabel');vEl.textContent=label;vEl.className='total-verdict '+cls;
   document.getElementById('totalVerdictBadge').innerHTML='<span class="verdict-pill verdict-'+cls+'" style="padding:3px 10px;border-radius:100px">'+label+'</span>';
   return{total,verdict};
