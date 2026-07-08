@@ -1587,19 +1587,19 @@ function showDetail(id){currentReviewId=id;
   // Update URL
   updateReviewUrl(r, 'id');
   showPage('detail');
-  renderDetailCatMenu(r.cat);
+  renderDetailCatMenu(r.cat==='notes'?r.notes_subcat:r.cat);
   renderDetailWorthItSidebar(id);
   renderRelatedPage('rel_'+id,1);
 }
 function renderDetailCatMenu(activeCat){
   const el=document.getElementById('detailCatMenu');
   if(!el)return;
-  const cats=[{key:'book',label:'📚 Books'},{key:'movie',label:'🎬 Movies'},{key:'series',label:'📺 Series'},{key:'notes',label:'📝 Notes'}];
+  const cats=[{key:'starting-over',label:'🌱 Notes on Life'},{key:'content-creation',label:'🎨 Content Creation'},{key:'book',label:'📚 Books'},{key:'movie',label:'🎬 Films'},{key:'language-learning',label:'🗣️ Learning'}];
   el.innerHTML=cats.map(c=>`<a class="detail-cat-link ${c.key===activeCat?'active':''}" onclick="goToCategory('${c.key}')">${c.label}</a>`).join('');
 }
 function goToCategory(cat){
   showPage('home');
-  const chipMap={book:1,movie:2,series:2,notes:3}; // series shares the 'Film' chip with movie
+  const chipMap={'starting-over':1,'content-creation':2,book:3,movie:4,series:4,'language-learning':5}; // series shares the 'Films' chip with movie
   const chips=document.querySelectorAll('.filter-chip');
   const chipIndex=chipMap[cat];
   const targetChip=chipIndex!==undefined?chips[chipIndex]:chips[0];
