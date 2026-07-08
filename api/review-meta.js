@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     const list = Array.isArray(reviews) ? reviews : [];
     const r = list.find(item => slugify(item.title, item.author) === slug);
 
-    
+
 
 
 
@@ -64,6 +64,10 @@ export default async function handler(req, res) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       return res.status(200).send(html);
     }
+
+    // Remove the hidden homepage H1 to avoid duplicate H1 tags on review pages
+    // (the review's own title will be the H1 for this page instead)
+    html = html.replace(/<h1 style="position:absolute[^>]*>the goopi by Andriya — Good Picks Only<\/h1>\s*/, '');
 
     const title = r.title;
     const excerptRaw = isEn ? (r.excerpt_en || r.excerpt) : r.excerpt;
