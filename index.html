@@ -435,9 +435,11 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   <button class="hamburger" id="hamburger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
   <div class="mobile-menu" id="mobileMenu">
     <button onclick="navTo('home');closeMobile()">Home</button>
+    <button onclick="goToCategory('starting-over');closeMobile()">🌱 Notes on Life</button>
+    <button onclick="goToCategory('content-creation');closeMobile()">🎨 Content Creation</button>
     <button onclick="goToCategory('book');closeMobile()">📚 Books</button>
-    <button onclick="goToCategory('movie');closeMobile()">🎬 Film</button>
-    <button onclick="goToCategory('notes');closeMobile()">📝 Notes</button>
+    <button onclick="goToCategory('movie');closeMobile()">🎬 Films</button>
+    <button onclick="goToCategory('language-learning');closeMobile()">🗣️ Learning</button>
     <button onclick="showPage('about');closeMobile()">About</button>
     <button onclick="showPage('contact');closeMobile()">Contact</button>
     <button onclick="showPage('privacy');closeMobile()">Policy</button>
