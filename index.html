@@ -777,6 +777,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
     </svg>
     <div class="hero-inner">
       <h1 style="display:inline-flex;align-items:center;gap:6px"><span style="font-size:.45em;font-family:'Dancing Script',cursive;font-weight:400;opacity:.9;position:relative;top:-0.4em;margin-right:-2px;letter-spacing:-0.05em">the</span>GOOPI<span style="color:var(--pink);font-size:.5em;display:block;line-height:1;margin-top:4px">●</span></h1>
+      <div style="font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text-mid);margin-top:-8px;margin-bottom:12px">by Andriya</div>
       <div class="hero-eyebrow">Good Picks Only</div>
       
       <div class="hero-search">
@@ -794,9 +795,11 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
   </div>
   <div class="filter-bar">
     <button class="filter-chip active" onclick="setFilter('all',this)"><span class="pip" style="background:var(--brown-dark)"></span>All</button>
-    <button class="filter-chip" onclick="setFilter('notes',this)"><span class="pip" style="background:#8B7BC8"></span>Notes</button>
+    <button class="filter-chip" onclick="setFilter('starting-over',this)"><span class="pip" style="background:#8B7BC8"></span>Notes on Life</button>
+    <button class="filter-chip" onclick="setFilter('content-creation',this)"><span class="pip" style="background:#D4A574"></span>Content Creation</button>
     <button class="filter-chip" onclick="setFilter('book',this)"><span class="pip" style="background:var(--green)"></span>Books</button>
-    <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Film</button>
+    <button class="filter-chip" onclick="setFilter('movie',this)"><span class="pip" style="background:var(--pink)"></span>Films</button>
+    <button class="filter-chip" onclick="setFilter('language-learning',this)"><span class="pip" style="background:#6B9BC3"></span>Learning</button>
   </div>
   <div class="main-section">
     <!-- Film sub-filter -->
@@ -806,14 +809,7 @@ nav{background:var(--cream-light);border-bottom:1px solid var(--border);padding:
     <button class="film-sub-btn" onclick="setFilmSub('series',this)">Series</button>
     </div>
   </div>
-  <div id="notesSubFilter" style="display:none;padding:0 20px 12px;overflow-x:auto"><div style="display:flex;background:var(--cream-light);border-radius:8px;padding:3px;border:1px solid var(--border);min-width:max-content">
-    <button class="film-sub-btn active" onclick="setNotesSub('all',this)">All</button>
-    <button class="film-sub-btn" onclick="setNotesSub('starting-over',this)">🌱 Starting Over</button>
-    <button class="film-sub-btn" onclick="setNotesSub('content-creation',this)">🎨 Content Creation</button>
-    <button class="film-sub-btn" onclick="setNotesSub('growth',this)">🚀 Growth</button>
-    <button class="film-sub-btn" onclick="setNotesSub('language-learning',this)">🗣️ Language</button>
-    </div>
-  </div>
+  
 
   <div>
     <div class="section-label">What I've Been Learning…</div>
@@ -1222,7 +1218,7 @@ SCORING (masing-masing 0-10, total max 100):
 </div>
 
 <script>
-let currentFilter='all',editId=null,currentPage=1,currentNotesSubFilter='all';
+let currentFilter='all',editId=null,currentPage=1;
 const REVIEWS_PER_PAGE=10;
 let tempBuyLinks=[],tempStreamLinks=[],tempTlBuyLinks=[],tempOrigBuyLinks=[],tempEnBuyLinks=[];
 let aiScoreCriteria=[],aiGenre='';
@@ -1337,7 +1333,13 @@ async function renderHome(){
     if(r.status==='scheduled'&&r.scheduled_at)return new Date(r.scheduled_at)<=now;
     return false; // draft
   };
-  const allFiltered=getReviews().filter(r=>isVisible(r)).filter(r=>currentFilter==='all'||(currentFilter==='movie'&&(r.cat==='movie'||r.cat==='series'))||r.cat===currentFilter).filter(r=>currentFilter!=='notes'||currentNotesSubFilter==='all'||r.notes_subcat===currentNotesSubFilter);
+  const notesTopics=['starting-over','content-creation','language-learning'];
+  const allFiltered=getReviews().filter(r=>isVisible(r)).filter(r=>{
+    if(currentFilter==='all')return true;
+    if(currentFilter==='movie')return r.cat==='movie'||r.cat==='series';
+    if(notesTopics.includes(currentFilter))return r.cat==='notes'&&r.notes_subcat===currentFilter;
+    return r.cat===currentFilter;
+  });
   const totalPages=Math.max(1,Math.ceil(allFiltered.length/REVIEWS_PER_PAGE));
   if(currentPage>totalPages)currentPage=totalPages;
   if(currentPage<1)currentPage=1;
@@ -1376,8 +1378,6 @@ function setFilter(f,btn){
   // Show/hide film sub-filter
   const subBar=document.getElementById('filmSubFilter');
   if(subBar)subBar.style.display=(f==='movie')?'flex':'none';
-  const notesSubBar=document.getElementById('notesSubFilter');
-  if(notesSubBar)notesSubBar.style.display=(f==='notes')?'flex':'none';
   renderHome();
 }
 
@@ -1732,13 +1732,6 @@ async function renderFilm(sub){
   renderPaginationControls(totalPages);
 }
 
-function setNotesSub(sub, btn){
-  document.querySelectorAll('#notesSubFilter .film-sub-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  currentNotesSubFilter = sub;
-  currentPage=1;
-  renderHome();
-}
 function setFilmSub(sub, btn){
   document.querySelectorAll('#filmSubFilter .film-sub-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -1751,52 +1744,52 @@ function setFilmSub(sub, btn){
 // Default scoring criteria per category
 const DEFAULT_CRITERIA = {
   book_fiction: [
-    {name:'Substansi & Ide', score:7, reason:''},
-    {name:'Kedalaman Narasi', score:7, reason:''},
-    {name:'Karakter & Sudut Pandang', score:7, reason:''},
-    {name:'Plot & Struktur', score:7, reason:''},
-    {name:'Gaya Penulisan', score:7, reason:''},
+    {name:'Substance & Ideas', score:7, reason:''},
+    {name:'Narrative Depth', score:7, reason:''},
+    {name:'Characters & Perspective', score:7, reason:''},
+    {name:'Plot & Structure', score:7, reason:''},
+    {name:'Writing Style', score:7, reason:''},
     {name:'Pacing', score:7, reason:''},
-    {name:'Originalitas', score:7, reason:''},
-    {name:'Relevansi & Konteks', score:7, reason:''},
-    {name:'Daya Baca', score:7, reason:''},
-    {name:'Kesan Akhir', score:7, reason:''}
+    {name:'Originality', score:7, reason:''},
+    {name:'Relevance & Context', score:7, reason:''},
+    {name:'Readability', score:7, reason:''},
+    {name:'Lasting Impression', score:7, reason:''}
   ],
   book_nonfiction: [
-    {name:'Substansi & Ide', score:7, reason:''},
-    {name:'Kedalaman Riset', score:7, reason:''},
-    {name:'Struktur & Alur', score:7, reason:''},
-    {name:'Gaya Penulisan', score:7, reason:''},
+    {name:'Substance & Ideas', score:7, reason:''},
+    {name:'Research Depth', score:7, reason:''},
+    {name:'Structure & Flow', score:7, reason:''},
+    {name:'Writing Style', score:7, reason:''},
     {name:'Pacing', score:7, reason:''},
-    {name:'Actionable / Aplikatif', score:7, reason:''},
-    {name:'Originalitas', score:7, reason:''},
-    {name:'Relevansi & Konteks', score:7, reason:''},
-    {name:'Daya Baca', score:7, reason:''},
-    {name:'Kesan Akhir', score:7, reason:''}
+    {name:'Actionability', score:7, reason:''},
+    {name:'Originality', score:7, reason:''},
+    {name:'Relevance & Context', score:7, reason:''},
+    {name:'Readability', score:7, reason:''},
+    {name:'Lasting Impression', score:7, reason:''}
   ],
   movie: [
-    {name:'Cerita & World-Building', score:7, reason:''},
-    {name:'Akting & Cast Chemistry', score:7, reason:''},
-    {name:'Sinematografi', score:7, reason:''},
+    {name:'Story & World-Building', score:7, reason:''},
+    {name:'Acting & Cast Chemistry', score:7, reason:''},
+    {name:'Cinematography', score:7, reason:''},
     {name:'Character Development', score:7, reason:''},
-    {name:'Musik & Sound Design', score:7, reason:''},
-    {name:'Pacing per Episode', score:7, reason:''},
-    {name:'Konsistensi Antar Episode', score:7, reason:''},
-    {name:'Emosi & Impact', score:7, reason:''},
-    {name:'Originalitas', score:7, reason:''},
-    {name:'Kesan Akhir', score:7, reason:''}
+    {name:'Music & Sound Design', score:7, reason:''},
+    {name:'Pacing & Editing', score:7, reason:''},
+    {name:'Consistency', score:7, reason:''},
+    {name:'Emotional Impact', score:7, reason:''},
+    {name:'Originality', score:7, reason:''},
+    {name:'Lasting Impression', score:7, reason:''}
   ],
   series: [
-    {name:'Cerita & World-Building', score:7, reason:''},
-    {name:'Akting & Cast Chemistry', score:7, reason:''},
-    {name:'Sinematografi', score:7, reason:''},
+    {name:'Story & World-Building', score:7, reason:''},
+    {name:'Acting & Cast Chemistry', score:7, reason:''},
+    {name:'Cinematography', score:7, reason:''},
     {name:'Character Development', score:7, reason:''},
-    {name:'Musik & Sound Design', score:7, reason:''},
-    {name:'Pacing per Episode', score:7, reason:''},
-    {name:'Konsistensi Antar Episode', score:7, reason:''},
-    {name:'Emosi & Impact', score:7, reason:''},
-    {name:'Originalitas', score:7, reason:''},
-    {name:'Kesan Akhir', score:7, reason:''}
+    {name:'Music & Sound Design', score:7, reason:''},
+    {name:'Pacing Per Episode', score:7, reason:''},
+    {name:'Cross-Episode Consistency', score:7, reason:''},
+    {name:'Emotional Impact', score:7, reason:''},
+    {name:'Originality', score:7, reason:''},
+    {name:'Lasting Impression', score:7, reason:''}
   ]
 };
 
@@ -2313,8 +2306,8 @@ async function aiStep1(){
       +'Score EXACTLY these 10 criteria based on your actual assessment of this specific work (0-10 each, integers). '
       +'CRITICAL: scores MUST vary realistically between criteria (e.g. 6, 9, 7, 8, 5...) based on the real strengths and weaknesses of this work — do NOT give the same score to every criterion, and do NOT default to 7. '
       +'If a work is genuinely excellent in a category, score 8-10. If mediocre, score 4-6. If weak, score 1-3. '
-      +'Reply ONLY valid JSON: {"genre":"Indonesian genre max 3 words","criteria":['
-      +critListFinal.map(name=>'{"name":"'+name+'","score":<your_actual_score_here>,"reason":"brief specific reason in Indonesian"}').join(',')
+      +'Reply ONLY valid JSON: {"genre":"genre in English, max 3 words","criteria":['
+      +critListFinal.map(name=>'{"name":"'+name+'","score":<your_actual_score_here>,"reason":"brief specific reason in English"}').join(',')
       +']}'}];
     const raw=await callAIMsg(scoreMsg);
     const cleaned1=raw.replace(/```json|```/g,'').trim();
@@ -2350,7 +2343,7 @@ async function aiStep2(){
   ];
   const chosenOpening=openingStyles[Math.floor(Math.random()*openingStyles.length)];
   try{
-    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in Indonesian for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scoring (10 criteria x max 10pts = 100): '+scoresSummary+'. Total: '+total+'/100. Verdict rule: >=85=Worth It, 70-84=OK BUT, <70=Skip. OPENING STYLE FOR THIS REVIEW: '+chosenOpening+' Reply using EXACTLY this plain text format, no JSON, no markdown, no extra text before or after:\n\nTITLE: [original title] — [a SHORT, intriguing hook in casual Indonesian, 3-7 words, that makes readers curious enough to click — NOT mocking, NOT negative, NOT condescending toward the book/movie or its fans, even if your review is critical. Focus on curiosity and specificity, not snark. Bad examples (too generic): \\"Hangat tapi Tidak Membakar\\", \\"Worth Banget\\". Bad examples (too mocking/negative): \\"Plot Twist-nya? Meh.\\", \\"Annoying Tapi Aku Tetep Suka\\", \\"Karakternya Bikin Gemes Pengen Lempar Buku\\". Good examples (curiosity-driven, specific, respectful): \\"Endingnya Bikin Aku Mikir 2 Hari\\", \\"Bagian Tengahnya Ternyata Penting Banget\\", \\"Twist yang Nggak Kelihatan Sampai Akhir\\", \\"Karakter Ini Lebih Kompleks dari Dugaanku\\". Reference something concrete from the review content that creates curiosity, written in a warm and inviting tone]\nEXCERPT: [hook max 120 chars, MUST naturally mention the author/director name somewhere in the sentence for SEO purposes. VARY your sentence structure each time — do NOT default to the pattern "[Name] bikin kamu sadar bahwa...". Instead pick whichever structure genuinely fits this specific book/movie: sometimes start with a question, sometimes with a bold claim, sometimes with a specific plot detail, sometimes with a contrast/surprise. Written in casual Indonesian, must feel specific to THIS work, not swappable with any other title]\\n===BODY===\\n[review 400-600 words in Indonesian (STRICT: do not exceed 600 words, this is a hard limit). IMPORTANT for variety: do NOT always follow the same paragraph order (personal context → summary → critique → recommendation). Instead, structure organically based on what is most interesting about THIS specific work — sometimes open with a striking scene or quote, sometimes with a strong opinion, sometimes with a comparison to something else. Vary where the criticism appears (early, middle, or late) and how much personal narrative vs analysis is included. Paragraphs separated by blank lines, use [QUOTE: text] for pullquote]\\n===END==='}];
+    const step2Msg=[{role:'user',content:'Write a '+catLabel+' review in English for "'+title+'"'+(author?' by '+author:'')+'. Genre: '+aiGenre+'. Tone: '+toneMap[tone]+'. Scoring (10 criteria x max 10pts = 100): '+scoresSummary+'. Total: '+total+'/100. Verdict rule: >=85=Worth It, 70-84=OK BUT, <70=Skip. OPENING STYLE FOR THIS REVIEW: '+chosenOpening+' Reply using EXACTLY this plain text format, no JSON, no markdown, no extra text before or after:\n\nTITLE: [original title] — [a SHORT, intriguing hook in casual English, 3-7 words, that makes readers curious enough to click — NOT mocking, NOT negative, NOT condescending toward the book/movie or its fans, even if your review is critical. Focus on curiosity and specificity, not snark. Bad examples (too generic): \\"Warm But Doesn\'t Burn\\", \\"Totally Worth It\\". Bad examples (too mocking/negative): \\"That Twist? Meh.\\", \\"Annoying But I Still Loved It\\", \\"This Character Made Me Want to Throw the Book\\". Good examples (curiosity-driven, specific, respectful): \\"The Ending Had Me Thinking for Days\\", \\"The Middle Section Actually Mattered\\", \\"A Twist You Won\'t See Coming\\", \\"This Character Is More Complex Than Expected\\". Reference something concrete from the review content that creates curiosity, written in a warm and inviting tone]\nEXCERPT: [hook max 120 chars, MUST naturally mention the author/director name somewhere in the sentence for SEO purposes. VARY your sentence structure each time — do NOT default to the pattern "[Name] shows you that...". Instead pick whichever structure genuinely fits this specific book/movie: sometimes start with a question, sometimes with a bold claim, sometimes with a specific plot detail, sometimes with a contrast/surprise. Written in casual English, must feel specific to THIS work, not swappable with any other title]\\n===BODY===\\n[review 400-600 words in English (STRICT: do not exceed 600 words, this is a hard limit). IMPORTANT for variety: do NOT always follow the same paragraph order (personal context → summary → critique → recommendation). Instead, structure organically based on what is most interesting about THIS specific work — sometimes open with a striking scene or quote, sometimes with a strong opinion, sometimes with a comparison to something else. Vary where the criticism appears (early, middle, or late) and how much personal narrative vs analysis is included. Paragraphs separated by blank lines, use [QUOTE: text] for pullquote]\\n===END==='}];
     const raw=await callAIMsg(step2Msg, 4500);
     const titleMatch=raw.match(/TITLE:\s*([^\n]+)/);
     const excerptMatch=raw.match(/EXCERPT:\s*([^\n]+)/);
