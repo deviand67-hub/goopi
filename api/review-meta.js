@@ -45,6 +45,18 @@ export default async function handler(req, res) {
     const list = Array.isArray(reviews) ? reviews : [];
     const r = list.find(item => slugify(item.title, item.author) === slug);
 
+    if (req.query.debugmatch === '1') {
+      res.setHeader('Content-Type', 'application/json');
+      return res.status(200).json({
+        requestedSlug: slug,
+        matched: !!r,
+        totalReviewsFetched: list.length,
+        supabaseResponseOk: response.ok,
+        supabaseStatus: response.status,
+        availableSlugs: list.map(item => ({ title: item.title, author: item.author, slug: slugify(item.title, item.author) }))
+      });
+    }
+
 
 
 
